@@ -2,6 +2,7 @@ import { Rezervacija } from "./Rezervacija";
 
 export class Let {
     constructor(
+        private id: number,
         private polaziste: string,
         private odrediste: string,
         private datumPolaska: Date,
@@ -10,6 +11,10 @@ export class Let {
         private kapacitetPremijumEkonomskeKlase: number,
         private kapacitetPrveKlase: number
     ) {}
+
+    public getId(): number {
+        return this.id;
+    }
     public getPolaziste(): string {
         return this.polaziste;
     }
@@ -61,15 +66,15 @@ export class Let {
                         trazenaRezervacija.getBrojOsoba() <=
                         l.getKapacitetPrveKlase();
                     break;
-                default:
-                    dovoljnoMesta =
-                        trazenaRezervacija.getBrojOsoba() <=
-                        Math.max(
-                            l.getKapacitetBiznisKlase(),
-                            l.getKapacitetEkonomskeKlase(),
-                            l.getKapacitetPremijumEkonomskeKlase(),
-                            l.getKapacitetPrveKlase()
-                        );
+                // default:
+                //     dovoljnoMesta =
+                //         trazenaRezervacija.getBrojOsoba() <=
+                //         Math.max(
+                //             l.getKapacitetBiznisKlase(),
+                //             l.getKapacitetEkonomskeKlase(),
+                //             l.getKapacitetPremijumEkonomskeKlase(),
+                //             l.getKapacitetPrveKlase()
+                //         );
             }
             if (
                 trazenaRezervacija.getDatumPolaska().getDate() ===
@@ -100,12 +105,21 @@ export class Let {
             // : " N/A"
         } </span><br>
         <strong>Kapacitet:</strong> <span> ${
-            l.getKapacitetBiznisKlase() + l.getKapacitetEkonomskeKlase()
+            l.getKapacitetBiznisKlase() +
+            l.getKapacitetEkonomskeKlase() +
+            l.getKapacitetPremijumEkonomskeKlase() +
+            l.getKapacitetBiznisKlase()
         } </span>
         <button type="submit" class="dugmeRezervisi"
+        data-id="${l.getId()}"
         data-polaziste="${l.getPolaziste()}"
         data-odrediste="${l.getOdrediste()}"
-        data-datum-polaska="${l.getDatumPolaska()}"> Rezervisi </button>
+        data-datum-polaska="${l.getDatumPolaska()}"
+        data-kapacitet-ekonomske="${l.getKapacitetEkonomskeKlase()}"
+        data-kapacitet-premijum-ekonomske="${l.getKapacitetPremijumEkonomskeKlase()}"
+        data-kapacitet-biznis="${l.getKapacitetBiznisKlase()}"
+        data-kapacitet-prve="${l.getKapacitetPrveKlase()}"
+        > Rezervisi </button>
         `;
             listaLetovaElement.appendChild(liElement);
         });

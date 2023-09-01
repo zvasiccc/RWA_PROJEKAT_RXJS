@@ -1,44 +1,44 @@
 {
-    "sviLetovi": [
-        {
-            "id": 1,
-            "polaziste": "Beograd",
-            "odrediste": "London",
-            "datumPolaska": "2023-09-22",
-            "kapacitetEkonomskeKlase": 20,
-            "kapacitetBiznisKlase": 50,
-            "kapacitetPremijumEkonomskeKlase": 45,
-            "kapacitetPrveKlase": 56
-        },
-        {
-            "id": 2,
-            "polaziste": "Beograd",
-            "odrediste": "London",
-            "datumPolaska": "2023-09-22",
-            "kapacitetEkonomskeKlase": 30,
-            "kapacitetBiznisKlase": 60,
-            "kapacitetPremijumEkonomskeKlase": 45,
-            "kapacitetPrveKlase": 56
-        },
-        {
-            "id": 3,
-            "polaziste": "Pariz",
-            "odrediste": "Rim",
-            "datumPolaska": "2023-10-10",
-            "kapacitetEkonomskeKlase": 18,
-            "kapacitetBiznisKlase": 34,
-            "kapacitetPremijumEkonomskeKlase": 45,
-            "kapacitetPrveKlase": 56
-        },
-        {
-            "id": 4,
-            "polaziste": "Tokio",
-            "odrediste": "Sidnej",
-            "datumPolaska": "2023-11-05",
-            "kapacitetEkonomskeKlase": 47,
-            "kapacitetBiznisKlase": 15,
-            "kapacitetPremijumEkonomskeKlase": 45,
-            "kapacitetPrveKlase": 56
-        }
-    ]
+  "sviLetovi": [
+    {
+      "id": 1,
+      "polaziste": "Beograd",
+      "odrediste": "London",
+      "datumPolaska": "2023-09-22",
+      "kapacitetEkonomskeKlase": 99,
+      "kapacitetBiznisKlase": 100,
+      "kapacitetPremijumEkonomskeKlase": 100,
+      "kapacitetPrveKlase": 100
+    },
+    {
+      "id": 2,
+      "polaziste": "Beograd",
+      "odrediste": "London",
+      "datumPolaska": "2023-09-22",
+      "kapacitetEkonomskeKlase": 30,
+      "kapacitetBiznisKlase": 60,
+      "kapacitetPremijumEkonomskeKlase": 45,
+      "kapacitetPrveKlase": 56
+    },
+    {
+      "id": 3,
+      "polaziste": "Pariz",
+      "odrediste": "Rim",
+      "datumPolaska": "2023-10-10",
+      "kapacitetEkonomskeKlase": 18,
+      "kapacitetBiznisKlase": 34,
+      "kapacitetPremijumEkonomskeKlase": 45,
+      "kapacitetPrveKlase": 56
+    },
+    {
+      "id": 4,
+      "polaziste": "Tokio",
+      "odrediste": "Sidnej",
+      "datumPolaska": "2023-11-05",
+      "kapacitetEkonomskeKlase": 47,
+      "kapacitetBiznisKlase": 15,
+      "kapacitetPremijumEkonomskeKlase": 45,
+      "kapacitetPrveKlase": 56
+    }
+  ]
 }

@@ -58,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 //sad l predstavlja any trenutno, i sad cemo da napravimo nase Let objekte
                 (l) =>
                     new Let(
+                        l.id,
                         l.polaziste,
                         l.odrediste,
                         new Date(l.datumPolaska),
@@ -118,36 +119,81 @@ document.addEventListener("DOMContentLoaded", () => {
                 dugme.addEventListener("click", function (event) {
                     event.preventDefault();
                     console.log(dugme);
+                    const avionId = dugme.getAttribute("data-id");
                     const polaziste = dugme.getAttribute("data-polaziste");
                     const odrediste = dugme.getAttribute("data-odrediste");
                     const datumPolaska =
                         dugme.getAttribute("data-datum-polaska");
+                    let kapacitetEkonomskeKlase: number = parseInt(
+                        dugme.getAttribute("data-kapacitet-ekonomske")
+                    );
+
+                    let kapacitetPremijumEkonomskeKlase: number = parseInt(
+                        dugme.getAttribute("data-kapacitet-premijum-ekonomske")
+                    );
+                    let kapacitetBiznisKlase: number = parseInt(
+                        dugme.getAttribute("data-kapacitet-biznis")
+                    );
+                    let kapacitetPrveKlase: number = parseInt(
+                        dugme.getAttribute("data-kapacitet-prve")
+                    );
+                    switch (trazenaRezervacija.getTipKlase()) {
+                        case "ekonomska":
+                            kapacitetEkonomskeKlase -=
+                                trazenaRezervacija.getBrojOsoba();
+                            break;
+                        case "premijum ekonomska":
+                            kapacitetPremijumEkonomskeKlase -=
+                                trazenaRezervacija.getBrojOsoba();
+                            break;
+                        case "biznis":
+                            kapacitetBiznisKlase -=
+                                trazenaRezervacija.getBrojOsoba();
+                            break;
+                        case "prva klasa":
+                            kapacitetPrveKlase -=
+                                trazenaRezervacija.getBrojOsoba();
+                            break;
+                        default:
+                            break;
+                    }
+                    try {
+                        fetch(`http://localhost:3000/sviLetovi/${avionId}`, {
+                            method: "PATCH",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                kapacitetEkonomskeKlase:
+                                    kapacitetEkonomskeKlase,
+                                kapacitetBiznisKlase: kapacitetBiznisKlase,
+                                kapacitetPremijumEkonomskeKlase:
+                                    kapacitetPremijumEkonomskeKlase,
+                                kapacitetPrveKlase: kapacitetPrveKlase,
+                            }),
+                        }).then((response) => {
+                            if (!response.ok) {
+                                throw Error("neuspesno azuriranje kapaciteta");
+                            }
+                            console.log("uspesno ste azurirali podatke");
+                        });
+                    } catch (er) {
+                        console.log(er);
+                    }
                     console.log("Kliknuto dugme za rezervaciju leta:");
+                    console.log("id: " + avionId);
                     console.log("Polazište: " + polaziste);
                     console.log("Odredište: " + odrediste);
                     console.log("Datum polaska: " + datumPolaska);
+                    console.log(
+                        "stari kap ekonomske" + kapacitetEkonomskeKlase
+                    );
                 });
             });
         } else {
             console.log("ne postoji nijedan let");
         }
     });
-    if (dugmadRezervisi) {
-        const svaDugmad = dugmadRezervisi as unknown as HTMLButtonElement[];
-        svaDugmad.forEach((dugme) => {
-            dugme.addEventListener("click", function (event) {
-                event.preventDefault();
-                console.log(dugme);
-                const polaziste = dugme.getAttribute("data-polaziste");
-                const odrediste = dugme.getAttribute("data-odrediste");
-                const datumPolaska = dugme.getAttribute("data-datum-polaska");
-                console.log("Kliknuto dugme za rezervaciju leta:");
-                console.log("Polazište: " + polaziste);
-                console.log("Odredište: " + odrediste);
-                console.log("Datum polaska: " + datumPolaska);
-            });
-        });
-    }
     function formatDate(dateString: string) {
         const [year, month, day] = dateString.split("-");
         return new Date(Number(year), Number(month) - 1, Number(day)); // Meseci u JavaScriptu kreću od 0 (januar = 0, februar = 1, ...), pa se oduzima 1.
