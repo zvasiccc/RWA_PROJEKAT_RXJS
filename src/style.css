@@ -1,0 +1,48 @@
+body {
+    margin: 8px;
+}
+
+.header {
+    background-color: red;
+}
+.container {
+    background-color: #3737c6;
+    display: flex;
+    flex-wrap: wrap;
+
+    justify-content: space-between;
+}
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between; /* Rasporedi elemente ravnomerno */
+    margin: 100px;
+}
+.form-group {
+    flex: 1;
+    margin: 100px; /* Dodaj razmak između elemenata */
+}
+button {
+    align-self: flex-end; /* Postavi dugme na desni kraj */
+    margin-top: 10px; /* Dodaj razmak iznad dugmeta */
+}
+.container li {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    list-style-type: none; /* Ukloni tačke ili brojeve ispred stavki */
+    margin-bottom: 20px; /* Dodaj razmak između stavki */
+    padding: 10px; /* Dodaj unutarnji prostor oko svake stavke */
+    background-color: purple; /* Boja pozadine stavki */
+    border: 1px solid #ccc; /* Dodaj ivicu oko svake stavke */
+    border-radius: 5px; /* Zaobljeni rubovi */
+}
+/* Stilovi za naslove atributa unutar <li> stavke */
+.container li strong {
+    font-weight: bold; /* Podešavanje debljine fonta za naslove atributa */
+}
+.container li span {
+    margin-left: 5px;
+    margin-right: 20px;
+    background-color: #1b6da8;
+}

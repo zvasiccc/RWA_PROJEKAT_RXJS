@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Rezervacija karata</title>
+        <!-- <link rel="stylesheet" href="bootstrap.min.css" /> -->
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div class="header">
+            <p>Dobrodosli na online rezervaciju karata!</p>
+            <div class="search-bar">
+                <form>
+                    <label for="polaziste">Polazište:</label>
+                    <input
+                        type="text"
+                        id="polaziste"
+                        name="polaziste"
+                        required
+                    />
+                    <button id="zameniPolazisteIOdrediste">⟷</button>
+                    <label for="odrediste">Odredište:</label>
+                    <input
+                        type="text"
+                        id="odrediste"
+                        name="odrediste"
+                        required
+                    />
+                    <label for="povratnaKarta">Povratna karta:</label>
+                    <input
+                        type="checkbox"
+                        id="povratnaKarta"
+                        name="povratnaKarta"
+                    />
+                    <label for="datumPolaska">Datum polaska:</label>
+                    <input
+                        type="date"
+                        id="datumPolaska"
+                        name="datumPolaska"
+                        required
+                    />
+                    <label for="datumPovratka">Datum povratka:</label>
+                    <input
+                        type="date"
+                        id="datumPovratka"
+                        name="datumPovratka"
+                        required
+                        disabled
+                    />
+                    <label for="brojOsoba">Broj osoba:</label>
+                    <input
+                        type="number"
+                        id="brojOsoba"
+                        name="brojOsoba"
+                        min="1"
+                        max="10"
+                        required
+                    />
+                    <label for="tipKlase">Klasa:</label>
+                    <select id="tipKlase" name="tipKlase" required>
+                        <option value="sve klase">Sve klase</option>
+                        <option value="ekonomska">Ekonomska</option>
+                        <option value="premijum ekonomska">
+                            Premijum ekonomska
+                        </option>
+                        <option value="biznis">Biznis</option>
+                        <option value="prva klasa">Prva klasa</option>
+                    </select>
+                    <button type="submit" id="dugmePretragaLetova">
+                        Pretraga letova
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="container">
+            <ul id="listaLetova"></ul>
+        </div>
+        <script src="../dist/bundle.js"></script>
+        <!-- <script src="putanja-do-bootstrap.js"></script> -->
+    </body>
+</html>
