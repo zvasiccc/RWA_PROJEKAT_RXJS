@@ -3,10 +3,12 @@ import { Let } from "./Let";
 import { Rezervacija } from "./Rezervacija";
 import { fromFetch } from "rxjs/fetch";
 import { switchMap, from, map, tap } from "rxjs";
+import { PovratniLet } from "./Povratni let";
 
 let listaSvihLetova: Let[] = [];
 //const listaOdgovarajucihRezervacija: Rezervacija[] = [];
-let listaOdgovarajucihLetova: Let[] = [];
+let listaOdgovarajucihJednosmernihLetova: Let[] = [];
+let listaOdgovarajucihPovratnihLetova: PovratniLet[] = [];
 document.addEventListener("DOMContentLoaded", () => {
     const polazisteInput = document.getElementById(
         "polaziste"
@@ -30,50 +32,54 @@ document.addEventListener("DOMContentLoaded", () => {
     const tipKlaseInput = document.getElementById(
         "tipKlase"
     ) as HTMLInputElement;
+
     const povratnaKartaInput = document.getElementById(
         "povratnaKarta"
     ) as HTMLInputElement;
+
     const dugmeZameniPolazisteIOdrediste = document.getElementById(
         "zameniPolazisteIOdrediste"
     );
     let dugmadRezervisi: HTMLButtonElement[];
-    fromFetch("http://localhost:3000/sviLetovi")
-        // pravi observable od fetcha, tj pravimo tok na koji mozemo da se pretplatimo
-        .pipe(
-            //u pipe se ubacuju operatori
-            switchMap((response) => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw Error("Failed to fetch level");
-                }
-                //sa toka responsova se prebacujemo na tok objekta nekih, odnosno ne koristimo vise ceo response
-                //nego samo nas json iz responsa, tj body responsa
-            }),
-            tap(() => (listaSvihLetova = [])), //tap nista ne radi sa tokom, sta udje to i izadje
-            //i zato njega koristimo da ispraznimo listu, a moramo da koristimo neki operator u pipeu
-            map((data) => <any[]>data), //prvo kazemo da je niz any objekata, nije niz LEt objekata zbog new Date koje koristimo, on dobija string onako
-            switchMap((data) => from(data)), //from od niza pravi tok elemenata
-            map(
-                //sad l predstavlja any trenutno, i sad cemo da napravimo nase Let objekte
-                (l) =>
-                    new Let(
-                        l.id,
-                        l.polaziste,
-                        l.odrediste,
-                        new Date(l.datumPolaska),
-                        l.kapacitetEkonomskeKlase,
-                        l.kapacitetBiznisKlase,
-                        l.kapacitetPremijumEkonomskeKlase,
-                        l.kapacitetPrveKlase
-                    )
+    function pribaviSveLetove() {
+        fromFetch("http://localhost:3000/sviLetovi")
+            // pravi observable od fetcha, tj pravimo tok na koji mozemo da se pretplatimo
+            .pipe(
+                //u pipe se ubacuju operatori
+                switchMap((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw Error("Failed to fetch level");
+                    }
+                    //sa toka responsova se prebacujemo na tok objekta nekih, odnosno ne koristimo vise ceo response
+                    //nego samo nas json iz responsa, tj body responsa
+                }),
+                tap(() => (listaSvihLetova = [])), //tap nista ne radi sa tokom, sta udje to i izadje
+                //i zato njega koristimo da ispraznimo listu, a moramo da koristimo neki operator u pipeu
+                map((data) => <any[]>data), //prvo kazemo da je niz any objekata, nije niz LEt objekata zbog new Date koje koristimo, on dobija string onako
+                switchMap((data) => from(data)), //from od niza pravi tok elemenata
+                map(
+                    //sad l predstavlja any trenutno, i sad cemo da napravimo nase Let objekte
+                    (l) =>
+                        new Let(
+                            l.id,
+                            l.polaziste,
+                            l.odrediste,
+                            new Date(l.datumPolaska),
+                            l.kapacitetEkonomskeKlase,
+                            l.kapacitetBiznisKlase,
+                            l.kapacitetPremijumEkonomskeKlase,
+                            l.kapacitetPrveKlase
+                        )
+                )
             )
-        )
-        //pretplatimo se na tok objekata nasih LEt
-        .subscribe((l) => {
-            listaSvihLetova.push(l);
-        });
-
+            //pretplatimo se na tok objekata nasih LEt
+            .subscribe((l) => {
+                listaSvihLetova.push(l);
+            });
+    }
+    pribaviSveLetove();
     const dugmePretragaLetova = document.getElementById("dugmePretragaLetova");
     povratnaKartaInput.addEventListener("change", function () {
         if (povratnaKartaInput.checked) {
@@ -101,16 +107,27 @@ document.addEventListener("DOMContentLoaded", () => {
             tipKlaseInput.value,
             povratnaKartaInput.checked
         );
-        listaOdgovarajucihLetova.splice(0, listaOdgovarajucihLetova.length);
+        listaOdgovarajucihJednosmernihLetova.splice(
+            0,
+            listaOdgovarajucihJednosmernihLetova.length
+        );
         if (trazenaRezervacija.getPovratnaKarta() == false) {
-            listaOdgovarajucihLetova = Let.odgovarajuciJednosmerniLetovi(
-                trazenaRezervacija,
-                listaSvihLetova
-            );
-            console.log(listaOdgovarajucihLetova);
+            listaOdgovarajucihJednosmernihLetova =
+                Let.odgovarajuciJednosmerniLetovi(
+                    trazenaRezervacija,
+                    listaSvihLetova
+                );
+            console.log(listaOdgovarajucihJednosmernihLetova);
+        } else {
+            listaOdgovarajucihPovratnihLetova =
+                PovratniLet.odgovarajuciPovratniLetovi(
+                    trazenaRezervacija,
+                    listaSvihLetova
+                );
+            console.log(listaOdgovarajucihPovratnihLetova);
         }
-        if (listaOdgovarajucihLetova.length > 0) {
-            Let.prikaziJednosmerneLetove(listaOdgovarajucihLetova);
+        if (listaOdgovarajucihJednosmernihLetova.length > 0) {
+            Let.prikaziJednosmerneLetove(listaOdgovarajucihJednosmernihLetova);
             dugmadRezervisi = Array.from(
                 document.querySelectorAll(".dugmeRezervisi")
             ) as HTMLButtonElement[];
@@ -176,6 +193,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                 throw Error("neuspesno azuriranje kapaciteta");
                             }
                             console.log("uspesno ste azurirali podatke");
+                            pribaviSveLetove();
+                            Let.prikaziJednosmerneLetove(listaSvihLetova);
                         });
                     } catch (er) {
                         console.log(er);
@@ -190,8 +209,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
                 });
             });
-        } else {
-            console.log("ne postoji nijedan let");
+        }
+        if (listaOdgovarajucihPovratnihLetova.length > 0) {
         }
     });
     function formatDate(dateString: string) {
