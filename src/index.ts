@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dugmeZameniPolazisteIOdrediste = document.getElementById(
         "zameniPolazisteIOdrediste"
     );
-
+    let dugmadRezervisi: HTMLButtonElement[];
     fromFetch("http://localhost:3000/sviLetovi")
         // pravi observable od fetcha, tj pravimo tok na koji mozemo da se pretplatimo
         .pipe(
@@ -107,14 +107,47 @@ document.addEventListener("DOMContentLoaded", () => {
                 listaSvihLetova
             );
             console.log(listaOdgovarajucihLetova);
-            console.log("jednosmerna karta treba");
         }
         if (listaOdgovarajucihLetova.length > 0) {
             Let.prikaziJednosmerneLetove(listaOdgovarajucihLetova);
+            dugmadRezervisi = Array.from(
+                document.querySelectorAll(".dugmeRezervisi")
+            ) as HTMLButtonElement[];
+            console.log(dugmadRezervisi);
+            dugmadRezervisi.forEach((dugme) => {
+                dugme.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    console.log(dugme);
+                    const polaziste = dugme.getAttribute("data-polaziste");
+                    const odrediste = dugme.getAttribute("data-odrediste");
+                    const datumPolaska =
+                        dugme.getAttribute("data-datum-polaska");
+                    console.log("Kliknuto dugme za rezervaciju leta:");
+                    console.log("Polazište: " + polaziste);
+                    console.log("Odredište: " + odrediste);
+                    console.log("Datum polaska: " + datumPolaska);
+                });
+            });
         } else {
             console.log("ne postoji nijedan let");
         }
     });
+    if (dugmadRezervisi) {
+        const svaDugmad = dugmadRezervisi as unknown as HTMLButtonElement[];
+        svaDugmad.forEach((dugme) => {
+            dugme.addEventListener("click", function (event) {
+                event.preventDefault();
+                console.log(dugme);
+                const polaziste = dugme.getAttribute("data-polaziste");
+                const odrediste = dugme.getAttribute("data-odrediste");
+                const datumPolaska = dugme.getAttribute("data-datum-polaska");
+                console.log("Kliknuto dugme za rezervaciju leta:");
+                console.log("Polazište: " + polaziste);
+                console.log("Odredište: " + odrediste);
+                console.log("Datum polaska: " + datumPolaska);
+            });
+        });
+    }
     function formatDate(dateString: string) {
         const [year, month, day] = dateString.split("-");
         return new Date(Number(year), Number(month) - 1, Number(day)); // Meseci u JavaScriptu kreću od 0 (januar = 0, februar = 1, ...), pa se oduzima 1.

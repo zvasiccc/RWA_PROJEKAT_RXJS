@@ -37,7 +37,6 @@ export class Let {
         trazenaRezervacija: Rezervacija,
         listaSvihLetova: Let[]
     ): Let[] {
-        console.log(trazenaRezervacija);
         const listaOdgovarajucihLetova: Let[] = [];
         let dovoljnoMesta: boolean = false;
         listaSvihLetova.forEach((l) => {
@@ -79,7 +78,6 @@ export class Let {
                 trazenaRezervacija.getOdrediste() === l.odrediste &&
                 dovoljnoMesta
             ) {
-                console.log("ispunjen uslov");
                 listaOdgovarajucihLetova.push(l);
             }
         });
@@ -104,7 +102,11 @@ export class Let {
         <strong>Kapacitet:</strong> <span> ${
             l.getKapacitetBiznisKlase() + l.getKapacitetEkonomskeKlase()
         } </span>
-    `;
+        <button type="submit" class="dugmeRezervisi"
+        data-polaziste="${l.getPolaziste()}"
+        data-odrediste="${l.getOdrediste()}"
+        data-datum-polaska="${l.getDatumPolaska()}"> Rezervisi </button>
+        `;
             listaLetovaElement.appendChild(liElement);
         });
     }
