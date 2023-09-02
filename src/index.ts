@@ -2,14 +2,15 @@ import { format } from "date-fns";
 import { Let } from "./Let";
 import { Rezervacija } from "./Rezervacija";
 import { fromFetch } from "rxjs/fetch";
-import { switchMap, from, map, tap } from "rxjs";
+import { switchMap, from, map, tap, fromEvent } from "rxjs";
 import { PovratniLet } from "./Povratni let";
 
 let listaSvihLetova: Let[] = [];
 //const listaOdgovarajucihRezervacija: Rezervacija[] = [];
 let listaOdgovarajucihJednosmernihLetova: Let[] = [];
 let listaOdgovarajucihPovratnihLetova: PovratniLet[] = [];
-document.addEventListener("DOMContentLoaded", () => {
+const domContentLoadedObservable = fromEvent(document, "DOMContentLoaded");
+domContentLoadedObservable.subscribe(() => {
     const polazisteInput = document.getElementById(
         "polaziste"
     ) as HTMLInputElement;
@@ -37,10 +38,23 @@ document.addEventListener("DOMContentLoaded", () => {
         "povratnaKarta"
     ) as HTMLInputElement;
 
+    const povratnaKartaInputObservable = fromEvent(
+        povratnaKartaInput,
+        "change"
+    );
     const dugmeZameniPolazisteIOdrediste = document.getElementById(
         "zameniPolazisteIOdrediste"
     );
+    const dugmeZameniPolazisteIOdredisteObservable = fromEvent(
+        dugmeZameniPolazisteIOdrediste,
+        "click"
+    );
     let dugmadRezervisi: HTMLButtonElement[];
+    const dugmePretragaLetova = document.getElementById("dugmePretragaLetova");
+    const dugmePretragaLetovaObservable = fromEvent(
+        dugmePretragaLetova,
+        "click"
+    );
     function pribaviSveLetove() {
         fromFetch("http://localhost:3000/sviLetovi")
             // pravi observable od fetcha, tj pravimo tok na koji mozemo da se pretplatimo
@@ -67,6 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             l.polaziste,
                             l.odrediste,
                             new Date(l.datumPolaska),
+                            l.vremePolaska,
+                            l.vremeDolaska,
                             l.kapacitetEkonomskeKlase,
                             l.kapacitetBiznisKlase,
                             l.kapacitetPremijumEkonomskeKlase,
@@ -80,8 +96,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
     pribaviSveLetove();
-    const dugmePretragaLetova = document.getElementById("dugmePretragaLetova");
-    povratnaKartaInput.addEventListener("change", function () {
+
+    povratnaKartaInputObservable.subscribe((event) => {
         if (povratnaKartaInput.checked) {
             datumPovratkaInput.disabled = false;
         } else {
@@ -89,14 +105,14 @@ document.addEventListener("DOMContentLoaded", () => {
             datumPolaskaInput.value = "";
         }
     });
-    dugmeZameniPolazisteIOdrediste.addEventListener("click", function () {
+    dugmeZameniPolazisteIOdredisteObservable.subscribe((event) => {
         const trenutnoPolaziste = polazisteInput.value;
         const trenutnoOdrediste = odredisteInput.value;
         polazisteInput.value = trenutnoOdrediste;
         odredisteInput.value = trenutnoPolaziste;
     });
 
-    dugmePretragaLetova.addEventListener("click", function (event) {
+    dugmePretragaLetovaObservable.subscribe((event) => {
         event.preventDefault();
         const trazenaRezervacija = new Rezervacija(
             polazisteInput.value,
@@ -124,6 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     trazenaRezervacija,
                     listaSvihLetova
                 );
+            console.log(listaSvihLetova);
             console.log(listaOdgovarajucihPovratnihLetova);
         }
         if (listaOdgovarajucihJednosmernihLetova.length > 0) {
@@ -211,10 +228,13 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
         if (listaOdgovarajucihPovratnihLetova.length > 0) {
+            PovratniLet.prikaziPovratneLetove(
+                listaOdgovarajucihPovratnihLetova
+            );
         }
     });
     function formatDate(dateString: string) {
         const [year, month, day] = dateString.split("-");
-        return new Date(Number(year), Number(month) - 1, Number(day)); // Meseci u JavaScriptu kreću od 0 (januar = 0, februar = 1, ...), pa se oduzima 1.
+        return new Date(Number(year), Number(month) - 1, Number(day)); // Meseci u JavaScriptu krecu od 0 (januar = 0, februar = 1, ...), pa se oduzima 1.
     }
 });

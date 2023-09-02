@@ -6,6 +6,8 @@ export class Let {
         private polaziste: string,
         private odrediste: string,
         private datumPolaska: Date,
+        private vremePolaska: string,
+        private vremeDolaska: string,
         private kapacitetEkonomskeKlase: number,
         private kapacitetBiznisKlase: number,
         private kapacitetPremijumEkonomskeKlase: number,
@@ -25,6 +27,12 @@ export class Let {
 
     public getDatumPolaska(): Date {
         return this.datumPolaska;
+    }
+    public getVremePolaska(): string {
+        return this.vremePolaska;
+    }
+    public getVremeDolaska(): string {
+        return this.vremeDolaska;
     }
     public getKapacitetEkonomskeKlase(): number {
         return this.kapacitetEkonomskeKlase;
@@ -89,7 +97,6 @@ export class Let {
         console.log(listaOdgovarajucihLetova);
         return listaOdgovarajucihLetova;
     }
-    odgovarajuciPovratniLetovi() {}
     static prikaziJednosmerneLetove(lista: Let[]) {
         const listaLetovaElement = document.getElementById("listaLetova");
         listaLetovaElement.innerHTML = "";

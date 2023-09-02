@@ -60,11 +60,39 @@ export class PovratniLet {
                         povratak.getOdrediste() &&
                     dovoljnoMesta
                 ) {
+                    console.log("ispunjava");
                     const noviPovratniLet = new PovratniLet(polazak, povratak);
                     listaOdgovarajucihPovratnihLetova.push(noviPovratniLet);
+                } else {
+                    console.log("ene ispunjava uslov");
                 }
             });
         });
         return listaOdgovarajucihPovratnihLetova;
+    }
+    static prikaziPovratneLetove(lista: PovratniLet[]) {
+        const listaLetovaElement = document.getElementById("listaLetova");
+        listaLetovaElement.innerHTML = "";
+        lista.forEach((l) => {
+            const liElement = document.createElement("li");
+            // Postavite sadržaj li elementa
+            liElement.innerHTML = `
+        <strong>Polazište:</strong> <span>${l.polazak.getPolaziste()}</span><br>
+        <strong>Odredište:</strong> <span>${l.polazak.getOdrediste()}</span><br>
+        <strong>Datum polaska:</strong> <span>${l.polazak
+            .getDatumPolaska()
+            .toLocaleDateString()}</span><br>
+            <strong>Vreme polaska:</strong> <span>${l.polazak.getVremePolaska()}</span><br>
+            <strong>Vreme dolaska:</strong> <span>${l.polazak.getVremeDolaska()}</span><br>
+            <br>
+            <br>
+            <strong>Datum povratka:</strong> <span>${l.povratak
+                .getDatumPolaska()
+                .toLocaleDateString()}</span><br>
+            <strong>OP</strong> <span>${l.povratak.getPolaziste()}</span><br>
+            <strong>OPA</strong> <span>${l.povratak.getOdrediste()}</span><br>`;
+            // Dodajte li element u listu
+            listaLetovaElement.appendChild(liElement);
+        });
     }
 }
