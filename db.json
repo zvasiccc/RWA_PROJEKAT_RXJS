@@ -1,4 +1,10 @@
 {
+    "gradovi": [
+        { "name": "Beograd" },
+        { "name": "London" },
+        { "name": "Bec" },
+        { "name": "Cirih" }
+    ],
     "sviLetovi": [
         {
             "id": 1,

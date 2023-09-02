@@ -1,11 +1,17 @@
+import { JednosmerniLet } from "./JednosmerniLet";
 import { Let } from "./Let";
 import { Rezervacija } from "./Rezervacija";
 
-export class PovratniLet {
-    constructor(private polazak: Let, private povratak: Let) {}
+export class PovratniLet extends Let {
+    constructor(
+        private polazak: JednosmerniLet,
+        private povratak: JednosmerniLet
+    ) {
+        super();
+    }
     static odgovarajuciPovratniLetovi(
         trazenaRezervacija: Rezervacija,
-        listaSvihLetova: Let[]
+        listaSvihLetova: JednosmerniLet[]
     ): PovratniLet[] {
         const listaOdgovarajucihPovratnihLetova: PovratniLet[] = [];
         listaSvihLetova.forEach((polazak) => {
@@ -70,13 +76,31 @@ export class PovratniLet {
         });
         return listaOdgovarajucihPovratnihLetova;
     }
-    static prikaziPovratneLetove(lista: PovratniLet[]) {
-        const listaLetovaElement = document.getElementById("listaLetova");
-        listaLetovaElement.innerHTML = "";
-        lista.forEach((l) => {
-            const liElement = document.createElement("li");
-            // Postavite sadržaj li elementa
-            liElement.innerHTML = `
+    // static prikaziPovratneLetove(lista: PovratniLet[]) {
+    //     const listaLetovaElement = document.getElementById("listaLetova");
+    //     listaLetovaElement.innerHTML = "";
+    //     lista.forEach((l) => {
+    //         l.draw(listaLetovaElement);
+    //     });
+    // }
+
+    public override draw(parent: HTMLElement): void {
+        const liElement = document.createElement("li");
+        liElement.classList.add("let-povratni");
+        // Postavite sadržaj li elementa
+        liElement.innerHTML = `
+            <div class="let-povratni">
+            ${this.polazak.toHTML()}
+            <br>
+            ${this.povratak.toHTML()}
+            </div>
+        `;
+        // Dodajte li element u listu
+        parent.appendChild(liElement);
+    }
+}
+/*
+            liElement.innerHTML = `<div class="let-povratni">
         <strong>Polazište:</strong> <span>${l.polazak.getPolaziste()}</span><br>
         <strong>Odredište:</strong> <span>${l.polazak.getOdrediste()}</span><br>
         <strong>Datum polaska:</strong> <span>${l.polazak
@@ -90,9 +114,6 @@ export class PovratniLet {
                 .getDatumPolaska()
                 .toLocaleDateString()}</span><br>
             <strong>OP</strong> <span>${l.povratak.getPolaziste()}</span><br>
-            <strong>OPA</strong> <span>${l.povratak.getOdrediste()}</span><br>`;
-            // Dodajte li element u listu
-            listaLetovaElement.appendChild(liElement);
-        });
-    }
-}
+            <strong>OPA</strong> <span>${l.povratak.getOdrediste()}</span><br>
+            </div>`;
+*/
