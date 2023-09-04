@@ -21,7 +21,7 @@
       "datumPolaska": "2023-09-22",
       "vremePolaska": "08:30:00",
       "vremeDolaska": "10:15:00",
-      "kapacitetEkonomskeKlase": 5,
+      "kapacitetEkonomskeKlase": 100,
       "kapacitetBiznisKlase": 99,
       "kapacitetPremijumEkonomskeKlase": 100,
       "kapacitetPrveKlase": 100
@@ -46,7 +46,7 @@
       "vremeDolaska": "14:15:00",
       "datumPolaska": "2023-09-23",
       "kapacitetEkonomskeKlase": 100,
-      "kapacitetBiznisKlase": 100,
+      "kapacitetBiznisKlase": 99,
       "kapacitetPremijumEkonomskeKlase": 100,
       "kapacitetPrveKlase": 100
     },

@@ -223,19 +223,6 @@ domContentLoadedObservable.subscribe(() => {
         kapaciteti.kapacitetPrveKlase = parseInt(
             dugme.getAttribute("data-kapacitet-prve-polazak")
         );
-        // let kapacitetEkonomskeKlasePovratak: number = parseInt(
-        //     dugme.getAttribute("data-kapacitet-ekonomske-povratak")
-        // );
-
-        // let kapacitetPremijumEkonomskeKlasePovratak: number = parseInt(
-        //     dugme.getAttribute("data-kapacitet-premijum-ekonomske-povratak")
-        // );
-        // let kapacitetBiznisKlasePovratak: number = parseInt(
-        //     dugme.getAttribute("data-kapacitet-biznis-povratak")
-        // );
-        // let kapacitetPrveKlasePovratak: number = parseInt(
-        //     dugme.getAttribute("data-kapacitet-prve-povratak")
-        // );
 
         kapaciteti = izracunajNoviKapacitet(trazenaRezervacija, kapaciteti);
         azurirajLetJson(avionIdPolazak, kapaciteti);
@@ -257,38 +244,56 @@ domContentLoadedObservable.subscribe(() => {
     }
     function azurirajLetJson(avionId: string, kapaciteti: Kapaciteti) {
         try {
-            fetch(`http://localhost:3000/sviLetovi/${avionId}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    kapacitetEkonomskeKlase: 5,
-                    kapacitetBiznisKlase: kapaciteti.kapacitetBiznisKlase,
-                    kapacitetPremijumEkonomskeKlase:
-                        kapaciteti.kapacitetPremijumEkonomskeKlase,
-                    kapacitetPrveKlase: kapaciteti.kapacitetPrveKlase,
-                }),
-            }).then((response) => {
-                alert("uspesno azurirano");
-                if (!response.ok) {
-                    throw Error("neuspesno azuriranje kapaciteta");
-                }
-
-                //pribaviSveLetove();
-                //Let.prikaziLetove(listaLetovaZaPrikaz); //ne desi se nikad
-            });
+            fromFetch(`http://localhost:3000/sviLetovi/${avionId}`)
+                .pipe(
+                    switchMap((response) => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error("Failed to fetch level");
+                        }
+                    }),
+                    switchMap((data: Let) => {
+                        const url = `http://localhost:3000/sviLetovi/${avionId}`;
+                        return fetch(url, {
+                            method: "PATCH",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                kapacitetEkonomskeKlase:
+                                    kapaciteti.kapacitetEkonomskeKlase,
+                                kapacitetBiznisKlase:
+                                    kapaciteti.kapacitetBiznisKlase,
+                                kapacitetPremijumEkonomskeKlase:
+                                    kapaciteti.kapacitetPremijumEkonomskeKlase,
+                                kapacitetPrveKlase:
+                                    kapaciteti.kapacitetPrveKlase,
+                            }),
+                        });
+                    })
+                )
+                .subscribe(
+                    (response) => {
+                        if (response.ok) {
+                            alert("Uspješno ažurirano");
+                        } else {
+                            throw new Error("Neuspješno ažuriranje kapaciteta");
+                        }
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
         } catch (er) {
             console.log(er);
         }
     }
+
     function izracunajNoviKapacitet(
         trazenaRezervacija: Rezervacija,
         kapaciteti: Kapaciteti
     ): Kapaciteti {
-        alert(
-            "stari kapacitet ekonomske je:" + kapaciteti.kapacitetEkonomskeKlase
-        );
         switch (trazenaRezervacija.getTipKlase()) {
             case "ekonomska":
                 kapaciteti.kapacitetEkonomskeKlase -=
