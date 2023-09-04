@@ -5,6 +5,7 @@ import { fromFetch } from "rxjs/fetch";
 import { switchMap, from, map, tap, fromEvent, of, filter, merge } from "rxjs";
 import { PovratniLet } from "./Povratni let";
 import { Let } from "./Let";
+import { Kapaciteti } from "./Kapaciteti";
 
 let listaSvihLetova: JednosmerniLet[] = [];
 //const listaOdgovarajucihRezervacija: Rezervacija[] = [];
@@ -147,89 +148,171 @@ domContentLoadedObservable.subscribe(() => {
             })
         )
         .subscribe((trazenaRezervacija) => {
-            dugmadRezervisi = Array.from(
-                document.querySelectorAll(".dugmeRezervisi")
-            ) as HTMLButtonElement[];
-            console.log(dugmadRezervisi);
-            dugmadRezervisi.forEach((dugme) => {
-                dugme.addEventListener("click", function (event) {
-                    event.preventDefault();
-                    console.log(dugme);
-                    const avionId = dugme.getAttribute("data-id");
-                    const polaziste = dugme.getAttribute("data-polaziste");
-                    const odrediste = dugme.getAttribute("data-odrediste");
-                    const datumPolaska =
-                        dugme.getAttribute("data-datum-polaska");
-                    let kapacitetEkonomskeKlase: number = parseInt(
-                        dugme.getAttribute("data-kapacitet-ekonomske")
-                    );
-
-                    let kapacitetPremijumEkonomskeKlase: number = parseInt(
-                        dugme.getAttribute("data-kapacitet-premijum-ekonomske")
-                    );
-                    let kapacitetBiznisKlase: number = parseInt(
-                        dugme.getAttribute("data-kapacitet-biznis")
-                    );
-                    let kapacitetPrveKlase: number = parseInt(
-                        dugme.getAttribute("data-kapacitet-prve")
-                    );
-                    switch (trazenaRezervacija.getTipKlase()) {
-                        case "ekonomska":
-                            kapacitetEkonomskeKlase -=
-                                trazenaRezervacija.getBrojOsoba();
-                            break;
-                        case "premijum ekonomska":
-                            kapacitetPremijumEkonomskeKlase -=
-                                trazenaRezervacija.getBrojOsoba();
-                            break;
-                        case "biznis":
-                            kapacitetBiznisKlase -=
-                                trazenaRezervacija.getBrojOsoba();
-                            break;
-                        case "prva klasa":
-                            kapacitetPrveKlase -=
-                                trazenaRezervacija.getBrojOsoba();
-                            break;
-                        default:
-                            break;
-                    }
-                    try {
-                        fetch(`http://localhost:3000/sviLetovi/${avionId}`, {
-                            method: "PATCH",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({
-                                kapacitetEkonomskeKlase:
-                                    kapacitetEkonomskeKlase,
-                                kapacitetBiznisKlase: kapacitetBiznisKlase,
-                                kapacitetPremijumEkonomskeKlase:
-                                    kapacitetPremijumEkonomskeKlase,
-                                kapacitetPrveKlase: kapacitetPrveKlase,
-                            }),
-                        }).then((response) => {
-                            if (!response.ok) {
-                                throw Error("neuspesno azuriranje kapaciteta");
-                            }
-                            console.log("uspesno ste azurirali podatke");
-                            pribaviSveLetove();
-                            Let.prikaziLetove(listaLetovaZaPrikaz);
-                        });
-                    } catch (er) {
-                        console.log(er);
-                    }
-                    console.log("Kliknuto dugme za rezervaciju leta:");
-                    console.log("id: " + avionId);
-                    console.log("Polazište: " + polaziste);
-                    console.log("Odredište: " + odrediste);
-                    console.log("Datum polaska: " + datumPolaska);
-                    console.log(
-                        "stari kap ekonomske" + kapacitetEkonomskeKlase
-                    );
+            if (trazenaRezervacija.getPovratnaKarta() == false) {
+                dugmadRezervisi = Array.from(
+                    document.querySelectorAll(".dugmeRezervisiJednosmerni")
+                ) as HTMLButtonElement[];
+                console.log(dugmadRezervisi);
+                dugmadRezervisi.forEach((dugme) => {
+                    dugme.addEventListener("click", function (event) {
+                        event.preventDefault();
+                        console.log(dugme);
+                        azurirajPodatkeOJednosmernomLetu(
+                            trazenaRezervacija,
+                            dugme
+                        );
+                    });
                 });
-            });
+            } else {
+                dugmadRezervisi = Array.from(
+                    document.querySelectorAll(".dugmeRezervisiPovratni")
+                ) as HTMLButtonElement[];
+                console.log(dugmadRezervisi);
+                dugmadRezervisi.forEach((dugme) => {
+                    dugme.addEventListener("click", function (event) {
+                        event.preventDefault();
+                        console.log(dugme);
+                        azurirajPodatkeOPovratnomLetu(
+                            trazenaRezervacija,
+                            dugme
+                        );
+                    });
+                });
+            }
         });
+    function azurirajPodatkeOJednosmernomLetu(
+        trazenaRezervacija: Rezervacija,
+        dugme: HTMLButtonElement
+    ) {
+        const avionId = dugme.getAttribute("data-id");
+        let kapaciteti = new Kapaciteti();
+        kapaciteti.kapacitetEkonomskeKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-ekonomske")
+        );
 
+        kapaciteti.kapacitetPremijumEkonomskeKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-premijum-ekonomske")
+        );
+        kapaciteti.kapacitetBiznisKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-biznis")
+        );
+        kapaciteti.kapacitetPrveKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-prve")
+        );
+
+        kapaciteti = izracunajNoviKapacitet(trazenaRezervacija, kapaciteti);
+        azurirajLetJson(avionId, kapaciteti);
+    }
+    function azurirajPodatkeOPovratnomLetu(
+        trazenaRezervacija: Rezervacija,
+        dugme: HTMLButtonElement
+    ) {
+        const avionIdPolazak = dugme.getAttribute("data-id-polazak");
+        const avionIdPovratak = dugme.getAttribute("data-id-povratak");
+        let kapaciteti = new Kapaciteti();
+        kapaciteti.kapacitetEkonomskeKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-ekonomske-polazak")
+        );
+
+        kapaciteti.kapacitetPremijumEkonomskeKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-premijum-ekonomske-polazak")
+        );
+        kapaciteti.kapacitetBiznisKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-biznis-polazak")
+        );
+        kapaciteti.kapacitetPrveKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-prve-polazak")
+        );
+        // let kapacitetEkonomskeKlasePovratak: number = parseInt(
+        //     dugme.getAttribute("data-kapacitet-ekonomske-povratak")
+        // );
+
+        // let kapacitetPremijumEkonomskeKlasePovratak: number = parseInt(
+        //     dugme.getAttribute("data-kapacitet-premijum-ekonomske-povratak")
+        // );
+        // let kapacitetBiznisKlasePovratak: number = parseInt(
+        //     dugme.getAttribute("data-kapacitet-biznis-povratak")
+        // );
+        // let kapacitetPrveKlasePovratak: number = parseInt(
+        //     dugme.getAttribute("data-kapacitet-prve-povratak")
+        // );
+
+        kapaciteti = izracunajNoviKapacitet(trazenaRezervacija, kapaciteti);
+        azurirajLetJson(avionIdPolazak, kapaciteti);
+        kapaciteti.kapacitetEkonomskeKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-ekonomske-povratak")
+        );
+
+        kapaciteti.kapacitetPremijumEkonomskeKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-premijum-ekonomske-povratak")
+        );
+        kapaciteti.kapacitetBiznisKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-biznis-povratak")
+        );
+        kapaciteti.kapacitetPrveKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-prve-povratak")
+        );
+        izracunajNoviKapacitet(trazenaRezervacija, kapaciteti);
+        azurirajLetJson(avionIdPovratak, kapaciteti);
+    }
+    function azurirajLetJson(avionId: string, kapaciteti: Kapaciteti) {
+        try {
+            fetch(`http://localhost:3000/sviLetovi/${avionId}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    kapacitetEkonomskeKlase: 5,
+                    kapacitetBiznisKlase: kapaciteti.kapacitetBiznisKlase,
+                    kapacitetPremijumEkonomskeKlase:
+                        kapaciteti.kapacitetPremijumEkonomskeKlase,
+                    kapacitetPrveKlase: kapaciteti.kapacitetPrveKlase,
+                }),
+            }).then((response) => {
+                alert("uspesno azurirano");
+                if (!response.ok) {
+                    throw Error("neuspesno azuriranje kapaciteta");
+                }
+
+                //pribaviSveLetove();
+                //Let.prikaziLetove(listaLetovaZaPrikaz); //ne desi se nikad
+            });
+        } catch (er) {
+            console.log(er);
+        }
+    }
+    function izracunajNoviKapacitet(
+        trazenaRezervacija: Rezervacija,
+        kapaciteti: Kapaciteti
+    ): Kapaciteti {
+        alert(
+            "stari kapacitet ekonomske je:" + kapaciteti.kapacitetEkonomskeKlase
+        );
+        switch (trazenaRezervacija.getTipKlase()) {
+            case "ekonomska":
+                kapaciteti.kapacitetEkonomskeKlase -=
+                    trazenaRezervacija.getBrojOsoba();
+                break;
+            case "premijum ekonomska":
+                kapaciteti.kapacitetPremijumEkonomskeKlase -=
+                    trazenaRezervacija.getBrojOsoba();
+
+                break;
+            case "biznis":
+                kapaciteti.kapacitetBiznisKlase -=
+                    trazenaRezervacija.getBrojOsoba();
+
+                break;
+            case "prva klasa":
+                kapaciteti.kapacitetPrveKlase -=
+                    trazenaRezervacija.getBrojOsoba();
+                break;
+            default:
+                break;
+        }
+        return kapaciteti;
+    }
     /*
     const jednosmerniLetovi$ = rezervacije$
         .pipe(

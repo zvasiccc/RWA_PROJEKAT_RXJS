@@ -127,7 +127,7 @@ export class JednosmerniLet extends Let {
     }
     public dodaciToHTML() {
         return `<div class="dodaci">
-         <button type="submit" class="dugmeRezervisi"
+         <button type="submit" class="dugmeRezervisiJednosmerni"
         data-id="${this.getId()}"
         data-polaziste="${this.getPolaziste()}"
         data-odrediste="${this.getOdrediste()}"

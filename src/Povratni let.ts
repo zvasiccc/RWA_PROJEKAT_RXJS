@@ -95,11 +95,31 @@ export class PovratniLet extends Let {
             <br>
             </div>
             <div>
-            ${this.povratak.dodaciToHTML()}
+            ${this.dodaciToHTML()}
             </div>
         `;
         // Dodajte li element u listu
         parent.appendChild(liElement);
+    }
+    public dodaciToHTML() {
+        return `<div class="dodaci">
+         <button type="submit" class="dugmeRezervisiPovratni"
+        data-id-polazak="${this.polazak.getId()}"
+        data-id-povratak="${this.povratak.getId()}"
+        data-polaziste="${this.polazak.getPolaziste()}"
+        data-odrediste="${this.polazak.getOdrediste()}"
+        data-datum-polaska="${this.polazak.getDatumPolaska()}"
+        data-datum-povratka="${this.povratak.getDatumPolaska()}"
+        data-kapacitet-ekonomske-polazak="${this.polazak.getKapacitetEkonomskeKlase()}"
+        data-kapacitet-premijum-ekonomske-polazak="${this.polazak.getKapacitetPremijumEkonomskeKlase()}"
+        data-kapacitet-biznis-polazak="${this.polazak.getKapacitetBiznisKlase()}"
+        data-kapacitet-prve-polazak="${this.polazak.getKapacitetPrveKlase()}"
+        data-kapacitet-ekonomske-povratak="${this.povratak.getKapacitetEkonomskeKlase()}"
+        data-kapacitet-premijum-ekonomske-povratak="${this.povratak.getKapacitetPremijumEkonomskeKlase()}"
+        data-kapacitet-biznis-povratak="${this.povratak.getKapacitetBiznisKlase()}"
+        data-kapacitet-prve-povratak="${this.povratak.getKapacitetPrveKlase()}"
+        > Rezervisi </button>
+        </div>`;
     }
 }
 /*
