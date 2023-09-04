@@ -24,7 +24,7 @@ domContentLoadedObservable.subscribe(() => {
     //! dugme pretrazi u drugi div, i dugme detalji leta
     //! cena karata
     //
-
+    // TODO: za povratni let sve isto kao za jednosmerni, enum tip klase, detalji dugme
     const odredisteInput = document.getElementById(
         "odrediste"
     ) as HTMLInputElement;
@@ -93,6 +93,11 @@ domContentLoadedObservable.subscribe(() => {
                             new Date(l.datumPolaska),
                             l.vremePolaska,
                             l.vremeDolaska,
+                            l.avioKompanija,
+                            l.cenaKarteEkonomskeKlase,
+                            l.cenaKartePremijumEkonomskeKlase,
+                            l.cenaKarteBiznisKlase,
+                            l.cenaKartePrveKlase,
                             l.kapacitetEkonomskeKlase,
                             l.kapacitetBiznisKlase,
                             l.kapacitetPremijumEkonomskeKlase,
@@ -148,37 +153,38 @@ domContentLoadedObservable.subscribe(() => {
             })
         )
         .subscribe((trazenaRezervacija) => {
-            if (trazenaRezervacija.getPovratnaKarta() == false) {
-                dugmadRezervisi = Array.from(
-                    document.querySelectorAll(".dugmeRezervisiJednosmerni")
-                ) as HTMLButtonElement[];
-                console.log(dugmadRezervisi);
-                dugmadRezervisi.forEach((dugme) => {
-                    dugme.addEventListener("click", function (event) {
-                        event.preventDefault();
-                        console.log(dugme);
-                        JednosmerniLet.azurirajPodatkeOJednosmernomLetu(
-                            trazenaRezervacija,
-                            dugme
-                        );
-                    });
-                });
-            } else {
-                dugmadRezervisi = Array.from(
-                    document.querySelectorAll(".dugmeRezervisiPovratni")
-                ) as HTMLButtonElement[];
-                console.log(dugmadRezervisi);
-                dugmadRezervisi.forEach((dugme) => {
-                    dugme.addEventListener("click", function (event) {
-                        event.preventDefault();
-                        console.log(dugme);
-                        PovratniLet.azurirajPodatkeOPovratnomLetu(
-                            trazenaRezervacija,
-                            dugme
-                        );
-                    });
-                });
-            }
+            console.log(trazenaRezervacija);
+            // if (trazenaRezervacija.getPovratnaKarta() == false) {
+            //     dugmadRezervisi = Array.from(
+            //         document.querySelectorAll(".dugmeRezervisiJednosmerni")
+            //     ) as HTMLButtonElement[];
+            //     console.log(dugmadRezervisi);
+            //     dugmadRezervisi.forEach((dugme) => {
+            //         dugme.addEventListener("click", function (event) {
+            //             event.preventDefault();
+            //             console.log(dugme);
+            //             JednosmerniLet.azurirajPodatkeOJednosmernomLetu(
+            //                 trazenaRezervacija,
+            //                 dugme
+            //             );
+            //         });
+            //     });
+            // } else {
+            //     dugmadRezervisi = Array.from(
+            //         document.querySelectorAll(".dugmeRezervisiPovratni")
+            //     ) as HTMLButtonElement[];
+            //     console.log(dugmadRezervisi);
+            //     dugmadRezervisi.forEach((dugme) => {
+            //         dugme.addEventListener("click", function (event) {
+            //             event.preventDefault();
+            //             console.log(dugme);
+            //             PovratniLet.azurirajPodatkeOPovratnomLetu(
+            //                 trazenaRezervacija,
+            //                 dugme
+            //             );
+            //         });
+            //     });
+            // }
         });
 
     /*

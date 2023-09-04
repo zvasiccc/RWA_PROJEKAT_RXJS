@@ -62,27 +62,22 @@ export abstract class Let {
         }
     }
     public static izracunajNoveKapaciteteLeta(
-        trazenaRezervacija: Rezervacija,
+        brojOsoba: number,
+        tipKlase: string,
         kapaciteti: Kapaciteti
     ): Kapaciteti {
-        switch (trazenaRezervacija.getTipKlase()) {
+        switch (tipKlase) {
             case "ekonomska":
-                kapaciteti.kapacitetEkonomskeKlase -=
-                    trazenaRezervacija.getBrojOsoba();
+                kapaciteti.kapacitetEkonomskeKlase -= brojOsoba;
                 break;
             case "premijum ekonomska":
-                kapaciteti.kapacitetPremijumEkonomskeKlase -=
-                    trazenaRezervacija.getBrojOsoba();
-
+                kapaciteti.kapacitetPremijumEkonomskeKlase -= brojOsoba;
                 break;
             case "biznis":
-                kapaciteti.kapacitetBiznisKlase -=
-                    trazenaRezervacija.getBrojOsoba();
-
+                kapaciteti.kapacitetBiznisKlase -= brojOsoba;
                 break;
             case "prva klasa":
-                kapaciteti.kapacitetPrveKlase -=
-                    trazenaRezervacija.getBrojOsoba();
+                kapaciteti.kapacitetPrveKlase -= brojOsoba;
                 break;
             default:
                 break;

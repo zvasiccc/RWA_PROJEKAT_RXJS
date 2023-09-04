@@ -1,3 +1,12 @@
+import {
+    combineLatest,
+    fromEvent,
+    lastValueFrom,
+    map,
+    startWith,
+    tap,
+    withLatestFrom,
+} from "rxjs";
 import { Kapaciteti } from "./Kapaciteti";
 import { Let } from "./Let";
 import { Rezervacija } from "./Rezervacija";
@@ -10,21 +19,36 @@ export class JednosmerniLet extends Let {
         private datumPolaska: Date,
         private vremePolaska: string,
         private vremeDolaska: string,
+        private avioKompanija: string,
+        private _cenaKarteEkonomskeKlase: number,
+        private _cenaKartePremijumEkonomskeKlase: number,
+        private _cenaKarteBiznisKlase: number,
+        private _cenaKartePrveKlase: number,
         private kapacitetEkonomskeKlase: number,
-        private kapacitetBiznisKlase: number,
         private kapacitetPremijumEkonomskeKlase: number,
+        private kapacitetBiznisKlase: number,
         private kapacitetPrveKlase: number
     ) {
         super();
     }
-
+    public get cenaKarteEkonomskeKlase(): number {
+        return this._cenaKarteEkonomskeKlase;
+    }
+    public get cenaKartePremijumEkonomskeKlase(): number {
+        return this._cenaKartePremijumEkonomskeKlase;
+    }
+    public get cenaKarteBiznisKlase(): number {
+        return this._cenaKarteBiznisKlase;
+    }
+    public get cenaKartePrveKlase(): number {
+        return this._cenaKartePrveKlase;
+    }
     public getId(): number {
         return this.id;
     }
     public getPolaziste(): string {
         return this.polaziste;
     }
-
     public getOdrediste(): string {
         return this.odrediste;
     }
@@ -105,33 +129,79 @@ export class JednosmerniLet extends Let {
         liElement.classList.add("let-jednosmerni");
         liElement.innerHTML = this.jednosmerniLetToHTML() + this.dodaciToHTML();
         parent.appendChild(liElement);
+
+        const tipKlaseInput = document.getElementById(
+            "tipKlase"
+        ) as HTMLInputElement;
+
+        const tipoviKlase$ = fromEvent(tipKlaseInput, "change").pipe(
+            map(
+                (
+                    p: InputEvent //p kad stigne je neki event ne znamo koji, specifiiramo odmah blize da je InputEvent
+                ) => (<HTMLInputElement>p.target).value
+            ),
+            // tap((p) => console.log(p)),
+            startWith(tipKlaseInput.value) //kad se napravi tok tipoviKlase$ da se izemituje tipKlaseInput.value
+        );
+
+        const brojOsobaInput = document.getElementById(
+            "brojOsoba"
+        ) as HTMLInputElement;
+        const brojOsoba$ = fromEvent(brojOsobaInput, "change").pipe(
+            map((p: InputEvent) => +(<HTMLInputElement>p.target).value),
+            // tap((p) => console.log(p)),
+            startWith(+brojOsobaInput.value)
+        );
+
+        let divCenaKarte = liElement.querySelector(".cenaKarte") as HTMLElement;
+
+        combineLatest(tipoviKlase$, brojOsoba$).subscribe((p) => {
+            //ceka jedan od ova 2 dogadjaja da se desi i onda se okida
+            divCenaKarte.innerHTML = this.izracunajUkupnuCenuJednosmernogLeta(
+                p[0],
+                +p[1]
+            ).toString();
+        });
+
+        const dugmeRezervisi: HTMLButtonElement = liElement.querySelector(
+            ".dugmeRezervisiJednosmerni"
+        );
+        fromEvent(dugmeRezervisi, "click")
+            .pipe(
+                withLatestFrom(brojOsoba$), //pravi niz, prvi element je event a drugi je ta poslednja emitovana vrednost
+                withLatestFrom(tipoviKlase$),
+                //tok this.dugmeRezervisi se okida kada kliknemo to dugme i nama kada kliknemo dugme treba broj osoba i tip klase
+                // i sa ove dve withLatestFrom ubacujemo zadnje vrednosti od to u ovaj tok
+                //dodaje u objekat toka poslednju vrednost koja se emituje iz dogadjaja broj osoba i dog tipoviKlase
+                map((p) => ({
+                    brojOsoba: p[0][1],
+                    tipKlase: p[1], //da se lakse snadjemo izmapiramo
+                }))
+            )
+            .subscribe((p) => {
+                this.azurirajPodatkeOJednosmernomLetu(p.brojOsoba, p.tipKlase);
+            });
     }
 
-    public static azurirajPodatkeOJednosmernomLetu(
-        trazenaRezervacija: Rezervacija,
-        dugme: HTMLButtonElement
+    public azurirajPodatkeOJednosmernomLetu(
+        brojOsoba: number,
+        tipKlase: string
     ) {
-        const avionId = dugme.getAttribute("data-id");
+        const avionId = this.getId();
         let kapaciteti = new Kapaciteti();
-        kapaciteti.kapacitetEkonomskeKlase = parseInt(
-            dugme.getAttribute("data-kapacitet-ekonomske")
-        );
+        kapaciteti.kapacitetEkonomskeKlase = this.kapacitetEkonomskeKlase;
 
-        kapaciteti.kapacitetPremijumEkonomskeKlase = parseInt(
-            dugme.getAttribute("data-kapacitet-premijum-ekonomske")
-        );
-        kapaciteti.kapacitetBiznisKlase = parseInt(
-            dugme.getAttribute("data-kapacitet-biznis")
-        );
-        kapaciteti.kapacitetPrveKlase = parseInt(
-            dugme.getAttribute("data-kapacitet-prve")
-        );
+        kapaciteti.kapacitetPremijumEkonomskeKlase =
+            this.kapacitetPremijumEkonomskeKlase;
+        kapaciteti.kapacitetBiznisKlase = this.kapacitetBiznisKlase;
+        kapaciteti.kapacitetPrveKlase = this.kapacitetPrveKlase;
 
         kapaciteti = Let.izracunajNoveKapaciteteLeta(
-            trazenaRezervacija,
+            brojOsoba,
+            tipKlase,
             kapaciteti
         );
-        Let.azurirajLetJson(avionId, kapaciteti);
+        Let.azurirajLetJson(avionId.toString(), kapaciteti);
     }
 
     public jednosmerniLetToHTML(): string {
@@ -166,6 +236,31 @@ export class JednosmerniLet extends Let {
         data-kapacitet-prve="${this.getKapacitetPrveKlase()}"
         > Rezervisi </button>
         <button type=submit" class="dugmeDetaljiLeta">Detalji</button>
+        <div class="cenaKarte">
+        0.0
+        <div>
         </div>`;
+    }
+    public izracunajUkupnuCenuJednosmernogLeta(
+        tipKlase: string,
+        brojOsoba: number
+    ): number {
+        let ukupnaCena: number = 0;
+        console.log(this);
+        switch (tipKlase) {
+            case "ekonomska":
+                ukupnaCena = brojOsoba * this.cenaKarteEkonomskeKlase;
+                break;
+            case "premijum ekonomska":
+                ukupnaCena = brojOsoba * this.cenaKartePremijumEkonomskeKlase;
+                break;
+            case "biznis":
+                ukupnaCena = brojOsoba * this.cenaKarteBiznisKlase;
+                break;
+            case "prva klasa":
+                ukupnaCena = brojOsoba * this.cenaKartePrveKlase;
+                break;
+        }
+        return ukupnaCena;
     }
 }

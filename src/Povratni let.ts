@@ -145,7 +145,8 @@ export class PovratniLet extends Let {
         );
 
         kapaciteti = Let.izracunajNoveKapaciteteLeta(
-            trazenaRezervacija,
+            trazenaRezervacija.getBrojOsoba(),
+            trazenaRezervacija.getTipKlase(),
             kapaciteti
         );
         Let.azurirajLetJson(avionIdPolazak, kapaciteti);
@@ -162,7 +163,11 @@ export class PovratniLet extends Let {
         kapaciteti.kapacitetPrveKlase = parseInt(
             dugme.getAttribute("data-kapacitet-prve-povratak")
         );
-        Let.izracunajNoveKapaciteteLeta(trazenaRezervacija, kapaciteti);
+        Let.izracunajNoveKapaciteteLeta(
+            trazenaRezervacija.getBrojOsoba(),
+            trazenaRezervacija.getTipKlase(),
+            kapaciteti
+        );
         Let.azurirajLetJson(avionIdPovratak, kapaciteti);
     }
 }
