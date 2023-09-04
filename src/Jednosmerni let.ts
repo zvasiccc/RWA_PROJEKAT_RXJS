@@ -1,3 +1,4 @@
+import { Kapaciteti } from "./Kapaciteti";
 import { Let } from "./Let";
 import { Rezervacija } from "./Rezervacija";
 
@@ -106,6 +107,33 @@ export class JednosmerniLet extends Let {
         parent.appendChild(liElement);
     }
 
+    public static azurirajPodatkeOJednosmernomLetu(
+        trazenaRezervacija: Rezervacija,
+        dugme: HTMLButtonElement
+    ) {
+        const avionId = dugme.getAttribute("data-id");
+        let kapaciteti = new Kapaciteti();
+        kapaciteti.kapacitetEkonomskeKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-ekonomske")
+        );
+
+        kapaciteti.kapacitetPremijumEkonomskeKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-premijum-ekonomske")
+        );
+        kapaciteti.kapacitetBiznisKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-biznis")
+        );
+        kapaciteti.kapacitetPrveKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-prve")
+        );
+
+        kapaciteti = Let.izracunajNoveKapaciteteLeta(
+            trazenaRezervacija,
+            kapaciteti
+        );
+        Let.azurirajLetJson(avionId, kapaciteti);
+    }
+
     public jednosmerniLetToHTML(): string {
         return `
         <div class="let-jednosmerni">
@@ -137,6 +165,7 @@ export class JednosmerniLet extends Let {
         data-kapacitet-biznis="${this.getKapacitetBiznisKlase()}"
         data-kapacitet-prve="${this.getKapacitetPrveKlase()}"
         > Rezervisi </button>
+        <button type=submit" class="dugmeDetaljiLeta">Detalji</button>
         </div>`;
     }
 }

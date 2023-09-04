@@ -1,4 +1,5 @@
 import { JednosmerniLet } from "./Jednosmerni let";
+import { Kapaciteti } from "./Kapaciteti";
 import { Let } from "./Let";
 import { Rezervacija } from "./Rezervacija";
 
@@ -119,7 +120,50 @@ export class PovratniLet extends Let {
         data-kapacitet-biznis-povratak="${this.povratak.getKapacitetBiznisKlase()}"
         data-kapacitet-prve-povratak="${this.povratak.getKapacitetPrveKlase()}"
         > Rezervisi </button>
+        <button type=submit" class="dugmeDetaljiLeta">Detalji</button>
         </div>`;
+    }
+    public static azurirajPodatkeOPovratnomLetu(
+        trazenaRezervacija: Rezervacija,
+        dugme: HTMLButtonElement
+    ) {
+        const avionIdPolazak = dugme.getAttribute("data-id-polazak");
+        const avionIdPovratak = dugme.getAttribute("data-id-povratak");
+        let kapaciteti = new Kapaciteti();
+        kapaciteti.kapacitetEkonomskeKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-ekonomske-polazak")
+        );
+
+        kapaciteti.kapacitetPremijumEkonomskeKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-premijum-ekonomske-polazak")
+        );
+        kapaciteti.kapacitetBiznisKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-biznis-polazak")
+        );
+        kapaciteti.kapacitetPrveKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-prve-polazak")
+        );
+
+        kapaciteti = Let.izracunajNoveKapaciteteLeta(
+            trazenaRezervacija,
+            kapaciteti
+        );
+        Let.azurirajLetJson(avionIdPolazak, kapaciteti);
+        kapaciteti.kapacitetEkonomskeKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-ekonomske-povratak")
+        );
+
+        kapaciteti.kapacitetPremijumEkonomskeKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-premijum-ekonomske-povratak")
+        );
+        kapaciteti.kapacitetBiznisKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-biznis-povratak")
+        );
+        kapaciteti.kapacitetPrveKlase = parseInt(
+            dugme.getAttribute("data-kapacitet-prve-povratak")
+        );
+        Let.izracunajNoveKapaciteteLeta(trazenaRezervacija, kapaciteti);
+        Let.azurirajLetJson(avionIdPovratak, kapaciteti);
     }
 }
 /*

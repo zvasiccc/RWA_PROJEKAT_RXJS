@@ -157,7 +157,7 @@ domContentLoadedObservable.subscribe(() => {
                     dugme.addEventListener("click", function (event) {
                         event.preventDefault();
                         console.log(dugme);
-                        azurirajPodatkeOJednosmernomLetu(
+                        JednosmerniLet.azurirajPodatkeOJednosmernomLetu(
                             trazenaRezervacija,
                             dugme
                         );
@@ -172,7 +172,7 @@ domContentLoadedObservable.subscribe(() => {
                     dugme.addEventListener("click", function (event) {
                         event.preventDefault();
                         console.log(dugme);
-                        azurirajPodatkeOPovratnomLetu(
+                        PovratniLet.azurirajPodatkeOPovratnomLetu(
                             trazenaRezervacija,
                             dugme
                         );
@@ -180,144 +180,7 @@ domContentLoadedObservable.subscribe(() => {
                 });
             }
         });
-    function azurirajPodatkeOJednosmernomLetu(
-        trazenaRezervacija: Rezervacija,
-        dugme: HTMLButtonElement
-    ) {
-        const avionId = dugme.getAttribute("data-id");
-        let kapaciteti = new Kapaciteti();
-        kapaciteti.kapacitetEkonomskeKlase = parseInt(
-            dugme.getAttribute("data-kapacitet-ekonomske")
-        );
 
-        kapaciteti.kapacitetPremijumEkonomskeKlase = parseInt(
-            dugme.getAttribute("data-kapacitet-premijum-ekonomske")
-        );
-        kapaciteti.kapacitetBiznisKlase = parseInt(
-            dugme.getAttribute("data-kapacitet-biznis")
-        );
-        kapaciteti.kapacitetPrveKlase = parseInt(
-            dugme.getAttribute("data-kapacitet-prve")
-        );
-
-        kapaciteti = izracunajNoviKapacitet(trazenaRezervacija, kapaciteti);
-        azurirajLetJson(avionId, kapaciteti);
-    }
-    function azurirajPodatkeOPovratnomLetu(
-        trazenaRezervacija: Rezervacija,
-        dugme: HTMLButtonElement
-    ) {
-        const avionIdPolazak = dugme.getAttribute("data-id-polazak");
-        const avionIdPovratak = dugme.getAttribute("data-id-povratak");
-        let kapaciteti = new Kapaciteti();
-        kapaciteti.kapacitetEkonomskeKlase = parseInt(
-            dugme.getAttribute("data-kapacitet-ekonomske-polazak")
-        );
-
-        kapaciteti.kapacitetPremijumEkonomskeKlase = parseInt(
-            dugme.getAttribute("data-kapacitet-premijum-ekonomske-polazak")
-        );
-        kapaciteti.kapacitetBiznisKlase = parseInt(
-            dugme.getAttribute("data-kapacitet-biznis-polazak")
-        );
-        kapaciteti.kapacitetPrveKlase = parseInt(
-            dugme.getAttribute("data-kapacitet-prve-polazak")
-        );
-
-        kapaciteti = izracunajNoviKapacitet(trazenaRezervacija, kapaciteti);
-        azurirajLetJson(avionIdPolazak, kapaciteti);
-        kapaciteti.kapacitetEkonomskeKlase = parseInt(
-            dugme.getAttribute("data-kapacitet-ekonomske-povratak")
-        );
-
-        kapaciteti.kapacitetPremijumEkonomskeKlase = parseInt(
-            dugme.getAttribute("data-kapacitet-premijum-ekonomske-povratak")
-        );
-        kapaciteti.kapacitetBiznisKlase = parseInt(
-            dugme.getAttribute("data-kapacitet-biznis-povratak")
-        );
-        kapaciteti.kapacitetPrveKlase = parseInt(
-            dugme.getAttribute("data-kapacitet-prve-povratak")
-        );
-        izracunajNoviKapacitet(trazenaRezervacija, kapaciteti);
-        azurirajLetJson(avionIdPovratak, kapaciteti);
-    }
-    function azurirajLetJson(avionId: string, kapaciteti: Kapaciteti) {
-        try {
-            fromFetch(`http://localhost:3000/sviLetovi/${avionId}`)
-                .pipe(
-                    switchMap((response) => {
-                        if (response.ok) {
-                            return response.json();
-                        } else {
-                            throw new Error("Failed to fetch level");
-                        }
-                    }),
-                    switchMap((data: Let) => {
-                        const url = `http://localhost:3000/sviLetovi/${avionId}`;
-                        return fetch(url, {
-                            method: "PATCH",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({
-                                kapacitetEkonomskeKlase:
-                                    kapaciteti.kapacitetEkonomskeKlase,
-                                kapacitetBiznisKlase:
-                                    kapaciteti.kapacitetBiznisKlase,
-                                kapacitetPremijumEkonomskeKlase:
-                                    kapaciteti.kapacitetPremijumEkonomskeKlase,
-                                kapacitetPrveKlase:
-                                    kapaciteti.kapacitetPrveKlase,
-                            }),
-                        });
-                    })
-                )
-                .subscribe(
-                    (response) => {
-                        if (response.ok) {
-                            alert("Uspješno ažurirano");
-                        } else {
-                            throw new Error("Neuspješno ažuriranje kapaciteta");
-                        }
-                    },
-                    (error) => {
-                        console.log(error);
-                    }
-                );
-        } catch (er) {
-            console.log(er);
-        }
-    }
-
-    function izracunajNoviKapacitet(
-        trazenaRezervacija: Rezervacija,
-        kapaciteti: Kapaciteti
-    ): Kapaciteti {
-        switch (trazenaRezervacija.getTipKlase()) {
-            case "ekonomska":
-                kapaciteti.kapacitetEkonomskeKlase -=
-                    trazenaRezervacija.getBrojOsoba();
-                break;
-            case "premijum ekonomska":
-                kapaciteti.kapacitetPremijumEkonomskeKlase -=
-                    trazenaRezervacija.getBrojOsoba();
-
-                break;
-            case "biznis":
-                kapaciteti.kapacitetBiznisKlase -=
-                    trazenaRezervacija.getBrojOsoba();
-
-                break;
-            case "prva klasa":
-                kapaciteti.kapacitetPrveKlase -=
-                    trazenaRezervacija.getBrojOsoba();
-                break;
-            default:
-                break;
-        }
-        return kapaciteti;
-    }
     /*
     const jednosmerniLetovi$ = rezervacije$
         .pipe(
