@@ -46,6 +46,9 @@ button {
     margin-right: 20px;
     background-color: #1b6da8;
 }
+li.let-povratni {
+    display: flex;
+}
 .let-povratni {
     border: 5px solid black;
     background-color: aqua;

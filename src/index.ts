@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { JednosmerniLet } from "./JednosmerniLet";
+import { JednosmerniLet } from "./Jednosmerni let";
 import { Rezervacija } from "./Rezervacija";
 import { fromFetch } from "rxjs/fetch";
 import { switchMap, from, map, tap, fromEvent, of, filter, merge } from "rxjs";

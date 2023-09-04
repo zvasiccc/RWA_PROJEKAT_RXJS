@@ -1,4 +1,4 @@
-import { JednosmerniLet } from "./JednosmerniLet";
+import { JednosmerniLet } from "./Jednosmerni let";
 import { Let } from "./Let";
 import { Rezervacija } from "./Rezervacija";
 
@@ -87,12 +87,15 @@ export class PovratniLet extends Let {
     public override draw(parent: HTMLElement): void {
         const liElement = document.createElement("li");
         liElement.classList.add("let-povratni");
-        // Postavite sadržaj li elementa
         liElement.innerHTML = `
             <div class="let-povratni">
-            ${this.polazak.toHTML()}
+            ${this.polazak.jednosmerniLetToHTML()}
             <br>
-            ${this.povratak.toHTML()}
+            ${this.povratak.jednosmerniLetToHTML()}
+            <br>
+            </div>
+            <div>
+            ${this.povratak.dodaciToHTML()}
             </div>
         `;
         // Dodajte li element u listu

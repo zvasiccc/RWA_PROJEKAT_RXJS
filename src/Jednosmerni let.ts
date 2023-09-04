@@ -77,15 +77,6 @@ export class JednosmerniLet extends Let {
                         trazenaRezervacija.getBrojOsoba() <=
                         l.getKapacitetPrveKlase();
                     break;
-                // default:
-                //     dovoljnoMesta =
-                //         trazenaRezervacija.getBrojOsoba() <=
-                //         Math.max(
-                //             l.getKapacitetBiznisKlase(),
-                //             l.getKapacitetEkonomskeKlase(),
-                //             l.getKapacitetPremijumEkonomskeKlase(),
-                //             l.getKapacitetPrveKlase()
-                //         );
             }
             if (
                 trazenaRezervacija.getDatumPolaska().getDate() ===
@@ -111,12 +102,11 @@ export class JednosmerniLet extends Let {
     public override draw(parent: HTMLElement): void {
         const liElement = document.createElement("li");
         liElement.classList.add("let-jednosmerni");
-        // Postavite sadržaj li elementa
-        liElement.innerHTML = this.toHTML();
+        liElement.innerHTML = this.jednosmerniLetToHTML() + this.dodaciToHTML();
         parent.appendChild(liElement);
     }
 
-    public toHTML(): string {
+    public jednosmerniLetToHTML(): string {
         return `
         <div class="let-jednosmerni">
         <strong>Polazište:</strong> <span> ${this.getPolaziste()} </span><br>
@@ -132,7 +122,12 @@ export class JednosmerniLet extends Let {
             this.getKapacitetPremijumEkonomskeKlase() +
             this.getKapacitetBiznisKlase()
         } </span>
-        <button type="submit" class="dugmeRezervisi"
+        </div>
+        `;
+    }
+    public dodaciToHTML() {
+        return `<div class="dodaci">
+         <button type="submit" class="dugmeRezervisi"
         data-id="${this.getId()}"
         data-polaziste="${this.getPolaziste()}"
         data-odrediste="${this.getOdrediste()}"
@@ -142,7 +137,6 @@ export class JednosmerniLet extends Let {
         data-kapacitet-biznis="${this.getKapacitetBiznisKlase()}"
         data-kapacitet-prve="${this.getKapacitetPrveKlase()}"
         > Rezervisi </button>
-        </div>
-        `;
+        </div>`;
     }
 }
