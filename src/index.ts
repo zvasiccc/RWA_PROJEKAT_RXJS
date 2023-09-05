@@ -18,9 +18,6 @@ import { Let } from "./Let";
 import { Kapaciteti } from "./Kapaciteti";
 
 let listaSvihLetova: JednosmerniLet[] = [];
-//const listaOdgovarajucihRezervacija: Rezervacija[] = [];
-let listaOdgovarajucihJednosmernihLetova: JednosmerniLet[] = [];
-let listaOdgovarajucihPovratnihLetova: PovratniLet[] = [];
 
 let listaLetovaZaPrikaz: Let[] = [];
 
@@ -33,6 +30,7 @@ domContentLoadedObservable.subscribe(() => {
     //popunjava sa podacima koji su  stigli
     // TODO: detalji dugme, auto complete
 
+    const predloziLista = document.getElementById("predlozi-lista");
     const polazisteInputObservable = fromEvent(polazisteInput, "input").pipe(
         debounceTime(500)
     );
@@ -163,7 +161,9 @@ domContentLoadedObservable.subscribe(() => {
                         );
                         if (predlozeniGradovi.length > 0) {
                             predlozeniGradovi.forEach((grad) => {
-                                console.log(grad);
+                                const listItem = document.createElement("li");
+                                listItem.textContent = grad;
+                                predloziLista.appendChild(listItem);
                             });
                         }
                     },

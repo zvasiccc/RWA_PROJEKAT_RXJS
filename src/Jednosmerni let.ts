@@ -32,49 +32,6 @@ export class JednosmerniLet extends Let {
     ) {
         super();
     }
-    // public get cenaKarteEkonomskeKlase(): number {
-    //     return this._cenaKarteEkonomskeKlase;
-    // }
-    // public get cenaKartePremijumEkonomskeKlase(): number {
-    //     return this._cenaKartePremijumEkonomskeKlase;
-    // }
-    // public get cenaKarteBiznisKlase(): number {
-    //     return this._cenaKarteBiznisKlase;
-    // }
-    // public get cenaKartePrveKlase(): number {
-    //     return this._cenaKartePrveKlase;
-    // }
-    // public id: number {
-    //     return this.id;
-    // }
-    // public polaziste: string {
-    //     return this.polaziste;
-    // }
-    // public odrediste: string {
-    //     return this.odrediste;
-    // }
-
-    // public getDatumPolaska(): Date {
-    //     return this.datumPolaska;
-    // }
-    // public getVremePolaska(): string {
-    //     return this.vremePolaska;
-    // }
-    // public getVremeDolaska(): string {
-    //     return this.vremeDolaska;
-    // }
-    // public getKapacitetEkonomskeKlase(): number {
-    //     return this.kapacitetEkonomskeKlase;
-    // }
-    // public getKapacitetBiznisKlase(): number {
-    //     return this.kapacitetBiznisKlase;
-    // }
-    // public getKapacitetPremijumEkonomskeKlase(): number {
-    //     return this.kapacitetPremijumEkonomskeKlase;
-    // }
-    // public kapacitetPrveKlase: number {
-    //     return this.kapacitetPrveKlase;
-    // }
     public get id(): number {
         return this._id;
     }
@@ -248,6 +205,17 @@ export class JednosmerniLet extends Let {
             .subscribe((p) => {
                 this.azurirajPodatkeOJednosmernomLetu(p.brojOsoba, p.tipKlase);
             });
+        const prozorDetaljiLeta = document.getElementById("prozorDetaljiLeta");
+        const dugmeDetaljiLeta: HTMLButtonElement =
+            liElement.querySelector(".dugmeDetaljiLeta");
+        fromEvent(dugmeDetaljiLeta, "click").subscribe(() => {
+            this.prikaziDetaljeLeta(prozorDetaljiLeta);
+        });
+        const dugmeZatvoriProzor =
+            document.getElementById("dugmeZatvoriProzor");
+        fromEvent(dugmeZatvoriProzor, "click").subscribe(() => {
+            this.zatvoriProzor(prozorDetaljiLeta);
+        });
     }
 
     public azurirajPodatkeOJednosmernomLetu(
@@ -329,5 +297,25 @@ export class JednosmerniLet extends Let {
                 break;
         }
         return ukupnaCena;
+    }
+    public prikaziDetaljeLeta(prozorDetaljiLeta: HTMLElement) {
+        const detaljiBrojLeta = document.getElementById("detaljiBrojLeta");
+        const detaljiDatumPolaska = document.getElementById(
+            "detaljiDatumPolaska"
+        );
+        detaljiBrojLeta.textContent = this.id.toString();
+        detaljiDatumPolaska.textContent = this.datumPolaska.toString();
+
+        this.prikaziProzor(prozorDetaljiLeta);
+    }
+    public prikaziProzor(prozorDetaljiLeta: HTMLElement) {
+        if (prozorDetaljiLeta) {
+            prozorDetaljiLeta.classList.add("prikazi");
+        }
+    }
+    public zatvoriProzor(prozorDetaljiLeta: HTMLElement) {
+        if (prozorDetaljiLeta) {
+            prozorDetaljiLeta.classList.remove("prikazi");
+        }
     }
 }

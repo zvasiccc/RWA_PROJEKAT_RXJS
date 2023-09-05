@@ -19,6 +19,7 @@
                         name="polaziste"
                         required
                     />
+                    <ul id="predlozi-lista"></ul>
                     <button id="zameniPolazisteIOdrediste">⟷</button>
                     <label for="odrediste">Odredište:</label>
                     <input
@@ -75,6 +76,12 @@
         </div>
         <div class="container">
             <ul id="listaLetova"></ul>
+        </div>
+        <div id="prozorDetaljiLeta">
+            <h2>Informacije o letu</h2>
+            <p>Broj leta: <span id="detaljiBrojLeta"></span></p>
+            <p>Datum polaska: <span id="detaljiDatumPolaska"></span></p>
+            <button id="dugmeZatvoriProzor">Zatvori</button>
         </div>
         <script src="../dist/bundle.js"></script>
         <!-- <script src="putanja-do-bootstrap.js"></script> -->
