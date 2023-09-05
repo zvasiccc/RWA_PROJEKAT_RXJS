@@ -17,7 +17,6 @@ export abstract class Let {
     }
     public static azurirajLetJson(avionId: string, kapaciteti: Kapaciteti) {
         try {
-            alert("azuriram avion" + avionId + " a kapaciteti su" + kapaciteti);
             fromFetch(`http://localhost:3000/sviLetovi/${avionId}`)
                 .pipe(
                     switchMap((response) => {

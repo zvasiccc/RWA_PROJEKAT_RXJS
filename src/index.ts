@@ -2,7 +2,17 @@ import { format } from "date-fns";
 import { JednosmerniLet } from "./Jednosmerni let";
 import { Rezervacija } from "./Rezervacija";
 import { fromFetch } from "rxjs/fetch";
-import { switchMap, from, map, tap, fromEvent, of, filter, merge } from "rxjs";
+import {
+    switchMap,
+    from,
+    map,
+    tap,
+    fromEvent,
+    of,
+    filter,
+    merge,
+    debounceTime,
+} from "rxjs";
 import { PovratniLet } from "./Povratni let";
 import { Let } from "./Let";
 import { Kapaciteti } from "./Kapaciteti";
@@ -21,10 +31,11 @@ domContentLoadedObservable.subscribe(() => {
     ) as HTMLInputElement; //!observable nad ovim elementom, stavljam operator debounce time na 500, on sluzi da se ne opterecuje server
     //saljem fetch pravilno na adresu http://localhost:3000/gradovi?name_like=${event.target.value} i onda se otvara padajuci meni koji se
     //popunjava sa podacima koji su  stigli
-    //! dugme pretrazi u drugi div, i dugme detalji leta
-    //! cena karata
-    //
-    // TODO: za povratni let sve isto kao za jednosmerni, enum tip klase, detalji dugme
+    // TODO: detalji dugme, auto complete
+
+    const polazisteInputObservable = fromEvent(polazisteInput, "input").pipe(
+        debounceTime(500)
+    );
     const odredisteInput = document.getElementById(
         "odrediste"
     ) as HTMLInputElement;
@@ -125,6 +136,44 @@ domContentLoadedObservable.subscribe(() => {
         const trenutnoOdrediste = odredisteInput.value;
         polazisteInput.value = trenutnoOdrediste;
         odredisteInput.value = trenutnoPolaziste;
+    });
+    polazisteInputObservable.subscribe((event) => {
+        try {
+            fromFetch("http://localhost:3000/gradovi")
+                .pipe(
+                    switchMap((response) => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error("Failed to fetch level");
+                        }
+                    })
+                )
+                .subscribe(
+                    (data: { name: string }[]) => {
+                        // kazemo da su pribavljeni podaci sa fetcha tipa niz imena
+                        console.log(data);
+                        const uneseniTekst = polazisteInput.value;
+                        const imenaSvihGradova = data.map((grad) => grad.name);
+                        const predlozeniGradovi = imenaSvihGradova.filter(
+                            (grad) =>
+                                grad
+                                    .toLowerCase()
+                                    .startsWith(uneseniTekst.toLowerCase())
+                        );
+                        if (predlozeniGradovi.length > 0) {
+                            predlozeniGradovi.forEach((grad) => {
+                                console.log(grad);
+                            });
+                        }
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+        } catch (err) {
+            console.log(err);
+        }
     });
 
     const rezervacije$ = dugmePretragaLetovaObservable
