@@ -2,6 +2,7 @@ import { switchMap } from "rxjs";
 import { fromFetch } from "rxjs/fetch";
 import { Kapaciteti } from "./Kapaciteti";
 import { Rezervacija } from "./Rezervacija";
+import { tipKlase } from "./TipKlaseEnum";
 
 export abstract class Let {
     public abstract draw(parent: HTMLElement): void;
@@ -16,6 +17,7 @@ export abstract class Let {
     }
     public static azurirajLetJson(avionId: string, kapaciteti: Kapaciteti) {
         try {
+            alert("azuriram avion" + avionId + " a kapaciteti su" + kapaciteti);
             fromFetch(`http://localhost:3000/sviLetovi/${avionId}`)
                 .pipe(
                     switchMap((response) => {
@@ -48,7 +50,7 @@ export abstract class Let {
                 .subscribe(
                     (response) => {
                         if (response.ok) {
-                            alert("Uspješno ažurirano");
+                            console.log("uspesno azurirano");
                         } else {
                             throw new Error("Neuspješno ažuriranje kapaciteta");
                         }
@@ -63,20 +65,20 @@ export abstract class Let {
     }
     public static izracunajNoveKapaciteteLeta(
         brojOsoba: number,
-        tipKlase: string,
+        tipKlaseParam: string,
         kapaciteti: Kapaciteti
     ): Kapaciteti {
-        switch (tipKlase) {
-            case "ekonomska":
+        switch (tipKlaseParam) {
+            case tipKlase.EKONOMSKA_KLASA:
                 kapaciteti.kapacitetEkonomskeKlase -= brojOsoba;
                 break;
-            case "premijum ekonomska":
+            case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
                 kapaciteti.kapacitetPremijumEkonomskeKlase -= brojOsoba;
                 break;
-            case "biznis":
+            case tipKlase.BIZNIS_KLASA:
                 kapaciteti.kapacitetBiznisKlase -= brojOsoba;
                 break;
-            case "prva klasa":
+            case tipKlase.PRVA_KLASA:
                 kapaciteti.kapacitetPrveKlase -= brojOsoba;
                 break;
             default:

@@ -143,7 +143,7 @@ domContentLoadedObservable.subscribe(() => {
                     )
             ),
             tap((r) => {
-                listaLetovaZaPrikaz = r.getPovratnaKarta()
+                listaLetovaZaPrikaz = r.povratnaKarta
                     ? PovratniLet.odgovarajuciPovratniLetovi(r, listaSvihLetova)
                     : JednosmerniLet.odgovarajuciJednosmerniLetovi(
                           r,
@@ -154,39 +154,12 @@ domContentLoadedObservable.subscribe(() => {
         )
         .subscribe((trazenaRezervacija) => {
             console.log(trazenaRezervacija);
-            // if (trazenaRezervacija.getPovratnaKarta() == false) {
-            //     dugmadRezervisi = Array.from(
-            //         document.querySelectorAll(".dugmeRezervisiJednosmerni")
-            //     ) as HTMLButtonElement[];
-            //     console.log(dugmadRezervisi);
-            //     dugmadRezervisi.forEach((dugme) => {
-            //         dugme.addEventListener("click", function (event) {
-            //             event.preventDefault();
-            //             console.log(dugme);
-            //             JednosmerniLet.azurirajPodatkeOJednosmernomLetu(
-            //                 trazenaRezervacija,
-            //                 dugme
-            //             );
-            //         });
-            //     });
-            // } else {
-            //     dugmadRezervisi = Array.from(
-            //         document.querySelectorAll(".dugmeRezervisiPovratni")
-            //     ) as HTMLButtonElement[];
-            //     console.log(dugmadRezervisi);
-            //     dugmadRezervisi.forEach((dugme) => {
-            //         dugme.addEventListener("click", function (event) {
-            //             event.preventDefault();
-            //             console.log(dugme);
-            //             PovratniLet.azurirajPodatkeOPovratnomLetu(
-            //                 trazenaRezervacija,
-            //                 dugme
-            //             );
-            //         });
-            //     });
-            // }
         });
 
+    function formatDate(dateString: string) {
+        const [year, month, day] = dateString.split("-");
+        return new Date(Number(year), Number(month) - 1, Number(day)); // Meseci u JavaScriptu krecu od 0 (januar = 0, februar = 1, ...), pa se oduzima 1.
+    }
     /*
     const jednosmerniLetovi$ = rezervacije$
         .pipe(
@@ -228,22 +201,22 @@ domContentLoadedObservable.subscribe(() => {
                     let kapacitetPrveKlase: number = parseInt(
                         dugme.getAttribute("data-kapacitet-prve")
                     );
-                    switch (trazenaRezervacija.getTipKlase()) {
-                        case "ekonomska":
+                    switch (trazenaRezervacija.tipKlase) {
+                        case tipKlase.EKONOMSKA_KLASA:
                             kapacitetEkonomskeKlase -=
-                                trazenaRezervacija.getBrojOsoba();
+                                trazenaRezervacija.brojOsoba;
                             break;
-                        case "premijum ekonomska":
+                        case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
                             kapacitetPremijumEkonomskeKlase -=
-                                trazenaRezervacija.getBrojOsoba();
+                                trazenaRezervacija.brojOsoba;
                             break;
-                        case "biznis":
+                        case tipKlase.BIZNIS_KLASA
                             kapacitetBiznisKlase -=
-                                trazenaRezervacija.getBrojOsoba();
+                                trazenaRezervacija.brojOsoba;
                             break;
-                        case "prva klasa":
+                        case tipKlase.PRVA_KLASA:
                             kapacitetPrveKlase -=
-                                trazenaRezervacija.getBrojOsoba();
+                                trazenaRezervacija.brojOsoba;
                             break;
                         default:
                             break;
@@ -366,22 +339,22 @@ domContentLoadedObservable.subscribe(() => {
                     let kapacitetPrveKlase: number = parseInt(
                         dugme.getAttribute("data-kapacitet-prve")
                     );
-                    switch (trazenaRezervacija.getTipKlase()) {
-                        case "ekonomska":
+                    switch (trazenaRezervacija.tipKlase) {
+                        case tipKlase.EKONOMSKA_KLASA:
                             kapacitetEkonomskeKlase -=
-                                trazenaRezervacija.getBrojOsoba();
+                                trazenaRezervacija.brojOsoba;
                             break;
-                        case "premijum ekonomska":
+                        case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
                             kapacitetPremijumEkonomskeKlase -=
-                                trazenaRezervacija.getBrojOsoba();
+                                trazenaRezervacija.brojOsoba;
                             break;
-                        case "biznis":
+                        case tipKlase.BIZNIS_KLASA
                             kapacitetBiznisKlase -=
-                                trazenaRezervacija.getBrojOsoba();
+                                trazenaRezervacija.brojOsoba;
                             break;
-                        case "prva klasa":
+                        case tipKlase.PRVA_KLASA:
                             kapacitetPrveKlase -=
-                                trazenaRezervacija.getBrojOsoba();
+                                trazenaRezervacija.brojOsoba;
                             break;
                         default:
                             break;
@@ -429,9 +402,4 @@ domContentLoadedObservable.subscribe(() => {
         }
     });
     */
-
-    function formatDate(dateString: string) {
-        const [year, month, day] = dateString.split("-");
-        return new Date(Number(year), Number(month) - 1, Number(day)); // Meseci u JavaScriptu krecu od 0 (januar = 0, februar = 1, ...), pa se oduzima 1.
-    }
 });

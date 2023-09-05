@@ -10,104 +10,179 @@ import {
 import { Kapaciteti } from "./Kapaciteti";
 import { Let } from "./Let";
 import { Rezervacija } from "./Rezervacija";
+import { tipKlase } from "./TipKlaseEnum";
 
 export class JednosmerniLet extends Let {
     constructor(
-        private id: number,
-        private polaziste: string,
-        private odrediste: string,
-        private datumPolaska: Date,
-        private vremePolaska: string,
-        private vremeDolaska: string,
-        private avioKompanija: string,
+        private _id: number,
+        private _polaziste: string,
+        private _odrediste: string,
+        private _datumPolaska: Date,
+        private _vremePolaska: string,
+        private _vremeDolaska: string,
+        private _avioKompanija: string,
         private _cenaKarteEkonomskeKlase: number,
         private _cenaKartePremijumEkonomskeKlase: number,
         private _cenaKarteBiznisKlase: number,
         private _cenaKartePrveKlase: number,
-        private kapacitetEkonomskeKlase: number,
-        private kapacitetPremijumEkonomskeKlase: number,
-        private kapacitetBiznisKlase: number,
-        private kapacitetPrveKlase: number
+        private _kapacitetEkonomskeKlase: number,
+        private _kapacitetPremijumEkonomskeKlase: number,
+        private _kapacitetBiznisKlase: number,
+        private _kapacitetPrveKlase: number
     ) {
         super();
     }
+    // public get cenaKarteEkonomskeKlase(): number {
+    //     return this._cenaKarteEkonomskeKlase;
+    // }
+    // public get cenaKartePremijumEkonomskeKlase(): number {
+    //     return this._cenaKartePremijumEkonomskeKlase;
+    // }
+    // public get cenaKarteBiznisKlase(): number {
+    //     return this._cenaKarteBiznisKlase;
+    // }
+    // public get cenaKartePrveKlase(): number {
+    //     return this._cenaKartePrveKlase;
+    // }
+    // public id: number {
+    //     return this.id;
+    // }
+    // public polaziste: string {
+    //     return this.polaziste;
+    // }
+    // public odrediste: string {
+    //     return this.odrediste;
+    // }
+
+    // public getDatumPolaska(): Date {
+    //     return this.datumPolaska;
+    // }
+    // public getVremePolaska(): string {
+    //     return this.vremePolaska;
+    // }
+    // public getVremeDolaska(): string {
+    //     return this.vremeDolaska;
+    // }
+    // public getKapacitetEkonomskeKlase(): number {
+    //     return this.kapacitetEkonomskeKlase;
+    // }
+    // public getKapacitetBiznisKlase(): number {
+    //     return this.kapacitetBiznisKlase;
+    // }
+    // public getKapacitetPremijumEkonomskeKlase(): number {
+    //     return this.kapacitetPremijumEkonomskeKlase;
+    // }
+    // public kapacitetPrveKlase: number {
+    //     return this.kapacitetPrveKlase;
+    // }
+    public get id(): number {
+        return this._id;
+    }
+
+    public get polaziste(): string {
+        return this._polaziste;
+    }
+
+    public get odrediste(): string {
+        return this._odrediste;
+    }
+
+    public get datumPolaska(): Date {
+        return this._datumPolaska;
+    }
+
+    public get vremePolaska(): string {
+        return this._vremePolaska;
+    }
+
+    public get vremeDolaska(): string {
+        return this._vremeDolaska;
+    }
+
+    public get avioKompanija(): string {
+        return this._avioKompanija;
+    }
+
     public get cenaKarteEkonomskeKlase(): number {
         return this._cenaKarteEkonomskeKlase;
     }
+
     public get cenaKartePremijumEkonomskeKlase(): number {
         return this._cenaKartePremijumEkonomskeKlase;
     }
+
     public get cenaKarteBiznisKlase(): number {
         return this._cenaKarteBiznisKlase;
     }
+
     public get cenaKartePrveKlase(): number {
         return this._cenaKartePrveKlase;
     }
-    public getId(): number {
-        return this.id;
-    }
-    public getPolaziste(): string {
-        return this.polaziste;
-    }
-    public getOdrediste(): string {
-        return this.odrediste;
+    public get kapacitetEkonomskeKlase(): number {
+        return this._kapacitetEkonomskeKlase;
     }
 
-    public getDatumPolaska(): Date {
-        return this.datumPolaska;
+    public set kapacitetEkonomskeKlase(value: number) {
+        this._kapacitetEkonomskeKlase = value;
     }
-    public getVremePolaska(): string {
-        return this.vremePolaska;
+
+    public get kapacitetPremijumEkonomskeKlase(): number {
+        return this._kapacitetPremijumEkonomskeKlase;
     }
-    public getVremeDolaska(): string {
-        return this.vremeDolaska;
+
+    public set kapacitetPremijumEkonomskeKlase(value: number) {
+        this._kapacitetPremijumEkonomskeKlase = value;
     }
-    public getKapacitetEkonomskeKlase(): number {
-        return this.kapacitetEkonomskeKlase;
+
+    public get kapacitetBiznisKlase(): number {
+        return this._kapacitetBiznisKlase;
     }
-    public getKapacitetBiznisKlase(): number {
-        return this.kapacitetBiznisKlase;
+
+    public set kapacitetBiznisKlase(value: number) {
+        this._kapacitetBiznisKlase = value;
     }
-    public getKapacitetPremijumEkonomskeKlase(): number {
-        return this.kapacitetPremijumEkonomskeKlase;
+
+    public get kapacitetPrveKlase(): number {
+        return this._kapacitetPrveKlase;
     }
-    public getKapacitetPrveKlase(): number {
-        return this.kapacitetPrveKlase;
+
+    public set kapacitetPrveKlase(value: number) {
+        this._kapacitetPrveKlase = value;
     }
     static odgovarajuciJednosmerniLetovi(
         trazenaRezervacija: Rezervacija,
         listaSvihLetova: JednosmerniLet[]
     ): JednosmerniLet[] {
+        console.log(trazenaRezervacija);
+        console.log("tip karte je " + trazenaRezervacija.tipKlase);
         const listaOdgovarajucihLetova: JednosmerniLet[] = [];
         let dovoljnoMesta: boolean = false;
         listaSvihLetova.forEach((l) => {
-            switch (trazenaRezervacija.getTipKlase()) {
-                case "ekonomska":
+            switch (trazenaRezervacija.tipKlase) {
+                case tipKlase.EKONOMSKA_KLASA:
                     dovoljnoMesta =
-                        trazenaRezervacija.getBrojOsoba() <=
-                        l.getKapacitetEkonomskeKlase();
+                        trazenaRezervacija.brojOsoba <=
+                        l.kapacitetEkonomskeKlase;
                     break;
-                case "biznis":
+                case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
                     dovoljnoMesta =
-                        trazenaRezervacija.getBrojOsoba() <=
-                        l.getKapacitetBiznisKlase();
+                        trazenaRezervacija.brojOsoba <=
+                        l.kapacitetPremijumEkonomskeKlase;
                     break;
-                case "premijum ekonomska":
+                case tipKlase.BIZNIS_KLASA:
                     dovoljnoMesta =
-                        trazenaRezervacija.getBrojOsoba() <=
-                        l.getKapacitetPremijumEkonomskeKlase();
+                        trazenaRezervacija.brojOsoba <= l.kapacitetBiznisKlase;
                     break;
-                case "prva klasa":
+                case tipKlase.PRVA_KLASA:
                     dovoljnoMesta =
-                        trazenaRezervacija.getBrojOsoba() <=
-                        l.getKapacitetPrveKlase();
+                        trazenaRezervacija.brojOsoba <= l.kapacitetPrveKlase;
                     break;
             }
             if (
-                trazenaRezervacija.getDatumPolaska().getDate() ===
+                trazenaRezervacija.datumPolaska.getDate() ===
                     l.datumPolaska.getDate() &&
-                trazenaRezervacija.getPolaziste() === l.polaziste &&
-                trazenaRezervacija.getOdrediste() === l.odrediste &&
+                trazenaRezervacija.polaziste === l.polaziste &&
+                trazenaRezervacija.odrediste === l.odrediste &&
                 dovoljnoMesta
             ) {
                 listaOdgovarajucihLetova.push(l);
@@ -116,14 +191,6 @@ export class JednosmerniLet extends Let {
         console.log(listaOdgovarajucihLetova);
         return listaOdgovarajucihLetova;
     }
-    // static prikaziJednosmerneLetove(lista: JednosmerniLet[]) {
-    //     const listaLetovaElement = document.getElementById("listaLetova");
-    //     listaLetovaElement.innerHTML = "";
-    //     lista.forEach((l) => {
-    //         l.draw(listaLetovaElement);
-    //     });
-    // }
-
     public override draw(parent: HTMLElement): void {
         const liElement = document.createElement("li");
         liElement.classList.add("let-jednosmerni");
@@ -187,10 +254,10 @@ export class JednosmerniLet extends Let {
         brojOsoba: number,
         tipKlase: string
     ) {
-        const avionId = this.getId();
+        const avionId = this.id;
+        alert("id aviona je " + avionId);
         let kapaciteti = new Kapaciteti();
         kapaciteti.kapacitetEkonomskeKlase = this.kapacitetEkonomskeKlase;
-
         kapaciteti.kapacitetPremijumEkonomskeKlase =
             this.kapacitetPremijumEkonomskeKlase;
         kapaciteti.kapacitetBiznisKlase = this.kapacitetBiznisKlase;
@@ -207,18 +274,18 @@ export class JednosmerniLet extends Let {
     public jednosmerniLetToHTML(): string {
         return `
         <div class="let-jednosmerni">
-        <strong>Polazište:</strong> <span> ${this.getPolaziste()} </span><br>
-        <strong>Odredište:</strong> <span> ${this.getOdrediste()} </span><br>
+        <strong>Polazište:</strong> <span> ${this.polaziste} </span><br>
+        <strong>Odredište:</strong> <span> ${this.odrediste} </span><br>
         <strong>Datum polaska:</strong> <span> ${
-            this.getDatumPolaska()
-            // ? l.getDatumPolaska().toLocaleDateString()
+            this.datumPolaska
+            // ? l.datumPolaska.toLocaleDateString()
             // : " N/A"
         } </span><br>
         <strong>Kapacitet:</strong> <span> ${
-            this.getKapacitetBiznisKlase() +
-            this.getKapacitetEkonomskeKlase() +
-            this.getKapacitetPremijumEkonomskeKlase() +
-            this.getKapacitetBiznisKlase()
+            this.kapacitetEkonomskeKlase +
+            this.kapacitetPremijumEkonomskeKlase +
+            this.kapacitetBiznisKlase +
+            this.kapacitetPrveKlase
         } </span>
         </div>
         `;
@@ -226,14 +293,14 @@ export class JednosmerniLet extends Let {
     public dodaciToHTML() {
         return `<div class="dodaci">
          <button type="submit" class="dugmeRezervisiJednosmerni"
-        data-id="${this.getId()}"
-        data-polaziste="${this.getPolaziste()}"
-        data-odrediste="${this.getOdrediste()}"
-        data-datum-polaska="${this.getDatumPolaska()}"
-        data-kapacitet-ekonomske="${this.getKapacitetEkonomskeKlase()}"
-        data-kapacitet-premijum-ekonomske="${this.getKapacitetPremijumEkonomskeKlase()}"
-        data-kapacitet-biznis="${this.getKapacitetBiznisKlase()}"
-        data-kapacitet-prve="${this.getKapacitetPrveKlase()}"
+        data-id="${this.id}"
+        data-polaziste="${this.polaziste}"
+        data-odrediste="${this.odrediste}"
+        data-datum-polaska="${this.datumPolaska}"
+        data-kapacitet-ekonomske="${this.kapacitetEkonomskeKlase}"
+        data-kapacitet-premijum-ekonomske="${this.kapacitetPremijumEkonomskeKlase}"
+        data-kapacitet-biznis="${this.kapacitetBiznisKlase}"
+        data-kapacitet-prve="${this.kapacitetPrveKlase}"
         > Rezervisi </button>
         <button type=submit" class="dugmeDetaljiLeta">Detalji</button>
         <div class="cenaKarte">
@@ -242,22 +309,22 @@ export class JednosmerniLet extends Let {
         </div>`;
     }
     public izracunajUkupnuCenuJednosmernogLeta(
-        tipKlase: string,
+        tipKlaseParam: string,
         brojOsoba: number
     ): number {
         let ukupnaCena: number = 0;
         console.log(this);
-        switch (tipKlase) {
-            case "ekonomska":
+        switch (tipKlaseParam) {
+            case tipKlase.EKONOMSKA_KLASA:
                 ukupnaCena = brojOsoba * this.cenaKarteEkonomskeKlase;
                 break;
-            case "premijum ekonomska":
+            case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
                 ukupnaCena = brojOsoba * this.cenaKartePremijumEkonomskeKlase;
                 break;
-            case "biznis":
+            case tipKlase.BIZNIS_KLASA:
                 ukupnaCena = brojOsoba * this.cenaKarteBiznisKlase;
                 break;
-            case "prva klasa":
+            case tipKlase.PRVA_KLASA:
                 ukupnaCena = brojOsoba * this.cenaKartePrveKlase;
                 break;
         }

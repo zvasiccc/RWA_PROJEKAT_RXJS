@@ -22,12 +22,12 @@
       "vremePolaska": "08:30:00",
       "vremeDolaska": "10:15:00",
       "avioKompanija": "AirSerbia",
-      "cenaKarteEkonomskeKlase": 54,
-      "cenaKartePremijumEkonomskeKlase": 58,
-      "cenaKarteBiznisKlase": 60,
-      "cenaKartePrveKlase": 64,
-      "kapacitetEkonomskeKlase": 98,
-      "kapacitetBiznisKlase": 99,
+      "cenaKarteEkonomskeKlase": 104,
+      "cenaKartePremijumEkonomskeKlase": 108,
+      "cenaKarteBiznisKlase": 120,
+      "cenaKartePrveKlase": 130,
+      "kapacitetEkonomskeKlase": 100,
+      "kapacitetBiznisKlase": 100,
       "kapacitetPremijumEkonomskeKlase": 100,
       "kapacitetPrveKlase": 100
     },
@@ -43,10 +43,10 @@
       "cenaKartePremijumEkonomskeKlase": 58,
       "cenaKarteBiznisKlase": 60,
       "cenaKartePrveKlase": 64,
-      "kapacitetEkonomskeKlase": 27,
-      "kapacitetBiznisKlase": 60,
-      "kapacitetPremijumEkonomskeKlase": 45,
-      "kapacitetPrveKlase": 56
+      "kapacitetEkonomskeKlase": 49,
+      "kapacitetBiznisKlase": 50,
+      "kapacitetPremijumEkonomskeKlase": 47,
+      "kapacitetPrveKlase": 50
     },
     {
       "id": 3,
@@ -60,9 +60,9 @@
       "cenaKartePremijumEkonomskeKlase": 58,
       "cenaKarteBiznisKlase": 60,
       "cenaKartePrveKlase": 64,
-      "kapacitetEkonomskeKlase": 100,
-      "kapacitetBiznisKlase": 99,
-      "kapacitetPremijumEkonomskeKlase": 100,
+      "kapacitetEkonomskeKlase": 99,
+      "kapacitetBiznisKlase": 100,
+      "kapacitetPremijumEkonomskeKlase": 98,
       "kapacitetPrveKlase": 99
     },
     {

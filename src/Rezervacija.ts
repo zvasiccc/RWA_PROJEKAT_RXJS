@@ -1,36 +1,63 @@
 export class Rezervacija {
     constructor(
-        private polaziste: string,
-        private odrediste: string,
-        private datumPolaska: Date,
-        private datumPovratka: Date,
-        private brojOsoba: number,
-        private tipKlase: string = "ekonomska",
-        private povratnaKarta: boolean = false
+        private _polaziste: string,
+        private _odrediste: string,
+        private _datumPolaska: Date,
+        private _datumPovratka: Date,
+        private _brojOsoba: number,
+        private _tipKlase: string = "ekonomska",
+        private _povratnaKarta: boolean = false
     ) {}
-    getPolaziste(): string {
-        return this.polaziste;
+    public get polaziste(): string {
+        return this._polaziste;
     }
 
-    getOdrediste(): string {
-        return this.odrediste;
+    public get odrediste(): string {
+        return this._odrediste;
     }
 
-    getDatumPolaska(): Date {
-        return this.datumPolaska;
+    public get datumPolaska(): Date {
+        return this._datumPolaska;
     }
 
-    getDatumPovratka(): Date {
-        return this.datumPovratka;
+    public get datumPovratka(): Date {
+        return this._datumPovratka;
     }
 
-    getBrojOsoba(): number {
-        return this.brojOsoba;
+    public get brojOsoba(): number {
+        return this._brojOsoba;
     }
-    getTipKlase(): string {
-        return this.tipKlase;
+
+    public get tipKlase(): string {
+        return this._tipKlase;
     }
-    getPovratnaKarta(): boolean {
-        return this.povratnaKarta;
+
+    public get povratnaKarta(): boolean {
+        return this._povratnaKarta;
     }
+    // polaziste: string {
+    //     return this.polaziste;
+    // }
+
+    // odrediste: string {
+    //     return this.odrediste;
+    // }
+
+    // getDatumPolaska(): Date {
+    //     return this.datumPolaska;
+    // }
+
+    // getDatumPovratka(): Date {
+    //     return this.datumPovratka;
+    // }
+
+    // brojOsoba: number {
+    //     return this.brojOsoba;
+    // }
+    // tipKlase: string {
+    //     return this.tipKlase;
+    // }
+    // getPovratnaKarta(): boolean {
+    //     return this.povratnaKarta;
+    // }
 }
