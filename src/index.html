@@ -13,21 +13,34 @@
             <div class="search-bar">
                 <form>
                     <label for="polaziste">Polazište:</label>
-                    <input
-                        type="text"
-                        id="polaziste"
-                        name="polaziste"
-                        required
-                    />
-                    <ul id="predlozi-lista"></ul>
+                    <div class="autocomplete">
+                        <input
+                            type="text"
+                            id="polaziste"
+                            name="polaziste"
+                            autocomplete="off"
+                            required
+                        />
+                        <ul
+                            class="suggestions"
+                            id="predloziListaPolaziste"
+                        ></ul>
+                    </div>
                     <button id="zameniPolazisteIOdrediste">⟷</button>
                     <label for="odrediste">Odredište:</label>
-                    <input
-                        type="text"
-                        id="odrediste"
-                        name="odrediste"
-                        required
-                    />
+                    <div class="autocomplete">
+                        <input
+                            type="text"
+                            id="odrediste"
+                            name="odrediste"
+                            autocomplete="off"
+                            required
+                        />
+                        <ul
+                            class="suggestions"
+                            id="predloziListaOdrediste"
+                        ></ul>
+                    </div>
                     <label for="povratnaKarta">Povratna karta:</label>
                     <input
                         type="checkbox"

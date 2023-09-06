@@ -16,7 +16,6 @@ import {
 import { PovratniLet } from "./Povratni let";
 import { Let } from "./Let";
 import { Kapaciteti } from "./Kapaciteti";
-
 let listaSvihLetova: JednosmerniLet[] = [];
 
 let listaLetovaZaPrikaz: Let[] = [];
@@ -25,18 +24,32 @@ const domContentLoadedObservable = fromEvent(document, "DOMContentLoaded");
 domContentLoadedObservable.subscribe(() => {
     const polazisteInput = document.getElementById(
         "polaziste"
-    ) as HTMLInputElement; //!observable nad ovim elementom, stavljam operator debounce time na 500, on sluzi da se ne opterecuje server
-    //saljem fetch pravilno na adresu http://localhost:3000/gradovi?name_like=${event.target.value} i onda se otvara padajuci meni koji se
-    //popunjava sa podacima koji su  stigli
-    // TODO: detalji dugme, auto complete
+    ) as HTMLInputElement;
 
-    const predloziLista = document.getElementById("predlozi-lista");
     const polazisteInputObservable = fromEvent(polazisteInput, "input").pipe(
         debounceTime(500)
     );
+    const predloziListaPolaziste = document.getElementById(
+        "predloziListaPolaziste"
+    );
+    const predloziListaPolazisteObservable = fromEvent(
+        predloziListaPolaziste,
+        "click"
+    );
+
     const odredisteInput = document.getElementById(
         "odrediste"
     ) as HTMLInputElement;
+    const odredisteInputObservable = fromEvent(odredisteInput, "input").pipe(
+        debounceTime(500)
+    );
+    const predloziListaOdrediste = document.getElementById(
+        "predloziListaOdrediste"
+    );
+    const predloziListaOdredisteObservable = fromEvent(
+        predloziListaOdrediste,
+        "click"
+    );
 
     const datumPolaskaInput = document.getElementById(
         "datumPolaska"
@@ -160,11 +173,15 @@ domContentLoadedObservable.subscribe(() => {
                                     .startsWith(uneseniTekst.toLowerCase())
                         );
                         if (predlozeniGradovi.length > 0) {
+                            predloziListaPolaziste.innerHTML = "";
                             predlozeniGradovi.forEach((grad) => {
                                 const listItem = document.createElement("li");
                                 listItem.textContent = grad;
-                                predloziLista.appendChild(listItem);
+                                predloziListaPolaziste.appendChild(listItem);
                             });
+                            predloziListaPolaziste.style.display = "block";
+                        } else {
+                            predloziListaPolaziste.style.display = "none";
                         }
                     },
                     (error) => {
@@ -175,7 +192,78 @@ domContentLoadedObservable.subscribe(() => {
             console.log(err);
         }
     });
+    predloziListaPolazisteObservable.subscribe((event) => {
+        if (event.target instanceof HTMLElement) {
+            // Dohvatimo tekst iz kliknutog elementa
+            const izabraniGrad = event.target.textContent;
 
+            polazisteInput.value = izabraniGrad;
+
+            predloziListaPolaziste.style.display = "none";
+        }
+    });
+    odredisteInputObservable.subscribe((event) => {
+        try {
+            fromFetch("http://localhost:3000/gradovi")
+                .pipe(
+                    switchMap((response) => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error("Failed to fetch level");
+                        }
+                    })
+                )
+                .subscribe(
+                    (data: { name: string }[]) => {
+                        // kazemo da su pribavljeni podaci sa fetcha tipa niz imena
+                        console.log(data);
+                        const uneseniTekst = odredisteInput.value;
+                        const imenaSvihGradova = data.map((grad) => grad.name);
+                        const predlozeniGradovi = imenaSvihGradova.filter(
+                            (grad) =>
+                                grad
+                                    .toLowerCase()
+                                    .startsWith(uneseniTekst.toLowerCase())
+                        );
+                        if (predlozeniGradovi.length > 0) {
+                            predloziListaOdrediste.innerHTML = "";
+                            predlozeniGradovi.forEach((grad) => {
+                                const listItem = document.createElement("li");
+                                listItem.textContent = grad;
+                                predloziListaOdrediste.appendChild(listItem);
+                            });
+                            predloziListaOdrediste.style.display = "block";
+                        } else {
+                            predloziListaOdrediste.style.display = "none";
+                        }
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+        } catch (err) {
+            console.log(err);
+        }
+    });
+    predloziListaOdredisteObservable.subscribe((event) => {
+        if (event.target instanceof HTMLElement) {
+            // Dohvatimo tekst iz kliknutog elementa
+            const izabraniGrad = event.target.textContent;
+
+            odredisteInput.value = izabraniGrad;
+
+            predloziListaOdrediste.style.display = "none";
+        }
+    });
+    document.addEventListener("click", (e) => {
+        if (
+            e.target !== polazisteInput &&
+            e.target !== predloziListaPolaziste
+        ) {
+            predloziListaPolaziste.style.display = "none";
+        }
+    });
     const rezervacije$ = dugmePretragaLetovaObservable
         .pipe(
             tap((event) => event.preventDefault()),

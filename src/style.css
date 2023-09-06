@@ -74,3 +74,31 @@ li.let-povratni {
 #prozorDetaljiLeta.prikazi {
     display: block;
 }
+/* Dodajte svoje stilove ovde prema potrebi */
+.autocomplete {
+    position: relative;
+    display: inline-block;
+}
+
+.suggestions {
+    position: absolute;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 150px;
+    overflow-y: auto;
+    width: 200px;
+    display: none;
+}
+
+.suggestions li {
+    padding: 8px;
+    cursor: pointer;
+    background-color: rgb(227, 234, 234);
+}
+
+.suggestions li:hover {
+    background-color: #c5c1c1;
+}
