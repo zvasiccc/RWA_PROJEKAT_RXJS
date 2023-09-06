@@ -58,7 +58,8 @@ li.let-povratni {
     margin-right: 20px;
     background-color: red;
 }
-#prozorDetaljiLeta {
+#prozorDetaljiJednosmernogLeta,
+#prozorDetaljiPovratnogLeta {
     display: none;
     position: fixed;
     top: 50%;
@@ -71,7 +72,8 @@ li.let-povratni {
     z-index: 1000;
 }
 
-#prozorDetaljiLeta.prikazi {
+#prozorDetaljiJednosmernogLeta.prikazi,
+#prozorDetaljiPovratnogLeta.prikazi {
     display: block;
 }
 /* Dodajte svoje stilove ovde prema potrebi */

@@ -41,18 +41,19 @@
                             id="predloziListaOdrediste"
                         ></ul>
                     </div>
-                    <label for="povratnaKarta">Povratna karta:</label>
-                    <input
-                        type="checkbox"
-                        id="povratnaKarta"
-                        name="povratnaKarta"
-                    />
+
                     <label for="datumPolaska">Datum polaska:</label>
                     <input
                         type="date"
                         id="datumPolaska"
                         name="datumPolaska"
                         required
+                    />
+                    <label for="povratnaKarta">Povratna karta:</label>
+                    <input
+                        type="checkbox"
+                        id="povratnaKarta"
+                        name="povratnaKarta"
                     />
                     <label for="datumPovratka">Datum povratka:</label>
                     <input
@@ -70,6 +71,7 @@
                         min="1"
                         max="10"
                         required
+                        value="1"
                     />
                     <label for="tipKlase">Klasa:</label>
                     <select id="tipKlase" name="tipKlase" required>
@@ -90,11 +92,29 @@
         <div class="container">
             <ul id="listaLetova"></ul>
         </div>
-        <div id="prozorDetaljiLeta">
-            <h2>Informacije o letu</h2>
+        <div id="prozorDetaljiJednosmernogLeta">
+            <h2>Informacije o jednosmernom letu</h2>
             <p>Broj leta: <span id="detaljiBrojLeta"></span></p>
-            <p>Datum polaska: <span id="detaljiDatumPolaska"></span></p>
-            <button id="dugmeZatvoriProzor">Zatvori</button>
+            <p>
+                Datum polaska:
+                <span id="detaljiDatumPolaskaJednosmernogLeta"></span>
+            </p>
+            <button id="dugmeZatvoriProzorJednosmernogLeta">Zatvori</button>
+        </div>
+        <div id="prozorDetaljiPovratnogLeta">
+            <h2>Informacije o povratnom letu</h2>
+            <p>
+                Broj polaznog leta: <span id="detaljiBrojPolaznogLeta"></span>
+            </p>
+            <p>
+                Datum polaska:
+                <span id="detaljiDatumPolaskaPovratnogLeta"></span>
+            </p>
+            <p>
+                Datum povratka:
+                <span id="detaljiDatumPovratkaPovratnogLeta"></span>
+            </p>
+            <button id="dugmeZatvoriProzorPovratnogLeta">Zatvori</button>
         </div>
         <script src="../dist/bundle.js"></script>
         <!-- <script src="putanja-do-bootstrap.js"></script> -->

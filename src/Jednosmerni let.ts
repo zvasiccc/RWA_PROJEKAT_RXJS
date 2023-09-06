@@ -205,16 +205,20 @@ export class JednosmerniLet extends Let {
             .subscribe((p) => {
                 this.azurirajPodatkeOJednosmernomLetu(p.brojOsoba, p.tipKlase);
             });
-        const prozorDetaljiLeta = document.getElementById("prozorDetaljiLeta");
-        const dugmeDetaljiLeta: HTMLButtonElement =
-            liElement.querySelector(".dugmeDetaljiLeta");
+        const prozorDetaljiJednosmernogLeta = document.getElementById(
+            "prozorDetaljiJednosmernogLeta"
+        );
+        const dugmeDetaljiLeta: HTMLButtonElement = liElement.querySelector(
+            ".dugmeDetaljiJednosmernogLeta"
+        );
         fromEvent(dugmeDetaljiLeta, "click").subscribe(() => {
-            this.prikaziDetaljeLeta(prozorDetaljiLeta);
+            this.prikaziDetaljeLeta(prozorDetaljiJednosmernogLeta);
         });
-        const dugmeZatvoriProzor =
-            document.getElementById("dugmeZatvoriProzor");
+        const dugmeZatvoriProzor = document.getElementById(
+            "dugmeZatvoriProzorJednosmernogLeta"
+        );
         fromEvent(dugmeZatvoriProzor, "click").subscribe(() => {
-            this.zatvoriProzor(prozorDetaljiLeta);
+            this.zatvoriProzor(prozorDetaljiJednosmernogLeta);
         });
     }
 
@@ -270,7 +274,7 @@ export class JednosmerniLet extends Let {
         data-kapacitet-biznis="${this.kapacitetBiznisKlase}"
         data-kapacitet-prve="${this.kapacitetPrveKlase}"
         > Rezervisi </button>
-        <button type=submit" class="dugmeDetaljiLeta">Detalji</button>
+        <button type=submit" class="dugmeDetaljiJednosmernogLeta">Detalji</button>
         <div class="cenaKarte">
         0.0
         <div>
@@ -301,11 +305,10 @@ export class JednosmerniLet extends Let {
     public prikaziDetaljeLeta(prozorDetaljiLeta: HTMLElement) {
         const detaljiBrojLeta = document.getElementById("detaljiBrojLeta");
         const detaljiDatumPolaska = document.getElementById(
-            "detaljiDatumPolaska"
+            "detaljiDatumPolaskaJednosmernogLeta"
         );
         detaljiBrojLeta.textContent = this.id.toString();
         detaljiDatumPolaska.textContent = this.datumPolaska.toString();
-
         this.prikaziProzor(prozorDetaljiLeta);
     }
     public prikaziProzor(prozorDetaljiLeta: HTMLElement) {

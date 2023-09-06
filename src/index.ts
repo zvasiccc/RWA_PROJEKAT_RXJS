@@ -259,9 +259,12 @@ domContentLoadedObservable.subscribe(() => {
     document.addEventListener("click", (e) => {
         if (
             e.target !== polazisteInput &&
-            e.target !== predloziListaPolaziste
+            e.target !== predloziListaPolaziste &&
+            e.target !== odredisteInput &&
+            e.target !== predloziListaOdrediste
         ) {
             predloziListaPolaziste.style.display = "none";
+            predloziListaOdrediste.style.display = "none";
         }
     });
     const rezervacije$ = dugmePretragaLetovaObservable

@@ -148,6 +148,21 @@ export class PovratniLet extends Let {
             .subscribe((p) => {
                 this.azurirajPodatkeOPovratnomLetu(p.brojOsoba, p.tipKlase);
             });
+        const prozorDetaljiPovratnogLeta = document.getElementById(
+            "prozorDetaljiPovratnogLeta"
+        );
+        const dugmeDetaljiLeta: HTMLButtonElement = liElement.querySelector(
+            ".dugmeDetaljiPovratnogLeta"
+        );
+        fromEvent(dugmeDetaljiLeta, "click").subscribe(() => {
+            this.prikaziDetaljeLeta(prozorDetaljiPovratnogLeta);
+        });
+        const dugmeZatvoriProzor = document.getElementById(
+            "dugmeZatvoriProzorPovratnogLeta"
+        );
+        fromEvent(dugmeZatvoriProzor, "click").subscribe(() => {
+            this.zatvoriProzor(prozorDetaljiPovratnogLeta);
+        });
     }
     public dodaciToHTML() {
         return `<div class="dodaci">
@@ -167,7 +182,7 @@ export class PovratniLet extends Let {
         data-kapacitet-biznis-povratak="${this.povratak.kapacitetBiznisKlase}"
         data-kapacitet-prve-povratak="${this.povratak.kapacitetPrveKlase}"
         > Rezervisi </button>
-        <button type=submit" class="dugmeDetaljiLeta">Detalji</button>
+        <button type=submit" class="dugmeDetaljiPovratnogLeta">Detalji</button>
         <div class="cenaKarte">
         0.0
         <div>
@@ -239,6 +254,33 @@ export class PovratniLet extends Let {
                 break;
         }
         return ukupnaCena;
+    }
+    public prikaziDetaljeLeta(prozorDetaljiLeta: HTMLElement) {
+        const detaljiBrojPolaznogLeta = document.getElementById(
+            "detaljiBrojPolaznogLeta"
+        );
+        const detaljiDatumPolaska = document.getElementById(
+            "detaljiDatumPolaskaPovratnogLeta"
+        );
+        const detaljiDatumPovratka = document.getElementById(
+            "detaljiDatumPovratkaPovratnogLeta"
+        );
+        detaljiBrojPolaznogLeta.textContent = this.polazak.id.toString();
+        detaljiDatumPolaska.textContent = this.polazak.datumPolaska.toString();
+        detaljiDatumPovratka.textContent =
+            this.povratak.datumPolaska.toString();
+
+        this.prikaziProzor(prozorDetaljiLeta);
+    }
+    public prikaziProzor(prozorDetaljiLeta: HTMLElement) {
+        if (prozorDetaljiLeta) {
+            prozorDetaljiLeta.classList.add("prikazi");
+        }
+    }
+    public zatvoriProzor(prozorDetaljiLeta: HTMLElement) {
+        if (prozorDetaljiLeta) {
+            prozorDetaljiLeta.classList.remove("prikazi");
+        }
     }
 }
 /*
