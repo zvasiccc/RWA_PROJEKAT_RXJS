@@ -13,6 +13,8 @@ import {
     merge,
     debounceTime,
     concatMap,
+    concat,
+    combineLatest,
 } from "rxjs";
 import { PovratniLet } from "./Povratni let";
 import { Let } from "./Let";
@@ -21,7 +23,7 @@ import { tipKlase } from "./TipKlaseEnum";
 let listaSvihLetova: JednosmerniLet[] = [];
 
 let listaLetovaZaPrikaz: Let[] = [];
-//TODO: uporedjivanje letova, prvo prikaz samo 10 letova
+
 const domContentLoadedObservable = fromEvent(document, "DOMContentLoaded");
 domContentLoadedObservable.subscribe(() => {
     const polazisteInput = document.getElementById(
@@ -96,13 +98,26 @@ domContentLoadedObservable.subscribe(() => {
         brojLetovaPoStranici: number,
         pageIndex: number
     ) {
-        let tipKlaseUBazutu = "";
+        let trazeniTipKlase = "";
         switch (rezervacija.tipKlase) {
             case tipKlase.EKONOMSKA_KLASA:
-                tipKlaseUBazutu = "kapacitetEkonomskeKlase";
+                trazeniTipKlase = "kapacitetEkonomskeKlase";
+                break;
+            case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
+                trazeniTipKlase = "kapacitetPremijumEkonomskeKlase";
+                break;
+            case tipKlase.BIZNIS_KLASA:
+                trazeniTipKlase = "kapacitetBiznisKlase";
+                break;
+            case tipKlase.PRVA_KLASA:
+                trazeniTipKlase = "kapacitetPrveKlase";
+                break;
         }
-        // TODO: srediti parametre za ucitavanje
-        const url = `http://localhost:3000/sviLetovi?polaziste=${rezervacija.polaziste}&odrediste=${rezervacija.odrediste}&${tipKlaseUBazutu}_lte=50&_limit=${brojLetovaPoStranici}&_page=${pageIndex}`;
+        const url = `http://localhost:3000/sviLetovi?polaziste=${
+            rezervacija.polaziste
+        }&odrediste=${
+            rezervacija.odrediste
+        }&${trazeniTipKlase}_gte=${rezervacija.brojOsoba.toString()}&_limit=${brojLetovaPoStranici}&_page=${pageIndex}`;
         return (
             fromFetch(url)
                 // pravi observable od fetcha, tj pravimo tok na koji mozemo da se pretplatimo
@@ -345,10 +360,10 @@ domContentLoadedObservable.subscribe(() => {
 
     const x = merge(pretragaRequest$, ucitajJosRequest$);
 
-    const jednomserniLetovi = x.pipe(filter(() => povratnaKartaInput.checked));
-    const povratniLetovi = x.pipe(filter(() => !povratnaKartaInput.checked));
+    const jednosmerniLetovi = x.pipe(filter(() => !povratnaKartaInput.checked));
+    const povratniLetovi = x.pipe(filter(() => povratnaKartaInput.checked));
 
-    jednomserniLetovi
+    jednosmerniLetovi
         .pipe(
             concatMap((listaLetovaElement) => {
                 //brojacStranice++;
@@ -370,6 +385,114 @@ domContentLoadedObservable.subscribe(() => {
             jedanLet.draw(listaLetovaElement);
         });
 
+    const rezOriginal = new Rezervacija(
+        polazisteInput.value,
+        odredisteInput.value,
+        new Date(formatDate(datumPolaskaInput.value)),
+        new Date(formatDate(datumPovratkaInput.value)),
+        +brojOsobaInput.value,
+        tipKlaseInput.value,
+        povratnaKartaInput.checked
+    );
+
+    // Kreirate kopiju rezervacije sa obrnutim polazištem i odredištem
+    const rezObrnuto = new Rezervacija(
+        odredisteInput.value,
+        polazisteInput.value, // Obrnuto polazište i odredište
+        new Date(formatDate(datumPovratkaInput.value)),
+        new Date(formatDate(datumPolaskaInput.value)), // Obrnuti datumi
+        +brojOsobaInput.value,
+        tipKlaseInput.value,
+        povratnaKartaInput.checked
+    );
+
+    // Filtriranje letova u jednosmernim letoovima za oba seta rezervacija;;
+    const jednosmerniLetoviOriginal = pribaviNekeLetove(
+        rezOriginal,
+        4,
+        indeksStranice
+    );
+    const jednosmerniLetoviObrnuto = pribaviNekeLetove(
+        rezObrnuto,
+        4,
+        indeksStranice
+    ); // });
+    // povratniLetovi.pipe( combineLatest(
+    //     jednosmerniLetoviOriginal,
+    //     jednosmerniLetoviObrnuto
+    // );)
+    // const kombinovaniLetovi$ = combineLatest(
+    //     jednosmerniLetoviOriginal,
+    //     jednosmerniLetoviObrnuto
+    // );
+
+    // kombinovaniLetovi$.subscribe(([polazniLet, povratniLet]) => {
+    //     // Ovde možete raditi šta god želite sa polaznim i povratnim letovima
+    //     console.log("Polazni let:", polazniLet);
+    //     console.log("Povratni let:", povratniLet);
+    //     // Obrada rezultata
+    // });
+    //   kombinovaniLetovi$.subscribe((jedanLet) => {
+    //     jedanLet.draw(listaLetovaElement);
+    //   });
+
+    // const rezOriginal = new Rezervacija(
+    //     polazisteInput.value,
+    //     odredisteInput.value,
+    //     new Date(formatDate(datumPolaskaInput.value)),
+    //     new Date(formatDate(datumPovratkaInput.value)),
+    //     +brojOsobaInput.value,
+    //     tipKlaseInput.value,
+    //     povratnaKartaInput.checked
+    // );
+
+    // // Kreirate kopiju rezervacije sa obrnutim polazištem i odredištem
+    // const rezObrnuto = new Rezervacija(
+    //     odredisteInput.value,
+    //     polazisteInput.value, // Obrnuto polazište i odredište
+    //     new Date(formatDate(datumPovratkaInput.value)),
+    //     new Date(formatDate(datumPolaskaInput.value)), // Obrnuti datumi
+    //     +brojOsobaInput.value,
+    //     tipKlaseInput.value,
+    //     povratnaKartaInput.checked
+    // );
+
+    // // Filtriranje letova u jednosmernim letoovima za oba seta rezervacija
+    // const jednosmerniLetoviOriginal = x.pipe(
+    //     filter(() => !rezOriginal.povratnaKarta)
+    // );
+    // const jednosmerniLetoviObrnuto = x.pipe(
+    //     filter(() => !rezObrnuto.povratnaKarta)
+    // );
+
+    // // Spajanje svakog leta iz oba seta jednosmernih letoova
+    // const kombinovaniLetovi$ = concat(
+    //     jednosmerniLetoviOriginal.pipe(
+    //         concatMap((polazniLet) => {
+    //             return jednosmerniLetoviObrnuto.pipe(
+    //                 concatMap((povratniLet) => {
+    //                     return pribaviNekeLetove(
+    //                         rezOriginal,
+    //                         1,
+    //                         indeksStranice
+    //                     );
+    //                 })
+    //             );
+    //         })
+    //     ),
+    //     jednosmerniLetoviObrnuto.pipe(
+    //         concatMap((polazniLet) => {
+    //             return jednosmerniLetoviOriginal.pipe(
+    //                 concatMap((povratniLet) => {
+    //                     return pribaviNekeLetove(rezObrnuto, 1, indeksStranice);
+    //                 })
+    //             );
+    //         })
+    //     )
+    // );
+
+    // kombinovaniLetovi$.subscribe((jedanLet) => {
+    //     jedanLet.draw(listaLetovaElement);
     //TODO: za poovratne 2 puta odraditi pribaviNekeLetove fju i  rezultate svaki sa svakim koji se preklapaju i od toga napraviti povratni let nad time odraditi crtanje u subscirbe
     function formatDate(dateString: string) {
         const [year, month, day] = dateString.split("-");
