@@ -96,6 +96,9 @@ export class PovratniLet extends Let {
             "tipKlase"
         ) as HTMLInputElement;
 
+        const brojOsobaInput = document.getElementById(
+            "brojOsoba"
+        ) as HTMLInputElement;
         const tipoviKlase$ = fromEvent(tipKlaseInput, "change").pipe(
             map(
                 (
@@ -105,11 +108,7 @@ export class PovratniLet extends Let {
             // tap((p) => console.log(p)),
             startWith(tipKlaseInput.value) //kad se napravi tok tipoviKlase$ da se izemituje tipKlaseInput.value
         );
-        //TODO tipovi klase moze jedna fja, broj osoba isto, a onda ovde da ih pozivam
-        //ili jedna funkcija kojo prosledim parametar input a ona vrati obserbable u zavisnosti od parametra
-        const brojOsobaInput = document.getElementById(
-            "brojOsoba"
-        ) as HTMLInputElement;
+        //TODO pozvati funkciju iz Let za racunanje!
         const brojOsoba$ = fromEvent(brojOsobaInput, "change").pipe(
             map((p: InputEvent) => +(<HTMLInputElement>p.target).value),
             // tap((p) => console.log(p)),
@@ -140,7 +139,7 @@ export class PovratniLet extends Let {
                 }))
             )
             .subscribe((p) => {
-                this.azurirajPodatkeOPovratnomLetu(p.brojOsoba, p.tipKlase);
+                this.azurirajPodatkeOLetu(p.brojOsoba, p.tipKlase);
             });
         const prozorDetaljiPovratnogLeta = document.getElementById(
             "prozorDetaljiPovratnogLeta"
@@ -158,7 +157,7 @@ export class PovratniLet extends Let {
             this.zatvoriProzor(prozorDetaljiPovratnogLeta);
         });
     }
-    public azurirajPodatkeOPovratnomLetu(brojOsoba: number, tipKlase: string) {
+    public azurirajPodatkeOLetu(brojOsoba: number, tipKlase: string) {
         const avionIdPolazak = this.polazak.id;
         const avionIdPovratak = this.povratak.id;
         //const avionIdPovratak = dugme.getAttribute("data-id-povratak");
@@ -168,7 +167,6 @@ export class PovratniLet extends Let {
 
         kapaciteti.kapacitetPremijumEkonomskeKlase =
             this.polazak.kapacitetPremijumEkonomskeKlase;
-
         kapaciteti.kapacitetBiznisKlase = this.polazak.kapacitetBiznisKlase;
         kapaciteti.kapacitetPrveKlase = this.polazak.kapacitetPrveKlase;
 
@@ -187,7 +185,11 @@ export class PovratniLet extends Let {
         kapaciteti.kapacitetBiznisKlase = this.povratak.kapacitetBiznisKlase;
         kapaciteti.kapacitetPrveKlase = this.povratak.kapacitetPrveKlase;
 
-        Let.izracunajNoveKapaciteteLeta(brojOsoba, tipKlase, kapaciteti);
+        kapaciteti = Let.izracunajNoveKapaciteteLeta(
+            brojOsoba,
+            tipKlase,
+            kapaciteti
+        );
         Let.azurirajLetJson(avionIdPovratak.toString(), kapaciteti);
     }
     public dodaciToHTML(): string {

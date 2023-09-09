@@ -1,4 +1,4 @@
-import { fromEvent } from "rxjs";
+import { Observable, combineLatest, fromEvent, map, startWith } from "rxjs";
 
 export class Nadgledanje {
     static nadgledajPovratnaKartaCheck(
@@ -29,5 +29,25 @@ export class Nadgledanje {
                 }
             );
         }
+    }
+    static nadgledajPromenuCene(tipKlaseInput: HTMLInputElement) {
+        return fromEvent(tipKlaseInput, "change").pipe(
+            map(
+                (
+                    p: InputEvent //p kad stigne je neki event ne znamo koji, specifiiramo odmah blize da je InputEvent
+                ) => (<HTMLInputElement>p.target).value
+            ),
+            // tap((p) => console.log(p)),
+            startWith(tipKlaseInput.value) //kad se napravi tok tipoviKlase$ da se izemituje tipKlaseInput.value
+        );
+    }
+    static ukombinuj(
+        tipKlaseInput: HTMLInputElement,
+        brojOsobaInput: HTMLInputElement
+    ) {
+        return combineLatest(
+            this.nadgledajPromenuCene(tipKlaseInput),
+            this.nadgledajPromenuCene(brojOsobaInput)
+        );
     }
 }

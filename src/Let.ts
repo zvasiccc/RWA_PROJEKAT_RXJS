@@ -1,8 +1,9 @@
-import { switchMap } from "rxjs";
+import { fromEvent, map, switchMap, withLatestFrom } from "rxjs";
 import { fromFetch } from "rxjs/fetch";
 import { Kapaciteti } from "./Kapaciteti";
 import { tipKlase } from "./TipKlaseEnum";
 import { JednosmerniLet } from "./Jednosmerni let";
+import { Nadgledanje } from "./Nadgledanje";
 
 export abstract class Let {
     public abstract draw(parent: HTMLElement): void;
@@ -36,10 +37,10 @@ export abstract class Let {
                             body: JSON.stringify({
                                 kapacitetEkonomskeKlase:
                                     kapaciteti.kapacitetEkonomskeKlase,
-                                kapacitetBiznisKlase:
-                                    kapaciteti.kapacitetBiznisKlase,
                                 kapacitetPremijumEkonomskeKlase:
                                     kapaciteti.kapacitetPremijumEkonomskeKlase,
+                                kapacitetBiznisKlase:
+                                    kapaciteti.kapacitetBiznisKlase,
                                 kapacitetPrveKlase:
                                     kapaciteti.kapacitetPrveKlase,
                             }),
@@ -99,5 +100,48 @@ export abstract class Let {
         if (prozorDetaljiLeta) {
             prozorDetaljiLeta.classList.remove("prikazi");
         }
+    }
+    protected abstract azurirajPodatkeOLetu(
+        brojOsoba: number,
+        tipKlase: string
+    ): void;
+    public rezervisiLet(
+        tipKlaseInput: HTMLInputElement,
+        brojOsobaInput: HTMLInputElement,
+        liElement: HTMLLIElement
+    ) {
+        const tipoviKlase$ = Nadgledanje.nadgledajPromenuCene(tipKlaseInput);
+
+        const brojOsoba$ = Nadgledanje.nadgledajPromenuCene(
+            brojOsobaInput
+        ).pipe(map((value: string) => +value));
+
+        let divCenaKarte = liElement.querySelector(".cenaKarte") as HTMLElement;
+        Nadgledanje.ukombinuj(tipKlaseInput, brojOsobaInput).subscribe((p) => {
+            //ceka jedan od ova 2 dogadjaja da se desi i onda se okida
+            divCenaKarte.innerHTML = this.izracunajUkupnuCenuLeta(
+                p[0],
+                +p[1]
+            ).toString();
+        });
+
+        const dugmeRezervisi: HTMLButtonElement = liElement.querySelector(
+            ".dugmeRezervisiJednosmerni"
+        );
+        fromEvent(dugmeRezervisi, "click")
+            .pipe(
+                withLatestFrom(brojOsoba$), //pravi niz, prvi element je event a drugi je ta poslednja emitovana vrednost
+                withLatestFrom(tipoviKlase$),
+                //tok this.dugmeRezervisi se okida kada kliknemo to dugme i nama kada kliknemo dugme treba broj osoba i tip klase
+                // i sa ove dve withLatestFrom ubacujemo zadnje vrednosti od to u ovaj tok
+                //dodaje u objekat toka poslednju vrednost koja se emituje iz dogadjaja broj osoba i dog tipoviKlase
+                map((p) => ({
+                    brojOsoba: p[0][1],
+                    tipKlase: p[1], //da se lakse snadjemo izmapiramo
+                }))
+            )
+            .subscribe((p) => {
+                this.azurirajPodatkeOLetu(p.brojOsoba, p.tipKlase);
+            });
     }
 }

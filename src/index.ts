@@ -21,7 +21,6 @@ import { Let } from "./Let";
 import { tipKlase } from "./TipKlaseEnum";
 import { Autocomplete } from "./Autocomplete";
 import { Nadgledanje } from "./Nadgledanje";
-//TODO optimalniji autocomplete
 fromEvent(document, "DOMContentLoaded").subscribe(() => {
     const polazisteInput = document.getElementById(
         "polaziste"
@@ -125,8 +124,8 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
                                         l.cenaKarteBiznisKlase,
                                         l.cenaKartePrveKlase,
                                         l.kapacitetEkonomskeKlase,
-                                        l.kapacitetBiznisKlase,
                                         l.kapacitetPremijumEkonomskeKlase,
+                                        l.kapacitetBiznisKlase,
                                         l.kapacitetPrveKlase
                                     )
                             )
@@ -258,7 +257,7 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
     );
 
     merge(
-        jednosmerniLet$.pipe(filter(() => !povratnaKartaInput.checked)), //TODO proveri jel visak filter
+        jednosmerniLet$.pipe(filter(() => !povratnaKartaInput.checked)),
         povratniLet$.pipe(filter(() => povratnaKartaInput.checked))
     )
         .pipe(concatMap((p) => from(p))) //concat map ceka da se zavrsi tok(da se emituju svi letovi) pa tek onda krece na sledece

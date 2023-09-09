@@ -3,6 +3,7 @@ import { Kapaciteti } from "./Kapaciteti";
 import { Let } from "./Let";
 import { Rezervacija } from "./Rezervacija";
 import { tipKlase } from "./TipKlaseEnum";
+import { Nadgledanje } from "./Nadgledanje";
 
 export class JednosmerniLet extends Let {
     constructor(
@@ -150,53 +151,55 @@ export class JednosmerniLet extends Let {
             "tipKlase"
         ) as HTMLInputElement;
 
-        const tipoviKlase$ = fromEvent(tipKlaseInput, "change").pipe(
-            map(
-                (
-                    p: InputEvent //p kad stigne je neki event ne znamo koji, specifiiramo odmah blize da je InputEvent
-                ) => (<HTMLInputElement>p.target).value
-            ),
-            // tap((p) => console.log(p)),
-            startWith(tipKlaseInput.value) //kad se napravi tok tipoviKlase$ da se izemituje tipKlaseInput.value
-        );
-
         const brojOsobaInput = document.getElementById(
             "brojOsoba"
         ) as HTMLInputElement;
-        const brojOsoba$ = fromEvent(brojOsobaInput, "change").pipe(
-            map((p: InputEvent) => +(<HTMLInputElement>p.target).value),
-            // tap((p) => console.log(p)),
-            startWith(+brojOsobaInput.value)
-        );
 
-        let divCenaKarte = liElement.querySelector(".cenaKarte") as HTMLElement;
+        this.rezervisiLet(tipKlaseInput, brojOsobaInput, liElement);
+        // const tipoviKlase$ = fromEvent(tipKlaseInput, "change").pipe(
+        //     map(
+        //         (
+        //             p: InputEvent //p kad stigne je neki event ne znamo koji, specifiiramo odmah blize da je InputEvent
+        //         ) => (<HTMLInputElement>p.target).value
+        //     ),
+        //     // tap((p) => console.log(p)),
+        //     startWith(tipKlaseInput.value) //kad se napravi tok tipoviKlase$ da se izemituje tipKlaseInput.value
+        // );
+        // const tipoviKlase$ = Nadgledanje.nadgledajPromenuCene(tipKlaseInput);
+        // const brojOsobaInput = document.getElementById(
+        //     "brojOsoba"
+        // ) as HTMLInputElement;
+        // const brojOsoba$ = Nadgledanje.nadgledajPromenuCene(
+        //     brojOsobaInput
+        // ).pipe(map((value: string) => +value));
 
-        combineLatest(tipoviKlase$, brojOsoba$).subscribe((p) => {
-            //ceka jedan od ova 2 dogadjaja da se desi i onda se okida
-            divCenaKarte.innerHTML = this.izracunajUkupnuCenuLeta(
-                p[0],
-                +p[1]
-            ).toString();
-        });
+        // let divCenaKarte = liElement.querySelector(".cenaKarte") as HTMLElement;
+        // Nadgledanje.ukombinuj(tipKlaseInput, brojOsobaInput).subscribe((p) => {
+        //     //ceka jedan od ova 2 dogadjaja da se desi i onda se okida
+        //     divCenaKarte.innerHTML = this.izracunajUkupnuCenuLeta(
+        //         p[0],
+        //         +p[1]
+        //     ).toString();
+        // });
 
-        const dugmeRezervisi: HTMLButtonElement = liElement.querySelector(
-            ".dugmeRezervisiJednosmerni"
-        );
-        fromEvent(dugmeRezervisi, "click")
-            .pipe(
-                withLatestFrom(brojOsoba$), //pravi niz, prvi element je event a drugi je ta poslednja emitovana vrednost
-                withLatestFrom(tipoviKlase$),
-                //tok this.dugmeRezervisi se okida kada kliknemo to dugme i nama kada kliknemo dugme treba broj osoba i tip klase
-                // i sa ove dve withLatestFrom ubacujemo zadnje vrednosti od to u ovaj tok
-                //dodaje u objekat toka poslednju vrednost koja se emituje iz dogadjaja broj osoba i dog tipoviKlase
-                map((p) => ({
-                    brojOsoba: p[0][1],
-                    tipKlase: p[1], //da se lakse snadjemo izmapiramo
-                }))
-            )
-            .subscribe((p) => {
-                this.azurirajPodatkeOJednosmernomLetu(p.brojOsoba, p.tipKlase);
-            });
+        // const dugmeRezervisi: HTMLButtonElement = liElement.querySelector(
+        //     ".dugmeRezervisiJednosmerni"
+        // );
+        // fromEvent(dugmeRezervisi, "click")
+        //     .pipe(
+        //         withLatestFrom(brojOsoba$), //pravi niz, prvi element je event a drugi je ta poslednja emitovana vrednost
+        //         withLatestFrom(tipoviKlase$),
+        //         //tok this.dugmeRezervisi se okida kada kliknemo to dugme i nama kada kliknemo dugme treba broj osoba i tip klase
+        //         // i sa ove dve withLatestFrom ubacujemo zadnje vrednosti od to u ovaj tok
+        //         //dodaje u objekat toka poslednju vrednost koja se emituje iz dogadjaja broj osoba i dog tipoviKlase
+        //         map((p) => ({
+        //             brojOsoba: p[0][1],
+        //             tipKlase: p[1], //da se lakse snadjemo izmapiramo
+        //         }))
+        //     )
+        //     .subscribe((p) => {
+        //         this.azurirajPodatkeOLetu(p.brojOsoba, p.tipKlase);
+        //     });
         const prozorDetaljiJednosmernogLeta = document.getElementById(
             "prozorDetaljiJednosmernogLeta"
         );
@@ -214,10 +217,7 @@ export class JednosmerniLet extends Let {
         });
     }
 
-    public azurirajPodatkeOJednosmernomLetu(
-        brojOsoba: number,
-        tipKlase: string
-    ) {
+    public azurirajPodatkeOLetu(brojOsoba: number, tipKlase: string) {
         const avionId = this.id;
         alert("id aviona je " + avionId);
         let kapaciteti = new Kapaciteti();
