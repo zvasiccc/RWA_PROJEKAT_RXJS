@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import { JednosmerniLet } from "./Jednosmerni let";
 import { Rezervacija } from "./Rezervacija";
 import { fromFetch } from "rxjs/fetch";
@@ -8,21 +7,18 @@ import {
     map,
     tap,
     fromEvent,
-    of,
     filter,
     merge,
     debounceTime,
     concatMap,
-    concat,
-    combineLatest,
+    Observable,
+    zip,
+    share,
+    withLatestFrom,
 } from "rxjs";
 import { PovratniLet } from "./Povratni let";
 import { Let } from "./Let";
-import { Kapaciteti } from "./Kapaciteti";
 import { tipKlase } from "./TipKlaseEnum";
-let listaSvihLetova: JednosmerniLet[] = [];
-
-let listaLetovaZaPrikaz: Let[] = [];
 
 const domContentLoadedObservable = fromEvent(document, "DOMContentLoaded");
 domContentLoadedObservable.subscribe(() => {
@@ -90,14 +86,14 @@ domContentLoadedObservable.subscribe(() => {
         dugmePretragaLetova,
         "click"
     );
-    let brojacStranice = 0;
-    const brojLetovaPoStranici = 1; // Broj letova po stranici
+    //let brojacStranice = 0;
+    //const brojLetovaPoStranici = 1; // Broj letova po stranici
     const dugmeUCitajVise = document.getElementById("dugmeUcitajViseLetova");
     function pribaviNekeLetove(
         rezervacija: Rezervacija,
         brojLetovaPoStranici: number,
         pageIndex: number
-    ) {
+    ): Observable<JednosmerniLet[]> {
         let trazeniTipKlase = "";
         switch (rezervacija.tipKlase) {
             case tipKlase.EKONOMSKA_KLASA:
@@ -132,39 +128,36 @@ domContentLoadedObservable.subscribe(() => {
                         //sa toka responsova se prebacujemo na tok objekta nekih, odnosno ne koristimo vise ceo response
                         //nego samo nas json iz responsa, tj body responsa
                     }),
-                    tap(() => (listaSvihLetova = [])), //tap nista ne radi sa tokom, sta udje to i izadje
-                    //i zato njega koristimo da ispraznimo listu, a moramo da koristimo neki operator u pipeu
+
                     map((data) => <any[]>data), //prvo kazemo da je niz any objekata, nije niz LEt objekata zbog new Date koje koristimo, on dobija string onako
-                    switchMap((data) => from(data)), //from od niza pravi tok elemenata
+                    //                    switchMap((data) => from(data)), //from od niza pravi tok elemenata
                     map(
                         //sad l predstavlja any trenutno, i sad cemo da napravimo nase Let objekte
-                        (l) =>
-                            new JednosmerniLet(
-                                l.id,
-                                l.polaziste,
-                                l.odrediste,
-                                new Date(l.datumPolaska),
-                                l.vremePolaska,
-                                l.vremeDolaska,
-                                l.avioKompanija,
-                                l.cenaKarteEkonomskeKlase,
-                                l.cenaKartePremijumEkonomskeKlase,
-                                l.cenaKarteBiznisKlase,
-                                l.cenaKartePrveKlase,
-                                l.kapacitetEkonomskeKlase,
-                                l.kapacitetBiznisKlase,
-                                l.kapacitetPremijumEkonomskeKlase,
-                                l.kapacitetPrveKlase
+                        (p) =>
+                            p.map(
+                                (l) =>
+                                    new JednosmerniLet(
+                                        l.id,
+                                        l.polaziste,
+                                        l.odrediste,
+                                        new Date(l.datumPolaska),
+                                        l.vremePolaska,
+                                        l.vremeDolaska,
+                                        l.avioKompanija,
+                                        l.cenaKarteEkonomskeKlase,
+                                        l.cenaKartePremijumEkonomskeKlase,
+                                        l.cenaKarteBiznisKlase,
+                                        l.cenaKartePrveKlase,
+                                        l.kapacitetEkonomskeKlase,
+                                        l.kapacitetBiznisKlase,
+                                        l.kapacitetPremijumEkonomskeKlase,
+                                        l.kapacitetPrveKlase
+                                    )
                             )
                     )
                 )
-            //pretplatimo se na tok objekata nasih LEt
-            // .subscribe((l) => {
-            //     listaSvihLetova.push(l);
-            // })
         );
     }
-    // pribaviNekeLetove();
 
     povratnaKartaInputObservable.subscribe((event) => {
         if (povratnaKartaInput.checked) {
@@ -299,75 +292,33 @@ domContentLoadedObservable.subscribe(() => {
             predloziListaOdrediste.style.display = "none";
         }
     });
-    // const rezervacije$ = dugmePretragaLetovaObservable
-    //     .pipe(
-    //         tap((event) => event.preventDefault()),
-    //         map(
-    //             () =>
-    //                 new Rezervacija(
-    //                     polazisteInput.value,
-    //                     odredisteInput.value,
-    //                     new Date(formatDate(datumPolaskaInput.value)),
-    //                     new Date(formatDate(datumPovratkaInput.value)),
-    //                     parseInt(brojOsobaInput.value),
-    //                     tipKlaseInput.value,
-    //                     povratnaKartaInput.checked
-    //                 )
-    //         ),
-    //         map((r) => {
-    //             const listaLetovaElement =
-    //                 document.getElementById("listaLetova");
-    //             listaLetovaElement.innerHTML = "";
-    //             return listaLetovaElement;
-    //             // listaLetovaZaPrikaz = r.povratnaKarta
-    //             //     ? PovratniLet.odgovarajuciPovratniLetovi(r, listaSvihLetova)
-    //             //     : JednosmerniLet.odgovarajuciJednosmerniLetovi(
-    //             //           r,
-    //             //           listaSvihLetova
-    //             //       );
-    //             // console.log("svi letovi su", listaSvihLetova);
-    //             // Let.prikaziLetove(listaLetovaZaPrikaz);
-    //         }),
-    //         switchMap((listaLetovaElement) =>
-    //             pribaviNekeLetove(1, 1).pipe(
-    //                 map((jedanLet) => ({
-    //                     listaLetovaElement: listaLetovaElement,
-    //                     jedanLet: jedanLet,
-    //                 }))
-    //             )
-    //         )
-    //     )
-    //     .subscribe(({ listaLetovaElement, jedanLet }) => {
-    //         jedanLet.draw(listaLetovaElement);
-    //         //console.log(trazenaRezervacija);
-    //         //pribaviNekeLetove(1, 1);
-    //     });
 
     let indeksStranice: number = 1;
     const listaLetovaElement = document.getElementById("listaLetova");
 
     const pretragaRequest$ = dugmePretragaLetovaObservable.pipe(
-        tap((event) => event.preventDefault()),
-        tap(() => {
+        //svaki put kad se kline na dumge se desi ovo ispod
+        tap((event) => {
+            event.preventDefault();
             indeksStranice = 1;
             listaLetovaElement.innerHTML = "";
-        })
+        }),
+        share() //ako se vise puta pretplatyim na tok, bez share bi emitovao vise puta, i onda jedan subscribe bi reagovao vise puta
+        //na dogadjaj na koji je vec reagovao, ovako sa share reaguje samo jednom, posto se vise puta subsribeujemo na pretragaRequest
     );
 
     const ucitajJosRequest$ = fromEvent(dugmeUCitajVise, "click").pipe(
-        tap(() => indeksStranice++)
+        tap(() => indeksStranice++),
+        share()
     );
 
-    const x = merge(pretragaRequest$, ucitajJosRequest$);
-
-    const jednosmerniLetovi = x.pipe(filter(() => !povratnaKartaInput.checked));
-    const povratniLetovi = x.pipe(filter(() => povratnaKartaInput.checked));
-
-    jednosmerniLetovi
-        .pipe(
-            concatMap((listaLetovaElement) => {
-                //brojacStranice++;
-                const rez = new Rezervacija(
+    const odlazniLetoviFetch$ = merge(pretragaRequest$, ucitajJosRequest$).pipe(
+        map(
+            //tok je niz kroz koji dobijamo podatke kroz vreme
+            //merge radi da na bilo koji od ova 2 dogadjaja se odgovara isto
+            //combine latest radi da kad bilo koji od tih tokova emituje on vraca niz poslednje emitovanih vrednosti iz svakog toka, iz svakog toka po jedna vrednost
+            () =>
+                new Rezervacija(
                     polazisteInput.value,
                     odredisteInput.value,
                     new Date(formatDate(datumPolaskaInput.value)),
@@ -375,125 +326,88 @@ domContentLoadedObservable.subscribe(() => {
                     +brojOsobaInput.value,
                     tipKlaseInput.value,
                     povratnaKartaInput.checked
-                );
-                return pribaviNekeLetove(rez, 1, indeksStranice);
+                )
+        ),
+        concatMap((rez) => pribaviNekeLetove(rez, 1, indeksStranice)),
+        //merge map kako koji tok dodje on ih mesa
+        //concat map saceka da se zavrsi prvi tok i onda krece sa drugim tokom, znaci ovde ceka da se svi letovi izemituju pa onda krece na sledeci tok
+        //nekad kad se sledeci put klikne
+        //switch map ako krene jedan a naidje drugi, on prekdia prvi i nastavlja drugi
+        //exhaust map ako je prvi u toku, drugi iskulira samo
 
-                //TODO napravim jos jednu rezeravaciju sa kontra mestima i datuma pa pozovem fju s tu rez kao parametar
-            })
-        )
-        .subscribe((jedanLet) => {
-            jedanLet.draw(listaLetovaElement);
-        });
-
-    const rezOriginal = new Rezervacija(
-        polazisteInput.value,
-        odredisteInput.value,
-        new Date(formatDate(datumPolaskaInput.value)),
-        new Date(formatDate(datumPovratkaInput.value)),
-        +brojOsobaInput.value,
-        tipKlaseInput.value,
-        povratnaKartaInput.checked
+        share()
     );
 
-    // Kreirate kopiju rezervacije sa obrnutim polazištem i odredištem
-    const rezObrnuto = new Rezervacija(
-        odredisteInput.value,
-        polazisteInput.value, // Obrnuto polazište i odredište
-        new Date(formatDate(datumPovratkaInput.value)),
-        new Date(formatDate(datumPolaskaInput.value)), // Obrnuti datumi
-        +brojOsobaInput.value,
-        tipKlaseInput.value,
-        povratnaKartaInput.checked
+    odlazniLetoviFetch$.subscribe((p) => p);
+
+    //!odlazni letovi uvek trebaju i kad je cekiran povratna i kad nije, a dolazni samo kad je cekirano
+    const dolazniLetoviFetch$ = pretragaRequest$.pipe(
+        filter(() => povratnaKartaInput.checked), //odnosno ovde emituje svaki dogadjaj samo ako je cekirano, ako nije dolazniLetoviFetch$ tok ne emituje nista
+        map(
+            () =>
+                new Rezervacija(
+                    odredisteInput.value,
+                    polazisteInput.value,
+                    new Date(formatDate(datumPovratkaInput.value)),
+                    new Date(formatDate(datumPolaskaInput.value)),
+                    +brojOsobaInput.value,
+                    tipKlaseInput.value,
+                    povratnaKartaInput.checked
+                )
+        ),
+        concatMap((rez) => pribaviNekeLetove(rez, 1, indeksStranice)),
+        //da je obican map dobili bi observable od observable od jednosmerni let a sad je samo obresvale od jednosmerni
+        //pretragaRequest$ je emitovalo klikovi misa, mi smo to izmapirali na rezervaciju, znaci svaki put kad se klikne pretraaga se pravi nova rezervacija
+        // a sa concat map se od toka rezervacija prebcujemo na tok  nizom jednosmernih letova
+        //tok i observabli se misli na isto, nije bas isto
+        //i onda se posle negde  subscribujemo na taj tok
+        share()
     );
 
-    // Filtriranje letova u jednosmernim letoovima za oba seta rezervacija;;
-    const jednosmerniLetoviOriginal = pribaviNekeLetove(
-        rezOriginal,
-        4,
-        indeksStranice
+    dolazniLetoviFetch$.subscribe((p) => p);
+
+    const jednosmerniLet$ = pretragaRequest$.pipe(
+        filter(() => !povratnaKartaInput.checked),
+        switchMap(() => odlazniLetoviFetch$),
+        map((p) => <Let[]>p) //zbog polimorfizma da bude tipa Let da bi mogli da ga ukombinujemo sa povratnim letom
     );
-    const jednosmerniLetoviObrnuto = pribaviNekeLetove(
-        rezObrnuto,
-        4,
-        indeksStranice
-    ); // });
-    // povratniLetovi.pipe( combineLatest(
-    //     jednosmerniLetoviOriginal,
-    //     jednosmerniLetoviObrnuto
-    // );)
-    // const kombinovaniLetovi$ = combineLatest(
-    //     jednosmerniLetoviOriginal,
-    //     jednosmerniLetoviObrnuto
-    // );
 
-    // kombinovaniLetovi$.subscribe(([polazniLet, povratniLet]) => {
-    //     // Ovde možete raditi šta god želite sa polaznim i povratnim letovima
-    //     console.log("Polazni let:", polazniLet);
-    //     console.log("Povratni let:", povratniLet);
-    //     // Obrada rezultata
-    // });
-    //   kombinovaniLetovi$.subscribe((jedanLet) => {
-    //     jedanLet.draw(listaLetovaElement);
-    //   });
+    const pretragaPovratniLet$ = pretragaRequest$.pipe(
+        filter(() => povratnaKartaInput.checked),
+        switchMap(() => zip(odlazniLetoviFetch$, dolazniLetoviFetch$))
+    );
 
-    // const rezOriginal = new Rezervacija(
-    //     polazisteInput.value,
-    //     odredisteInput.value,
-    //     new Date(formatDate(datumPolaskaInput.value)),
-    //     new Date(formatDate(datumPovratkaInput.value)),
-    //     +brojOsobaInput.value,
-    //     tipKlaseInput.value,
-    //     povratnaKartaInput.checked
-    // );
+    const ucitajVisePovratniLet$ = ucitajJosRequest$.pipe(
+        //ideja je da se ucita jos jedan(hardkoidrano) odlazni a da se za njega ispitaju svi dolazni letovi da li neki odgovara
+        filter(() => povratnaKartaInput.checked),
+        switchMap(() => odlazniLetoviFetch$),
+        withLatestFrom(dolazniLetoviFetch$) //stize nam jedan(jer je hardkoirano trenutno) odlazni let i njega ukombinujermo sa poslednjom emitovanim vrednostima
+        //a to je nama niz letova
+    );
+    const povratniLet$ = merge(
+        pretragaPovratniLet$,
+        ucitajVisePovratniLet$
+    ).pipe(
+        map((p) => {
+            const arr: Let[] = [];
+            p[0].forEach((odlazak) => {
+                p[1].forEach((povratak) => {
+                    arr.push(new PovratniLet(odlazak, povratak) as Let);
+                });
+            });
+            return arr;
+        })
+    );
 
-    // // Kreirate kopiju rezervacije sa obrnutim polazištem i odredištem
-    // const rezObrnuto = new Rezervacija(
-    //     odredisteInput.value,
-    //     polazisteInput.value, // Obrnuto polazište i odredište
-    //     new Date(formatDate(datumPovratkaInput.value)),
-    //     new Date(formatDate(datumPolaskaInput.value)), // Obrnuti datumi
-    //     +brojOsobaInput.value,
-    //     tipKlaseInput.value,
-    //     povratnaKartaInput.checked
-    // );
+    merge(
+        jednosmerniLet$.pipe(filter(() => !povratnaKartaInput.checked)),
+        povratniLet$.pipe(filter(() => povratnaKartaInput.checked))
+    )
+        .pipe(concatMap((p) => from(p)))
+        //from od niza pravi tok vrednosti, znaci emituje prvi element pa drugi, pa treci...
+        .subscribe((p) => p.draw(listaLetovaElement));
+    //na svaki let pojedinacno reagujemo iscrtavanjem
 
-    // // Filtriranje letova u jednosmernim letoovima za oba seta rezervacija
-    // const jednosmerniLetoviOriginal = x.pipe(
-    //     filter(() => !rezOriginal.povratnaKarta)
-    // );
-    // const jednosmerniLetoviObrnuto = x.pipe(
-    //     filter(() => !rezObrnuto.povratnaKarta)
-    // );
-
-    // // Spajanje svakog leta iz oba seta jednosmernih letoova
-    // const kombinovaniLetovi$ = concat(
-    //     jednosmerniLetoviOriginal.pipe(
-    //         concatMap((polazniLet) => {
-    //             return jednosmerniLetoviObrnuto.pipe(
-    //                 concatMap((povratniLet) => {
-    //                     return pribaviNekeLetove(
-    //                         rezOriginal,
-    //                         1,
-    //                         indeksStranice
-    //                     );
-    //                 })
-    //             );
-    //         })
-    //     ),
-    //     jednosmerniLetoviObrnuto.pipe(
-    //         concatMap((polazniLet) => {
-    //             return jednosmerniLetoviOriginal.pipe(
-    //                 concatMap((povratniLet) => {
-    //                     return pribaviNekeLetove(rezObrnuto, 1, indeksStranice);
-    //                 })
-    //             );
-    //         })
-    //     )
-    // );
-
-    // kombinovaniLetovi$.subscribe((jedanLet) => {
-    //     jedanLet.draw(listaLetovaElement);
-    //TODO: za poovratne 2 puta odraditi pribaviNekeLetove fju i  rezultate svaki sa svakim koji se preklapaju i od toga napraviti povratni let nad time odraditi crtanje u subscirbe
     function formatDate(dateString: string) {
         const [year, month, day] = dateString.split("-");
         return new Date(Number(year), Number(month) - 1, Number(day)); // Meseci u JavaScriptu krecu od 0 (januar = 0, februar = 1, ...), pa se oduzima 1.
