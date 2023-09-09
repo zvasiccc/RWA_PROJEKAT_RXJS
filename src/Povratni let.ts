@@ -118,7 +118,7 @@ export class PovratniLet extends Let {
         let divCenaKarte = liElement.querySelector(".cenaKarte") as HTMLElement;
         combineLatest(tipoviKlase$, brojOsoba$).subscribe((p) => {
             //ceka jedan od ova 2 dogadjaja da se desi i onda se okida
-            divCenaKarte.innerHTML = this.izracunajUkupnuCenuPovratnogLeta(
+            divCenaKarte.innerHTML = this.izracunajUkupnuCenuLeta(
                 p[0],
                 +p[1]
             ).toString();
@@ -190,23 +190,23 @@ export class PovratniLet extends Let {
         Let.izracunajNoveKapaciteteLeta(brojOsoba, tipKlase, kapaciteti);
         Let.azurirajLetJson(avionIdPovratak.toString(), kapaciteti);
     }
-    public dodaciToHTML() {
+    public dodaciToHTML(): string {
         return `<div class="dodaci">
          <button type="submit" class="dugmeRezervisiPovratni"
-        data-id-polazak="${this.polazak.id}"
-        data-id-povratak="${this.povratak.id}"
-        data-polaziste="${this.polazak.polaziste}"
-        data-odrediste="${this.polazak.odrediste}"
-        data-datum-polaska="${this.polazak.datumPolaska}"
-        data-datum-povratka="${this.povratak.datumPolaska}"
-        data-kapacitet-ekonomske-polazak="${this.polazak.kapacitetEkonomskeKlase}"
-        data-kapacitet-premijum-ekonomske-polazak="${this.polazak.kapacitetPremijumEkonomskeKlase}"
-        data-kapacitet-biznis-polazak="${this.polazak.kapacitetBiznisKlase}"
-        data-kapacitet-prve-polazak="${this.polazak.kapacitetPrveKlase}"
-        data-kapacitet-ekonomske-povratak="${this.povratak.kapacitetEkonomskeKlase}"
-        data-kapacitet-premijum-ekonomske-povratak="${this.povratak.kapacitetPremijumEkonomskeKlase}"
-        data-kapacitet-biznis-povratak="${this.povratak.kapacitetBiznisKlase}"
-        data-kapacitet-prve-povratak="${this.povratak.kapacitetPrveKlase}"
+        // data-id-polazak="${this.polazak.id}"
+        // data-id-povratak="${this.povratak.id}"
+        // data-polaziste="${this.polazak.polaziste}"
+        // data-odrediste="${this.polazak.odrediste}"
+        // data-datum-polaska="${this.polazak.datumPolaska}"
+        // data-datum-povratka="${this.povratak.datumPolaska}"
+        // data-kapacitet-ekonomske-polazak="${this.polazak.kapacitetEkonomskeKlase}"
+        // data-kapacitet-premijum-ekonomske-polazak="${this.polazak.kapacitetPremijumEkonomskeKlase}"
+        // data-kapacitet-biznis-polazak="${this.polazak.kapacitetBiznisKlase}"
+        // data-kapacitet-prve-polazak="${this.polazak.kapacitetPrveKlase}"
+        // data-kapacitet-ekonomske-povratak="${this.povratak.kapacitetEkonomskeKlase}"
+        // data-kapacitet-premijum-ekonomske-povratak="${this.povratak.kapacitetPremijumEkonomskeKlase}"
+        // data-kapacitet-biznis-povratak="${this.povratak.kapacitetBiznisKlase}"
+        // data-kapacitet-prve-povratak="${this.povratak.kapacitetPrveKlase}"
         > Rezervisi </button>
         <button type=submit" class="dugmeDetaljiPovratnogLeta">Detalji</button>
         <div class="cenaKarte">
@@ -214,41 +214,48 @@ export class PovratniLet extends Let {
         <div>
         </div>`;
     }
-    public izracunajUkupnuCenuPovratnogLeta(
-        //TODO napravi abstract u let
+    public izracunajUkupnuCenuLeta(
         tipKlaseParam: string,
         brojOsoba: number
     ): number {
-        let ukupnaCena: number = 0;
-        console.log(this);
-        switch (tipKlaseParam) {
-            case tipKlase.EKONOMSKA_KLASA:
-                ukupnaCena =
-                    (brojOsoba * this.polazak.cenaKarteEkonomskeKlase +
-                        brojOsoba * this.povratak.cenaKarteEkonomskeKlase) *
-                    0.9;
-                break;
-            case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
-                ukupnaCena =
-                    (brojOsoba * this.polazak.cenaKartePremijumEkonomskeKlase +
-                        brojOsoba *
-                            this.povratak.cenaKartePremijumEkonomskeKlase) *
-                    0.9;
-                break;
-            case tipKlase.BIZNIS_KLASA:
-                ukupnaCena =
-                    (brojOsoba * this.polazak.cenaKarteBiznisKlase +
-                        brojOsoba * this.povratak.cenaKarteBiznisKlase) *
-                    0.9;
-                break;
-            case tipKlase.PRVA_KLASA:
-                ukupnaCena =
-                    (brojOsoba * this.polazak.cenaKartePrveKlase +
-                        brojOsoba * this.povratak.cenaKartePrveKlase) *
-                    0.9;
-                break;
-        }
-        return ukupnaCena;
+        return (
+            (this.polazak.izracunajUkupnuCenuLeta(tipKlaseParam, brojOsoba) +
+                this.povratak.izracunajUkupnuCenuLeta(
+                    tipKlaseParam,
+                    brojOsoba
+                )) *
+            0.8
+        );
+        // let ukupnaCena: number = 0;
+        // console.log(this);
+        // switch (tipKlaseParam) {
+        //     case tipKlase.EKONOMSKA_KLASA:
+        //         ukupnaCena =
+        //             (brojOsoba * this.polazak.cenaKarteEkonomskeKlase +
+        //                 brojOsoba * this.povratak.cenaKarteEkonomskeKlase) *
+        //             0.9;
+        //         break;
+        //     case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
+        //         ukupnaCena =
+        //             (brojOsoba * this.polazak.cenaKartePremijumEkonomskeKlase +
+        //                 brojOsoba *
+        //                     this.povratak.cenaKartePremijumEkonomskeKlase) *
+        //             0.9;
+        //         break;
+        //     case tipKlase.BIZNIS_KLASA:
+        //         ukupnaCena =
+        //             (brojOsoba * this.polazak.cenaKarteBiznisKlase +
+        //                 brojOsoba * this.povratak.cenaKarteBiznisKlase) *
+        //             0.9;
+        //         break;
+        //     case tipKlase.PRVA_KLASA:
+        //         ukupnaCena =
+        //             (brojOsoba * this.polazak.cenaKartePrveKlase +
+        //                 brojOsoba * this.povratak.cenaKartePrveKlase) *
+        //             0.9;
+        //         break;
+        // }
+        // return ukupnaCena;
     }
     public prikaziDetaljeLeta(prozorDetaljiLeta: HTMLElement) {
         const detaljiBrojPolaznogLeta = document.getElementById(
@@ -268,13 +275,9 @@ export class PovratniLet extends Let {
         this.prikaziProzor(prozorDetaljiLeta);
     }
     public prikaziProzor(prozorDetaljiLeta: HTMLElement) {
-        if (prozorDetaljiLeta) {
-            prozorDetaljiLeta.classList.add("prikazi");
-        }
+        return super.prikaziProzor(prozorDetaljiLeta);
     }
-    public zatvoriProzor(prozorDetaljiLeta: HTMLElement) {
-        if (prozorDetaljiLeta) {
-            prozorDetaljiLeta.classList.remove("prikazi");
-        }
+    public zatvoriProzor(prozorDetaljiLeta: HTMLElement): void {
+        return super.zatvoriProzor(prozorDetaljiLeta);
     }
 }

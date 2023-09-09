@@ -173,7 +173,7 @@ export class JednosmerniLet extends Let {
 
         combineLatest(tipoviKlase$, brojOsoba$).subscribe((p) => {
             //ceka jedan od ova 2 dogadjaja da se desi i onda se okida
-            divCenaKarte.innerHTML = this.izracunajUkupnuCenuJednosmernogLeta(
+            divCenaKarte.innerHTML = this.izracunajUkupnuCenuLeta(
                 p[0],
                 +p[1]
             ).toString();
@@ -254,17 +254,17 @@ export class JednosmerniLet extends Let {
         </div>
         `;
     }
-    public dodaciToHTML() {
+    public dodaciToHTML(): string {
         return `<div class="dodaci">
          <button type="submit" class="dugmeRezervisiJednosmerni"
-        data-id="${this.id}"
-        data-polaziste="${this.polaziste}"
-        data-odrediste="${this.odrediste}"
-        data-datum-polaska="${this.datumPolaska}"
-        data-kapacitet-ekonomske="${this.kapacitetEkonomskeKlase}"
-        data-kapacitet-premijum-ekonomske="${this.kapacitetPremijumEkonomskeKlase}"
-        data-kapacitet-biznis="${this.kapacitetBiznisKlase}"
-        data-kapacitet-prve="${this.kapacitetPrveKlase}"
+        // data-id="${this.id}"
+        // data-polaziste="${this.polaziste}"
+        // data-odrediste="${this.odrediste}"
+        // data-datum-polaska="${this.datumPolaska}"
+        // data-kapacitet-ekonomske="${this.kapacitetEkonomskeKlase}"
+        // data-kapacitet-premijum-ekonomske="${this.kapacitetPremijumEkonomskeKlase}"
+        // data-kapacitet-biznis="${this.kapacitetBiznisKlase}"
+        // data-kapacitet-prve="${this.kapacitetPrveKlase}"
         > Rezervisi </button>
         <button type=submit" class="dugmeDetaljiJednosmernogLeta">Detalji</button>
         <div class="cenaKarte">
@@ -272,7 +272,7 @@ export class JednosmerniLet extends Let {
         <div>
         </div>`;
     }
-    public izracunajUkupnuCenuJednosmernogLeta(
+    public izracunajUkupnuCenuLeta(
         tipKlaseParam: string,
         brojOsoba: number
     ): number {
@@ -304,13 +304,9 @@ export class JednosmerniLet extends Let {
         this.prikaziProzor(prozorDetaljiLeta);
     }
     public prikaziProzor(prozorDetaljiLeta: HTMLElement) {
-        if (prozorDetaljiLeta) {
-            prozorDetaljiLeta.classList.add("prikazi");
-        }
+        return super.prikaziProzor(prozorDetaljiLeta);
     }
-    public zatvoriProzor(prozorDetaljiLeta: HTMLElement) {
-        if (prozorDetaljiLeta) {
-            prozorDetaljiLeta.classList.remove("prikazi");
-        }
+    public zatvoriProzor(prozorDetaljiLeta: HTMLElement): void {
+        return super.zatvoriProzor(prozorDetaljiLeta);
     }
 }

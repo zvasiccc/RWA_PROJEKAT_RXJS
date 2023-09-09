@@ -2,6 +2,7 @@ import { switchMap } from "rxjs";
 import { fromFetch } from "rxjs/fetch";
 import { Kapaciteti } from "./Kapaciteti";
 import { tipKlase } from "./TipKlaseEnum";
+import { JednosmerniLet } from "./Jednosmerni let";
 
 export abstract class Let {
     public abstract draw(parent: HTMLElement): void;
@@ -83,5 +84,20 @@ export abstract class Let {
                 break;
         }
         return kapaciteti;
+    }
+    protected abstract dodaciToHTML(): string;
+    protected abstract izracunajUkupnuCenuLeta(
+        tipKlaseParam: string,
+        brojOsoba: number
+    ): number;
+    public prikaziProzor(prozorDetaljiLeta: HTMLElement) {
+        if (prozorDetaljiLeta) {
+            prozorDetaljiLeta.classList.add("prikazi");
+        }
+    }
+    public zatvoriProzor(prozorDetaljiLeta: HTMLElement) {
+        if (prozorDetaljiLeta) {
+            prozorDetaljiLeta.classList.remove("prikazi");
+        }
     }
 }

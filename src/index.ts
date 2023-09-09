@@ -19,6 +19,8 @@ import {
 import { PovratniLet } from "./Povratni let";
 import { Let } from "./Let";
 import { tipKlase } from "./TipKlaseEnum";
+import { Autocomplete } from "./Autocomplete";
+import { Nadgledanje } from "./Nadgledanje";
 //TODO optimalniji autocomplete
 fromEvent(document, "DOMContentLoaded").subscribe(() => {
     const polazisteInput = document.getElementById(
@@ -132,164 +134,30 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
                 )
         );
     }
-
-    fromEvent(povratnaKartaInput, "change").subscribe((event) => {
-        if (povratnaKartaInput.checked) {
-            datumPovratkaInput.disabled = false;
-        } else {
-            datumPovratkaInput.disabled = true;
-            datumPovratkaInput.value = "";
-        }
-    });
-
-    fromEvent(dugmeZameniPolazisteIOdrediste, "click").subscribe((event) => {
-        const trenutnoPolaziste = polazisteInput.value;
-        const trenutnoOdrediste = odredisteInput.value;
-        polazisteInput.value = trenutnoOdrediste;
-        odredisteInput.value = trenutnoPolaziste;
-    });
-
-    fromEvent(polazisteInput, "input")
-        .pipe(debounceTime(500))
-        .subscribe((event) => {
-            try {
-                fromFetch("http://localhost:3000/gradovi")
-                    .pipe(
-                        switchMap((response) => {
-                            if (response.ok) {
-                                return response.json();
-                            } else {
-                                throw new Error("Failed to fetch level");
-                            }
-                        })
-                    )
-                    .subscribe(
-                        (data: { name: string }[]) => {
-                            // kazemo da su pribavljeni podaci sa fetcha tipa niz imena
-                            console.log(data);
-                            const uneseniTekst = polazisteInput.value;
-                            const imenaSvihGradova = data.map(
-                                (grad) => grad.name
-                            );
-                            const predlozeniGradovi = imenaSvihGradova.filter(
-                                (grad) =>
-                                    grad
-                                        .toLowerCase()
-                                        .startsWith(uneseniTekst.toLowerCase())
-                            );
-                            if (predlozeniGradovi.length > 0) {
-                                predloziListaPolaziste.innerHTML = "";
-                                predlozeniGradovi.forEach((grad) => {
-                                    const listItem =
-                                        document.createElement("li");
-                                    listItem.textContent = grad;
-                                    predloziListaPolaziste.appendChild(
-                                        listItem
-                                    );
-                                });
-                                predloziListaPolaziste.style.display = "block";
-                            } else {
-                                predloziListaPolaziste.style.display = "none";
-                            }
-                        },
-                        (error) => {
-                            console.log(error);
-                        }
-                    );
-            } catch (err) {
-                console.log(err);
-            }
-        });
-
-    fromEvent(predloziListaPolaziste, "click").subscribe((event) => {
-        if (event.target instanceof HTMLElement) {
-            // dodajemo click listener na listu predloga
-            const izabraniGrad = event.target.textContent;
-            polazisteInput.value = izabraniGrad;
-            predloziListaPolaziste.style.display = "none";
-        }
-    }); //TODO ovo moze u klasi za autocomplete neke, i neka klasa konfigurator pretrage i onda da radi te evente sto je nezavisno za sebe
-
-    fromEvent(odredisteInput, "input")
-        .pipe(debounceTime(500))
-        .subscribe((event) => {
-            try {
-                fromFetch("http://localhost:3000/gradovi")
-                    .pipe(
-                        switchMap((response) => {
-                            if (response.ok) {
-                                return response.json();
-                            } else {
-                                throw new Error("Failed to fetch level");
-                            }
-                        })
-                    )
-                    .subscribe(
-                        (data: { name: string }[]) => {
-                            // kazemo da su pribavljeni podaci sa fetcha tipa niz imena
-                            console.log(data);
-                            const uneseniTekst = odredisteInput.value;
-                            const imenaSvihGradova = data.map(
-                                (grad) => grad.name
-                            );
-                            const predlozeniGradovi = imenaSvihGradova.filter(
-                                (grad) =>
-                                    grad
-                                        .toLowerCase()
-                                        .startsWith(uneseniTekst.toLowerCase())
-                            );
-                            if (predlozeniGradovi.length > 0) {
-                                predloziListaOdrediste.innerHTML = "";
-                                predlozeniGradovi.forEach((grad) => {
-                                    const listItem =
-                                        document.createElement("li");
-                                    listItem.textContent = grad;
-                                    predloziListaOdrediste.appendChild(
-                                        listItem
-                                    );
-                                });
-                                predloziListaOdrediste.style.display = "block";
-                            } else {
-                                predloziListaOdrediste.style.display = "none";
-                            }
-                        },
-                        (error) => {
-                            console.log(error);
-                        }
-                    );
-            } catch (err) {
-                console.log(err);
-            }
-        });
-
-    fromEvent(predloziListaOdrediste, "click").subscribe((event) => {
-        if (event.target instanceof HTMLElement) {
-            // Dohvatimo tekst iz kliknutog elementa
-            const izabraniGrad = event.target.textContent;
-
-            odredisteInput.value = izabraniGrad;
-
-            predloziListaOdrediste.style.display = "none";
-        }
-    });
-
-    document.addEventListener("click", (e) => {
-        if (
-            e.target !== polazisteInput &&
-            e.target !== predloziListaPolaziste &&
-            e.target !== odredisteInput &&
-            e.target !== predloziListaOdrediste
-        ) {
-            predloziListaPolaziste.style.display = "none";
-            predloziListaOdrediste.style.display = "none";
-        }
-    });
+    Autocomplete.napraviAutocompletePolja(
+        polazisteInput,
+        predloziListaPolaziste
+    );
+    Autocomplete.napraviAutocompletePolja(
+        odredisteInput,
+        predloziListaOdrediste
+    );
+    Nadgledanje.nadgledajPovratnaKartaCheck(
+        povratnaKartaInput,
+        datumPovratkaInput
+    );
+    Nadgledanje.nadgledajdugmeZameniPolazisteIOdrediste(
+        dugmeZameniPolazisteIOdrediste,
+        polazisteInput,
+        odredisteInput
+    );
 
     const pretragaRequest$ = fromEvent(dugmePretragaLetova, "click").pipe(
         //svaki put kad se kline na dumge se desi ovo ispod
         tap((event) => {
             event.preventDefault();
             indeksStranice = 1;
+            dugmeUCitajVise.removeAttribute("hidden");
             listaLetovaElement.innerHTML = "";
         }),
         share() //ako se vise puta pretplatyim na tok, bez share bi emitovao vise puta, i onda jedan subscribe bi reagovao vise puta
