@@ -1,7 +1,6 @@
 import { switchMap } from "rxjs";
 import { fromFetch } from "rxjs/fetch";
 import { Kapaciteti } from "./Kapaciteti";
-import { Rezervacija } from "./Rezervacija";
 import { tipKlase } from "./TipKlaseEnum";
 
 export abstract class Let {

@@ -12,75 +12,68 @@ export class PovratniLet extends Let {
     ) {
         super();
     }
-    static odgovarajuciPovratniLetovi(
-        trazenaRezervacija: Rezervacija,
-        listaSvihLetova: JednosmerniLet[]
-    ): PovratniLet[] {
-        const listaOdgovarajucihPovratnihLetova: PovratniLet[] = [];
-        listaSvihLetova.forEach((polazak) => {
-            listaSvihLetova.forEach((povratak) => {
-                if (polazak != povratak) {
-                }
-                //da ne proveravamo iste letove
-                let dovoljnoMesta = false;
+    // static odgovarajuciPovratniLetovi(
+    //     trazenaRezervacija: Rezervacija,
+    //     listaSvihLetova: JednosmerniLet[]
+    // ): PovratniLet[] {
+    //     const listaOdgovarajucihPovratnihLetova: PovratniLet[] = [];
+    //     listaSvihLetova.forEach((polazak) => {
+    //         listaSvihLetova.forEach((povratak) => {
+    //             if (polazak != povratak) {
+    //             }
+    //             //da ne proveravamo iste letove
+    //             let dovoljnoMesta = false;
 
-                switch (trazenaRezervacija.tipKlase) {
-                    case tipKlase.EKONOMSKA_KLASA:
-                        dovoljnoMesta =
-                            trazenaRezervacija.brojOsoba <=
-                                polazak.kapacitetEkonomskeKlase &&
-                            trazenaRezervacija.brojOsoba <=
-                                povratak.kapacitetEkonomskeKlase;
-                        break;
-                    case tipKlase.BIZNIS_KLASA:
-                        dovoljnoMesta =
-                            trazenaRezervacija.brojOsoba <=
-                                polazak.kapacitetBiznisKlase &&
-                            trazenaRezervacija.brojOsoba <=
-                                povratak.kapacitetBiznisKlase;
-                        break;
-                    case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
-                        dovoljnoMesta =
-                            trazenaRezervacija.brojOsoba <=
-                                polazak.kapacitetPremijumEkonomskeKlase &&
-                            trazenaRezervacija.brojOsoba <=
-                                povratak.kapacitetPremijumEkonomskeKlase;
-                        break;
-                    case tipKlase.PRVA_KLASA:
-                        dovoljnoMesta =
-                            trazenaRezervacija.brojOsoba <=
-                                polazak.kapacitetPrveKlase &&
-                            trazenaRezervacija.brojOsoba <=
-                                povratak.kapacitetPrveKlase;
-                        break;
-                }
-                if (
-                    trazenaRezervacija.datumPolaska.getDate() ===
-                        polazak.datumPolaska.getDate() &&
-                    trazenaRezervacija.polaziste === polazak.polaziste &&
-                    trazenaRezervacija.odrediste === polazak.odrediste &&
-                    trazenaRezervacija.datumPovratka.getDate() ===
-                        povratak.datumPolaska.getDate() &&
-                    trazenaRezervacija.odrediste === povratak.polaziste && //jer se krece sa kontra strane sad
-                    trazenaRezervacija.polaziste === povratak.odrediste &&
-                    dovoljnoMesta
-                ) {
-                    console.log("ispunjava");
-                    const noviPovratniLet = new PovratniLet(polazak, povratak);
-                    listaOdgovarajucihPovratnihLetova.push(noviPovratniLet);
-                } else {
-                    console.log("ene ispunjava uslov");
-                }
-            });
-        });
-        return listaOdgovarajucihPovratnihLetova;
-    }
-    // static prikaziPovratneLetove(lista: PovratniLet[]) {
-    //     const listaLetovaElement = document.getElementById("listaLetova");
-    //     listaLetovaElement.innerHTML = "";
-    //     lista.forEach((l) => {
-    //         l.draw(listaLetovaElement);
+    //             switch (trazenaRezervacija.tipKlase) {
+    //                 case tipKlase.EKONOMSKA_KLASA:
+    //                     dovoljnoMesta =
+    //                         trazenaRezervacija.brojOsoba <=
+    //                             polazak.kapacitetEkonomskeKlase &&
+    //                         trazenaRezervacija.brojOsoba <=
+    //                             povratak.kapacitetEkonomskeKlase;
+    //                     break;
+    //                 case tipKlase.BIZNIS_KLASA:
+    //                     dovoljnoMesta =
+    //                         trazenaRezervacija.brojOsoba <=
+    //                             polazak.kapacitetBiznisKlase &&
+    //                         trazenaRezervacija.brojOsoba <=
+    //                             povratak.kapacitetBiznisKlase;
+    //                     break;
+    //                 case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
+    //                     dovoljnoMesta =
+    //                         trazenaRezervacija.brojOsoba <=
+    //                             polazak.kapacitetPremijumEkonomskeKlase &&
+    //                         trazenaRezervacija.brojOsoba <=
+    //                             povratak.kapacitetPremijumEkonomskeKlase;
+    //                     break;
+    //                 case tipKlase.PRVA_KLASA:
+    //                     dovoljnoMesta =
+    //                         trazenaRezervacija.brojOsoba <=
+    //                             polazak.kapacitetPrveKlase &&
+    //                         trazenaRezervacija.brojOsoba <=
+    //                             povratak.kapacitetPrveKlase;
+    //                     break;
+    //             }
+    //             if (
+    //                 trazenaRezervacija.datumPolaska.getDate() ===
+    //                     polazak.datumPolaska.getDate() &&
+    //                 trazenaRezervacija.polaziste === polazak.polaziste &&
+    //                 trazenaRezervacija.odrediste === polazak.odrediste &&
+    //                 trazenaRezervacija.datumPovratka.getDate() ===
+    //                     povratak.datumPolaska.getDate() &&
+    //                 trazenaRezervacija.odrediste === povratak.polaziste && //jer se krece sa kontra strane sad
+    //                 trazenaRezervacija.polaziste === povratak.odrediste &&
+    //                 dovoljnoMesta
+    //             ) {
+    //                 console.log("ispunjava");
+    //                 const noviPovratniLet = new PovratniLet(polazak, povratak);
+    //                 listaOdgovarajucihPovratnihLetova.push(noviPovratniLet);
+    //             } else {
+    //                 console.log("ene ispunjava uslov");
+    //             }
+    //         });
     //     });
+    //     return listaOdgovarajucihPovratnihLetova;
     // }
 
     public override draw(parent: HTMLElement): void {
@@ -112,7 +105,8 @@ export class PovratniLet extends Let {
             // tap((p) => console.log(p)),
             startWith(tipKlaseInput.value) //kad se napravi tok tipoviKlase$ da se izemituje tipKlaseInput.value
         );
-
+        //TODO tipovi klase moze jedna fja, broj osoba isto, a onda ovde da ih pozivam
+        //ili jedna funkcija kojo prosledim parametar input a ona vrati obserbable u zavisnosti od parametra
         const brojOsobaInput = document.getElementById(
             "brojOsoba"
         ) as HTMLInputElement;
@@ -164,30 +158,6 @@ export class PovratniLet extends Let {
             this.zatvoriProzor(prozorDetaljiPovratnogLeta);
         });
     }
-    public dodaciToHTML() {
-        return `<div class="dodaci">
-         <button type="submit" class="dugmeRezervisiPovratni"
-        data-id-polazak="${this.polazak.id}"
-        data-id-povratak="${this.povratak.id}"
-        data-polaziste="${this.polazak.polaziste}"
-        data-odrediste="${this.polazak.odrediste}"
-        data-datum-polaska="${this.polazak.datumPolaska}"
-        data-datum-povratka="${this.povratak.datumPolaska}"
-        data-kapacitet-ekonomske-polazak="${this.polazak.kapacitetEkonomskeKlase}"
-        data-kapacitet-premijum-ekonomske-polazak="${this.polazak.kapacitetPremijumEkonomskeKlase}"
-        data-kapacitet-biznis-polazak="${this.polazak.kapacitetBiznisKlase}"
-        data-kapacitet-prve-polazak="${this.polazak.kapacitetPrveKlase}"
-        data-kapacitet-ekonomske-povratak="${this.povratak.kapacitetEkonomskeKlase}"
-        data-kapacitet-premijum-ekonomske-povratak="${this.povratak.kapacitetPremijumEkonomskeKlase}"
-        data-kapacitet-biznis-povratak="${this.povratak.kapacitetBiznisKlase}"
-        data-kapacitet-prve-povratak="${this.povratak.kapacitetPrveKlase}"
-        > Rezervisi </button>
-        <button type=submit" class="dugmeDetaljiPovratnogLeta">Detalji</button>
-        <div class="cenaKarte">
-        0.0
-        <div>
-        </div>`;
-    }
     public azurirajPodatkeOPovratnomLetu(brojOsoba: number, tipKlase: string) {
         const avionIdPolazak = this.polazak.id;
         const avionIdPovratak = this.povratak.id;
@@ -220,7 +190,32 @@ export class PovratniLet extends Let {
         Let.izracunajNoveKapaciteteLeta(brojOsoba, tipKlase, kapaciteti);
         Let.azurirajLetJson(avionIdPovratak.toString(), kapaciteti);
     }
+    public dodaciToHTML() {
+        return `<div class="dodaci">
+         <button type="submit" class="dugmeRezervisiPovratni"
+        data-id-polazak="${this.polazak.id}"
+        data-id-povratak="${this.povratak.id}"
+        data-polaziste="${this.polazak.polaziste}"
+        data-odrediste="${this.polazak.odrediste}"
+        data-datum-polaska="${this.polazak.datumPolaska}"
+        data-datum-povratka="${this.povratak.datumPolaska}"
+        data-kapacitet-ekonomske-polazak="${this.polazak.kapacitetEkonomskeKlase}"
+        data-kapacitet-premijum-ekonomske-polazak="${this.polazak.kapacitetPremijumEkonomskeKlase}"
+        data-kapacitet-biznis-polazak="${this.polazak.kapacitetBiznisKlase}"
+        data-kapacitet-prve-polazak="${this.polazak.kapacitetPrveKlase}"
+        data-kapacitet-ekonomske-povratak="${this.povratak.kapacitetEkonomskeKlase}"
+        data-kapacitet-premijum-ekonomske-povratak="${this.povratak.kapacitetPremijumEkonomskeKlase}"
+        data-kapacitet-biznis-povratak="${this.povratak.kapacitetBiznisKlase}"
+        data-kapacitet-prve-povratak="${this.povratak.kapacitetPrveKlase}"
+        > Rezervisi </button>
+        <button type=submit" class="dugmeDetaljiPovratnogLeta">Detalji</button>
+        <div class="cenaKarte">
+        0.0
+        <div>
+        </div>`;
+    }
     public izracunajUkupnuCenuPovratnogLeta(
+        //TODO napravi abstract u let
         tipKlaseParam: string,
         brojOsoba: number
     ): number {
@@ -269,7 +264,7 @@ export class PovratniLet extends Let {
         detaljiDatumPolaska.textContent = this.polazak.datumPolaska.toString();
         detaljiDatumPovratka.textContent =
             this.povratak.datumPolaska.toString();
-
+        //TODO pozovi 2 fje za 2 povratna leta, ovde se ne crta
         this.prikaziProzor(prozorDetaljiLeta);
     }
     public prikaziProzor(prozorDetaljiLeta: HTMLElement) {
@@ -283,21 +278,3 @@ export class PovratniLet extends Let {
         }
     }
 }
-/*
-            liElement.innerHTML = `<div class="let-povratni">
-        <strong>Polazište:</strong> <span>${l.polazak.polaziste}</span><br>
-        <strong>Odredište:</strong> <span>${l.polazak.odrediste}</span><br>
-        <strong>Datum polaska:</strong> <span>${l.polazak
-            .datumPolaska
-            .toLocaleDateString()}</span><br>
-            <strong>Vreme polaska:</strong> <span>${l.polazak.getVremePolaska()}</span><br>
-            <strong>Vreme dolaska:</strong> <span>${l.polazak.getVremeDolaska()}</span><br>
-            <br>
-            <br>
-            <strong>Datum povratka:</strong> <span>${l.povratak
-                .datumPolaska
-                .toLocaleDateString()}</span><br>
-            <strong>OP</strong> <span>${l.povratak.polaziste}</span><br>
-            <strong>OPA</strong> <span>${l.povratak.odrediste}</span><br>
-            </div>`;
-*/

@@ -19,35 +19,22 @@ import {
 import { PovratniLet } from "./Povratni let";
 import { Let } from "./Let";
 import { tipKlase } from "./TipKlaseEnum";
-
-const domContentLoadedObservable = fromEvent(document, "DOMContentLoaded");
-domContentLoadedObservable.subscribe(() => {
+//TODO optimalniji autocomplete
+fromEvent(document, "DOMContentLoaded").subscribe(() => {
     const polazisteInput = document.getElementById(
         "polaziste"
     ) as HTMLInputElement;
 
-    const polazisteInputObservable = fromEvent(polazisteInput, "input").pipe(
-        debounceTime(500)
-    );
     const predloziListaPolaziste = document.getElementById(
         "predloziListaPolaziste"
     );
-    const predloziListaPolazisteObservable = fromEvent(
-        predloziListaPolaziste,
-        "click"
-    );
+
     const odredisteInput = document.getElementById(
         "odrediste"
     ) as HTMLInputElement;
-    const odredisteInputObservable = fromEvent(odredisteInput, "input").pipe(
-        debounceTime(500)
-    );
+
     const predloziListaOdrediste = document.getElementById(
         "predloziListaOdrediste"
-    );
-    const predloziListaOdredisteObservable = fromEvent(
-        predloziListaOdrediste,
-        "click"
     );
 
     const datumPolaskaInput = document.getElementById(
@@ -69,26 +56,14 @@ domContentLoadedObservable.subscribe(() => {
         "povratnaKarta"
     ) as HTMLInputElement;
 
-    const povratnaKartaInputObservable = fromEvent(
-        povratnaKartaInput,
-        "change"
-    );
     const dugmeZameniPolazisteIOdrediste = document.getElementById(
         "zameniPolazisteIOdrediste"
     );
-    const dugmeZameniPolazisteIOdredisteObservable = fromEvent(
-        dugmeZameniPolazisteIOdrediste,
-        "click"
-    );
-    let dugmadRezervisi: HTMLButtonElement[];
     const dugmePretragaLetova = document.getElementById("dugmePretragaLetova");
-    const dugmePretragaLetovaObservable = fromEvent(
-        dugmePretragaLetova,
-        "click"
-    );
-    //let brojacStranice = 0;
-    //const brojLetovaPoStranici = 1; // Broj letova po stranici
+
     const dugmeUCitajVise = document.getElementById("dugmeUcitajViseLetova");
+    let indeksStranice: number = 1;
+    const listaLetovaElement = document.getElementById("listaLetova");
     function pribaviNekeLetove(
         rezervacija: Rezervacija,
         brojLetovaPoStranici: number,
@@ -128,7 +103,6 @@ domContentLoadedObservable.subscribe(() => {
                         //sa toka responsova se prebacujemo na tok objekta nekih, odnosno ne koristimo vise ceo response
                         //nego samo nas json iz responsa, tj body responsa
                     }),
-
                     map((data) => <any[]>data), //prvo kazemo da je niz any objekata, nije niz LEt objekata zbog new Date koje koristimo, on dobija string onako
                     //                    switchMap((data) => from(data)), //from od niza pravi tok elemenata
                     map(
@@ -159,7 +133,7 @@ domContentLoadedObservable.subscribe(() => {
         );
     }
 
-    povratnaKartaInputObservable.subscribe((event) => {
+    fromEvent(povratnaKartaInput, "change").subscribe((event) => {
         if (povratnaKartaInput.checked) {
             datumPovratkaInput.disabled = false;
         } else {
@@ -167,111 +141,128 @@ domContentLoadedObservable.subscribe(() => {
             datumPovratkaInput.value = "";
         }
     });
-    dugmeZameniPolazisteIOdredisteObservable.subscribe((event) => {
+
+    fromEvent(dugmeZameniPolazisteIOdrediste, "click").subscribe((event) => {
         const trenutnoPolaziste = polazisteInput.value;
         const trenutnoOdrediste = odredisteInput.value;
         polazisteInput.value = trenutnoOdrediste;
         odredisteInput.value = trenutnoPolaziste;
     });
-    polazisteInputObservable.subscribe((event) => {
-        try {
-            fromFetch("http://localhost:3000/gradovi")
-                .pipe(
-                    switchMap((response) => {
-                        if (response.ok) {
-                            return response.json();
-                        } else {
-                            throw new Error("Failed to fetch level");
+
+    fromEvent(polazisteInput, "input")
+        .pipe(debounceTime(500))
+        .subscribe((event) => {
+            try {
+                fromFetch("http://localhost:3000/gradovi")
+                    .pipe(
+                        switchMap((response) => {
+                            if (response.ok) {
+                                return response.json();
+                            } else {
+                                throw new Error("Failed to fetch level");
+                            }
+                        })
+                    )
+                    .subscribe(
+                        (data: { name: string }[]) => {
+                            // kazemo da su pribavljeni podaci sa fetcha tipa niz imena
+                            console.log(data);
+                            const uneseniTekst = polazisteInput.value;
+                            const imenaSvihGradova = data.map(
+                                (grad) => grad.name
+                            );
+                            const predlozeniGradovi = imenaSvihGradova.filter(
+                                (grad) =>
+                                    grad
+                                        .toLowerCase()
+                                        .startsWith(uneseniTekst.toLowerCase())
+                            );
+                            if (predlozeniGradovi.length > 0) {
+                                predloziListaPolaziste.innerHTML = "";
+                                predlozeniGradovi.forEach((grad) => {
+                                    const listItem =
+                                        document.createElement("li");
+                                    listItem.textContent = grad;
+                                    predloziListaPolaziste.appendChild(
+                                        listItem
+                                    );
+                                });
+                                predloziListaPolaziste.style.display = "block";
+                            } else {
+                                predloziListaPolaziste.style.display = "none";
+                            }
+                        },
+                        (error) => {
+                            console.log(error);
                         }
-                    })
-                )
-                .subscribe(
-                    (data: { name: string }[]) => {
-                        // kazemo da su pribavljeni podaci sa fetcha tipa niz imena
-                        console.log(data);
-                        const uneseniTekst = polazisteInput.value;
-                        const imenaSvihGradova = data.map((grad) => grad.name);
-                        const predlozeniGradovi = imenaSvihGradova.filter(
-                            (grad) =>
-                                grad
-                                    .toLowerCase()
-                                    .startsWith(uneseniTekst.toLowerCase())
-                        );
-                        if (predlozeniGradovi.length > 0) {
-                            predloziListaPolaziste.innerHTML = "";
-                            predlozeniGradovi.forEach((grad) => {
-                                const listItem = document.createElement("li");
-                                listItem.textContent = grad;
-                                predloziListaPolaziste.appendChild(listItem);
-                            });
-                            predloziListaPolaziste.style.display = "block";
-                        } else {
-                            predloziListaPolaziste.style.display = "none";
-                        }
-                    },
-                    (error) => {
-                        console.log(error);
-                    }
-                );
-        } catch (err) {
-            console.log(err);
-        }
-    });
-    predloziListaPolazisteObservable.subscribe((event) => {
+                    );
+            } catch (err) {
+                console.log(err);
+            }
+        });
+
+    fromEvent(predloziListaPolaziste, "click").subscribe((event) => {
         if (event.target instanceof HTMLElement) {
-            // Dohvatimo tekst iz kliknutog elementa
+            // dodajemo click listener na listu predloga
             const izabraniGrad = event.target.textContent;
-
             polazisteInput.value = izabraniGrad;
-
             predloziListaPolaziste.style.display = "none";
         }
-    });
-    odredisteInputObservable.subscribe((event) => {
-        try {
-            fromFetch("http://localhost:3000/gradovi")
-                .pipe(
-                    switchMap((response) => {
-                        if (response.ok) {
-                            return response.json();
-                        } else {
-                            throw new Error("Failed to fetch level");
+    }); //TODO ovo moze u klasi za autocomplete neke, i neka klasa konfigurator pretrage i onda da radi te evente sto je nezavisno za sebe
+
+    fromEvent(odredisteInput, "input")
+        .pipe(debounceTime(500))
+        .subscribe((event) => {
+            try {
+                fromFetch("http://localhost:3000/gradovi")
+                    .pipe(
+                        switchMap((response) => {
+                            if (response.ok) {
+                                return response.json();
+                            } else {
+                                throw new Error("Failed to fetch level");
+                            }
+                        })
+                    )
+                    .subscribe(
+                        (data: { name: string }[]) => {
+                            // kazemo da su pribavljeni podaci sa fetcha tipa niz imena
+                            console.log(data);
+                            const uneseniTekst = odredisteInput.value;
+                            const imenaSvihGradova = data.map(
+                                (grad) => grad.name
+                            );
+                            const predlozeniGradovi = imenaSvihGradova.filter(
+                                (grad) =>
+                                    grad
+                                        .toLowerCase()
+                                        .startsWith(uneseniTekst.toLowerCase())
+                            );
+                            if (predlozeniGradovi.length > 0) {
+                                predloziListaOdrediste.innerHTML = "";
+                                predlozeniGradovi.forEach((grad) => {
+                                    const listItem =
+                                        document.createElement("li");
+                                    listItem.textContent = grad;
+                                    predloziListaOdrediste.appendChild(
+                                        listItem
+                                    );
+                                });
+                                predloziListaOdrediste.style.display = "block";
+                            } else {
+                                predloziListaOdrediste.style.display = "none";
+                            }
+                        },
+                        (error) => {
+                            console.log(error);
                         }
-                    })
-                )
-                .subscribe(
-                    (data: { name: string }[]) => {
-                        // kazemo da su pribavljeni podaci sa fetcha tipa niz imena
-                        console.log(data);
-                        const uneseniTekst = odredisteInput.value;
-                        const imenaSvihGradova = data.map((grad) => grad.name);
-                        const predlozeniGradovi = imenaSvihGradova.filter(
-                            (grad) =>
-                                grad
-                                    .toLowerCase()
-                                    .startsWith(uneseniTekst.toLowerCase())
-                        );
-                        if (predlozeniGradovi.length > 0) {
-                            predloziListaOdrediste.innerHTML = "";
-                            predlozeniGradovi.forEach((grad) => {
-                                const listItem = document.createElement("li");
-                                listItem.textContent = grad;
-                                predloziListaOdrediste.appendChild(listItem);
-                            });
-                            predloziListaOdrediste.style.display = "block";
-                        } else {
-                            predloziListaOdrediste.style.display = "none";
-                        }
-                    },
-                    (error) => {
-                        console.log(error);
-                    }
-                );
-        } catch (err) {
-            console.log(err);
-        }
-    });
-    predloziListaOdredisteObservable.subscribe((event) => {
+                    );
+            } catch (err) {
+                console.log(err);
+            }
+        });
+
+    fromEvent(predloziListaOdrediste, "click").subscribe((event) => {
         if (event.target instanceof HTMLElement) {
             // Dohvatimo tekst iz kliknutog elementa
             const izabraniGrad = event.target.textContent;
@@ -281,6 +272,7 @@ domContentLoadedObservable.subscribe(() => {
             predloziListaOdrediste.style.display = "none";
         }
     });
+
     document.addEventListener("click", (e) => {
         if (
             e.target !== polazisteInput &&
@@ -293,10 +285,7 @@ domContentLoadedObservable.subscribe(() => {
         }
     });
 
-    let indeksStranice: number = 1;
-    const listaLetovaElement = document.getElementById("listaLetova");
-
-    const pretragaRequest$ = dugmePretragaLetovaObservable.pipe(
+    const pretragaRequest$ = fromEvent(dugmePretragaLetova, "click").pipe(
         //svaki put kad se kline na dumge se desi ovo ispod
         tap((event) => {
             event.preventDefault();
@@ -311,7 +300,6 @@ domContentLoadedObservable.subscribe(() => {
         tap(() => indeksStranice++),
         share()
     );
-
     const odlazniLetoviFetch$ = merge(pretragaRequest$, ucitajJosRequest$).pipe(
         map(
             //tok je niz kroz koji dobijamo podatke kroz vreme
@@ -337,11 +325,9 @@ domContentLoadedObservable.subscribe(() => {
 
         share()
     );
-
-    odlazniLetoviFetch$.subscribe((p) => p);
-
-    //!odlazni letovi uvek trebaju i kad je cekiran povratna i kad nije, a dolazni samo kad je cekirano
+    odlazniLetoviFetch$.subscribe((p) => p); //ne emituje bez ovoga
     const dolazniLetoviFetch$ = pretragaRequest$.pipe(
+        //zato sto za dolazne letove nemamo stranicenje, nego sve pribavljamo odmah kada se klikne pretraga
         filter(() => povratnaKartaInput.checked), //odnosno ovde emituje svaki dogadjaj samo ako je cekirano, ako nije dolazniLetoviFetch$ tok ne emituje nista
         map(
             () =>
@@ -368,21 +354,25 @@ domContentLoadedObservable.subscribe(() => {
 
     const jednosmerniLet$ = pretragaRequest$.pipe(
         filter(() => !povratnaKartaInput.checked),
-        switchMap(() => odlazniLetoviFetch$),
+        switchMap(() => odlazniLetoviFetch$), //odlazniLetoviFetch je vec mergovano izmedju pretragaRequest i ucitaj jos Request, i prebacimo se na taj tok
         map((p) => <Let[]>p) //zbog polimorfizma da bude tipa Let da bi mogli da ga ukombinujemo sa povratnim letom
     );
 
     const pretragaPovratniLet$ = pretragaRequest$.pipe(
         filter(() => povratnaKartaInput.checked),
-        switchMap(() => zip(odlazniLetoviFetch$, dolazniLetoviFetch$))
+        switchMap(() => zip(odlazniLetoviFetch$, dolazniLetoviFetch$)) //zip ceka obe vrednosti da stignu
     );
-
+    //!povratni let ponasanje se razlikuje kada je pretraga dugmei  ucitaj jos dugme
+    // kada je pretraga mi zipujemo ova 2 vec napravljena toka sa odlaznim i dolaznim letovima
     const ucitajVisePovratniLet$ = ucitajJosRequest$.pipe(
         //ideja je da se ucita jos jedan(hardkoidrano) odlazni a da se za njega ispitaju svi dolazni letovi da li neki odgovara
         filter(() => povratnaKartaInput.checked),
-        switchMap(() => odlazniLetoviFetch$),
+        switchMap(() => odlazniLetoviFetch$), //odlazni nam stignu na svako kliktanje ucitaj jos,a dolazni samo na pretraga
         withLatestFrom(dolazniLetoviFetch$) //stize nam jedan(jer je hardkoirano trenutno) odlazni let i njega ukombinujermo sa poslednjom emitovanim vrednostima
         //a to je nama niz letova
+        //!ovde ne koristimo zip jer on salje 2 fetca svaki put i ceka oba
+        //a mi ovde hocemo da ucitamo odlazne letove nove a da koristimo vrednost koju vec imamo za dolazne, da ne bi slali opet fetch i cekali odgovor
+        //a odgovor vec imamo, withlastestfrom kopira ono sto je poslednje emitovali dolazni letovi fetch(tj ono pribavljeno iz pretraga)a ne salje nov zahtev
     );
     const povratniLet$ = merge(
         pretragaPovratniLet$,
@@ -400,10 +390,10 @@ domContentLoadedObservable.subscribe(() => {
     );
 
     merge(
-        jednosmerniLet$.pipe(filter(() => !povratnaKartaInput.checked)),
+        jednosmerniLet$.pipe(filter(() => !povratnaKartaInput.checked)), //TODO proveri jel visak filter
         povratniLet$.pipe(filter(() => povratnaKartaInput.checked))
     )
-        .pipe(concatMap((p) => from(p)))
+        .pipe(concatMap((p) => from(p))) //concat map ceka da se zavrsi tok(da se emituju svi letovi) pa tek onda krece na sledece
         //from od niza pravi tok vrednosti, znaci emituje prvi element pa drugi, pa treci...
         .subscribe((p) => p.draw(listaLetovaElement));
     //na svaki let pojedinacno reagujemo iscrtavanjem

@@ -1,12 +1,4 @@
-import {
-    combineLatest,
-    fromEvent,
-    lastValueFrom,
-    map,
-    startWith,
-    tap,
-    withLatestFrom,
-} from "rxjs";
+import { combineLatest, fromEvent, map, startWith, withLatestFrom } from "rxjs";
 import { Kapaciteti } from "./Kapaciteti";
 import { Let } from "./Let";
 import { Rezervacija } from "./Rezervacija";
@@ -106,48 +98,48 @@ export class JednosmerniLet extends Let {
     public set kapacitetPrveKlase(value: number) {
         this._kapacitetPrveKlase = value;
     }
-    static odgovarajuciJednosmerniLetovi(
-        trazenaRezervacija: Rezervacija,
-        listaSvihLetova: JednosmerniLet[]
-    ): JednosmerniLet[] {
-        console.log(trazenaRezervacija);
-        console.log("tip karte je " + trazenaRezervacija.tipKlase);
-        const listaOdgovarajucihLetova: JednosmerniLet[] = [];
-        let dovoljnoMesta: boolean = false;
-        listaSvihLetova.forEach((l) => {
-            switch (trazenaRezervacija.tipKlase) {
-                case tipKlase.EKONOMSKA_KLASA:
-                    dovoljnoMesta =
-                        trazenaRezervacija.brojOsoba <=
-                        l.kapacitetEkonomskeKlase;
-                    break;
-                case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
-                    dovoljnoMesta =
-                        trazenaRezervacija.brojOsoba <=
-                        l.kapacitetPremijumEkonomskeKlase;
-                    break;
-                case tipKlase.BIZNIS_KLASA:
-                    dovoljnoMesta =
-                        trazenaRezervacija.brojOsoba <= l.kapacitetBiznisKlase;
-                    break;
-                case tipKlase.PRVA_KLASA:
-                    dovoljnoMesta =
-                        trazenaRezervacija.brojOsoba <= l.kapacitetPrveKlase;
-                    break;
-            }
-            if (
-                trazenaRezervacija.datumPolaska.getDate() ===
-                    l.datumPolaska.getDate() &&
-                trazenaRezervacija.polaziste === l.polaziste &&
-                trazenaRezervacija.odrediste === l.odrediste &&
-                dovoljnoMesta
-            ) {
-                listaOdgovarajucihLetova.push(l);
-            }
-        });
-        console.log(listaOdgovarajucihLetova);
-        return listaOdgovarajucihLetova;
-    }
+    // static odgovarajuciJednosmerniLetovi(
+    //     trazenaRezervacija: Rezervacija,
+    //     listaSvihLetova: JednosmerniLet[]
+    // ): JednosmerniLet[] {
+    //     console.log(trazenaRezervacija);
+    //     console.log("tip karte je " + trazenaRezervacija.tipKlase);
+    //     const listaOdgovarajucihLetova: JednosmerniLet[] = [];
+    //     let dovoljnoMesta: boolean = false;
+    //     listaSvihLetova.forEach((l) => {
+    //         switch (trazenaRezervacija.tipKlase) {
+    //             case tipKlase.EKONOMSKA_KLASA:
+    //                 dovoljnoMesta =
+    //                     trazenaRezervacija.brojOsoba <=
+    //                     l.kapacitetEkonomskeKlase;
+    //                 break;
+    //             case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
+    //                 dovoljnoMesta =
+    //                     trazenaRezervacija.brojOsoba <=
+    //                     l.kapacitetPremijumEkonomskeKlase;
+    //                 break;
+    //             case tipKlase.BIZNIS_KLASA:
+    //                 dovoljnoMesta =
+    //                     trazenaRezervacija.brojOsoba <= l.kapacitetBiznisKlase;
+    //                 break;
+    //             case tipKlase.PRVA_KLASA:
+    //                 dovoljnoMesta =
+    //                     trazenaRezervacija.brojOsoba <= l.kapacitetPrveKlase;
+    //                 break;
+    //         }
+    //         if (
+    //             trazenaRezervacija.datumPolaska.getDate() ===
+    //                 l.datumPolaska.getDate() &&
+    //             trazenaRezervacija.polaziste === l.polaziste &&
+    //             trazenaRezervacija.odrediste === l.odrediste &&
+    //             dovoljnoMesta
+    //         ) {
+    //             listaOdgovarajucihLetova.push(l);
+    //         }
+    //     });
+    //     console.log(listaOdgovarajucihLetova);
+    //     return listaOdgovarajucihLetova;
+    // }
     public override draw(parent: HTMLElement): void {
         const liElement = document.createElement("li");
         liElement.classList.add("let-jednosmerni");

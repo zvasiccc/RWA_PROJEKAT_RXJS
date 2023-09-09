@@ -1,86 +1,86 @@
 {
-    "gradovi": [
-        {
-            "name": "Beograd"
-        },
-        {
-            "name": "London"
-        },
-        {
-            "name": "Bec"
-        },
-        {
-            "name": "Cirih"
-        }
-    ],
-    "sviLetovi": [
-        {
-            "id": 1,
-            "polaziste": "Beograd",
-            "odrediste": "London",
-            "datumPolaska": "2023-09-22",
-            "vremePolaska": "08:30:00",
-            "vremeDolaska": "10:15:00",
-            "avioKompanija": "AirSerbia",
-            "cenaKarteEkonomskeKlase": 104,
-            "cenaKartePremijumEkonomskeKlase": 108,
-            "cenaKarteBiznisKlase": 120,
-            "cenaKartePrveKlase": 130,
-            "kapacitetEkonomskeKlase": 99,
-            "kapacitetBiznisKlase": 100,
-            "kapacitetPremijumEkonomskeKlase": 100,
-            "kapacitetPrveKlase": 100
-        },
-        {
-            "id": 2,
-            "polaziste": "Beograd",
-            "odrediste": "London",
-            "datumPolaska": "2023-09-22",
-            "vremePolaska": "03:00:00",
-            "vremeDolaska": "2023-09-22",
-            "avioKompanija": "TurkishAirline",
-            "cenaKarteEkonomskeKlase": 54,
-            "cenaKartePremijumEkonomskeKlase": 58,
-            "cenaKarteBiznisKlase": 60,
-            "cenaKartePrveKlase": 64,
-            "kapacitetEkonomskeKlase": 49,
-            "kapacitetBiznisKlase": 50,
-            "kapacitetPremijumEkonomskeKlase": 47,
-            "kapacitetPrveKlase": 50
-        },
-        {
-            "id": 3,
-            "polaziste": "London",
-            "odrediste": "Beograd",
-            "datumPolaska": "2023-09-23",
-            "vremePolaska": "11:35:00",
-            "vremeDolaska": "14:15:00",
-            "avioKompanija": "AirSerbia",
-            "cenaKarteEkonomskeKlase": 54,
-            "cenaKartePremijumEkonomskeKlase": 58,
-            "cenaKarteBiznisKlase": 60,
-            "cenaKartePrveKlase": 64,
-            "kapacitetEkonomskeKlase": 99,
-            "kapacitetBiznisKlase": 100,
-            "kapacitetPremijumEkonomskeKlase": 98,
-            "kapacitetPrveKlase": 99
-        },
-        {
-            "id": 4,
-            "polaziste": "Beograd",
-            "odrediste": "London",
-            "datumPolaska": "2023-09-22",
-            "vremePolaska": "09:15",
-            "vremeDolaska": "15:15",
-            "avioKompanija": "MontenegroAir",
-            "cenaKarteEkonomskeKlase": 54,
-            "cenaKartePremijumEkonomskeKlase": 58,
-            "cenaKarteBiznisKlase": 60,
-            "cenaKartePrveKlase": 64,
-            "kapacitetEkonomskeKlase": 47,
-            "kapacitetBiznisKlase": 15,
-            "kapacitetPremijumEkonomskeKlase": 45,
-            "kapacitetPrveKlase": 56
-        }
-    ]
+  "gradovi": [
+    {
+      "name": "Beograd"
+    },
+    {
+      "name": "London"
+    },
+    {
+      "name": "Bec"
+    },
+    {
+      "name": "Cirih"
+    }
+  ],
+  "sviLetovi": [
+    {
+      "id": 1,
+      "polaziste": "Beograd",
+      "odrediste": "London",
+      "datumPolaska": "2023-09-22",
+      "vremePolaska": "08:30:00",
+      "vremeDolaska": "10:15:00",
+      "avioKompanija": "AirSerbia",
+      "cenaKarteEkonomskeKlase": 104,
+      "cenaKartePremijumEkonomskeKlase": 108,
+      "cenaKarteBiznisKlase": 120,
+      "cenaKartePrveKlase": 130,
+      "kapacitetEkonomskeKlase": 98,
+      "kapacitetBiznisKlase": 100,
+      "kapacitetPremijumEkonomskeKlase": 100,
+      "kapacitetPrveKlase": 100
+    },
+    {
+      "id": 2,
+      "polaziste": "Beograd",
+      "odrediste": "London",
+      "datumPolaska": "2023-09-22",
+      "vremePolaska": "03:00:00",
+      "vremeDolaska": "2023-09-22",
+      "avioKompanija": "TurkishAirline",
+      "cenaKarteEkonomskeKlase": 54,
+      "cenaKartePremijumEkonomskeKlase": 58,
+      "cenaKarteBiznisKlase": 60,
+      "cenaKartePrveKlase": 64,
+      "kapacitetEkonomskeKlase": 49,
+      "kapacitetBiznisKlase": 50,
+      "kapacitetPremijumEkonomskeKlase": 47,
+      "kapacitetPrveKlase": 50
+    },
+    {
+      "id": 3,
+      "polaziste": "London",
+      "odrediste": "Beograd",
+      "datumPolaska": "2023-09-23",
+      "vremePolaska": "11:35:00",
+      "vremeDolaska": "14:15:00",
+      "avioKompanija": "AirSerbia",
+      "cenaKarteEkonomskeKlase": 54,
+      "cenaKartePremijumEkonomskeKlase": 58,
+      "cenaKarteBiznisKlase": 60,
+      "cenaKartePrveKlase": 64,
+      "kapacitetEkonomskeKlase": 99,
+      "kapacitetBiznisKlase": 100,
+      "kapacitetPremijumEkonomskeKlase": 98,
+      "kapacitetPrveKlase": 99
+    },
+    {
+      "id": 4,
+      "polaziste": "Beograd",
+      "odrediste": "London",
+      "datumPolaska": "2023-09-22",
+      "vremePolaska": "09:15",
+      "vremeDolaska": "15:15",
+      "avioKompanija": "MontenegroAir",
+      "cenaKarteEkonomskeKlase": 54,
+      "cenaKartePremijumEkonomskeKlase": 58,
+      "cenaKarteBiznisKlase": 60,
+      "cenaKartePrveKlase": 64,
+      "kapacitetEkonomskeKlase": 47,
+      "kapacitetBiznisKlase": 15,
+      "kapacitetPremijumEkonomskeKlase": 45,
+      "kapacitetPrveKlase": 56
+    }
+  ]
 }
