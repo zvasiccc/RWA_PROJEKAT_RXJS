@@ -1,12 +1,4 @@
-import {
-    Observable,
-    combineLatest,
-    fromEvent,
-    map,
-    startWith,
-    withLatestFrom,
-} from "rxjs";
-import { Let } from "./Let";
+import { Observable, fromEvent, map, startWith, withLatestFrom } from "rxjs";
 
 export class Nadgledanje {
     static nadgledajPovratnaKartaCheck(

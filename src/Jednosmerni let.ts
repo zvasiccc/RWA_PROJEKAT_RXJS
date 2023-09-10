@@ -99,52 +99,16 @@ export class JednosmerniLet extends Let {
     public set kapacitetPrveKlase(value: number) {
         this._kapacitetPrveKlase = value;
     }
-    // static odgovarajuciJednosmerniLetovi(
-    //     trazenaRezervacija: Rezervacija,
-    //     listaSvihLetova: JednosmerniLet[]
-    // ): JednosmerniLet[] {
-    //     console.log(trazenaRezervacija);
-    //     console.log("tip karte je " + trazenaRezervacija.tipKlase);
-    //     const listaOdgovarajucihLetova: JednosmerniLet[] = [];
-    //     let dovoljnoMesta: boolean = false;
-    //     listaSvihLetova.forEach((l) => {
-    //         switch (trazenaRezervacija.tipKlase) {
-    //             case tipKlase.EKONOMSKA_KLASA:
-    //                 dovoljnoMesta =
-    //                     trazenaRezervacija.brojOsoba <=
-    //                     l.kapacitetEkonomskeKlase;
-    //                 break;
-    //             case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
-    //                 dovoljnoMesta =
-    //                     trazenaRezervacija.brojOsoba <=
-    //                     l.kapacitetPremijumEkonomskeKlase;
-    //                 break;
-    //             case tipKlase.BIZNIS_KLASA:
-    //                 dovoljnoMesta =
-    //                     trazenaRezervacija.brojOsoba <= l.kapacitetBiznisKlase;
-    //                 break;
-    //             case tipKlase.PRVA_KLASA:
-    //                 dovoljnoMesta =
-    //                     trazenaRezervacija.brojOsoba <= l.kapacitetPrveKlase;
-    //                 break;
-    //         }
-    //         if (
-    //             trazenaRezervacija.datumPolaska.getDate() ===
-    //                 l.datumPolaska.getDate() &&
-    //             trazenaRezervacija.polaziste === l.polaziste &&
-    //             trazenaRezervacija.odrediste === l.odrediste &&
-    //             dovoljnoMesta
-    //         ) {
-    //             listaOdgovarajucihLetova.push(l);
-    //         }
-    //     });
-    //     console.log(listaOdgovarajucihLetova);
-    //     return listaOdgovarajucihLetova;
-    // }
+
     public override draw(parent: HTMLElement): void {
         const liElement = document.createElement("li");
         liElement.classList.add("let-jednosmerni");
-        liElement.innerHTML = this.jednosmerniLetToHTML() + this.dodaciToHTML();
+        liElement.innerHTML =
+            this.jednosmerniLetToHTML() +
+            this.dodaciToHTML(
+                "dugmeRezervisiJednosmerni",
+                "dugmeDetaljiJednosmernogLeta"
+            );
         parent.appendChild(liElement);
 
         const tipKlaseInput = document.getElementById(
@@ -164,50 +128,7 @@ export class JednosmerniLet extends Let {
             liElement,
             dugmeRezervisi
         );
-        // const tipoviKlase$ = fromEvent(tipKlaseInput, "change").pipe(
-        //     map(
-        //         (
-        //             p: InputEvent //p kad stigne je neki event ne znamo koji, specifiiramo odmah blize da je InputEvent
-        //         ) => (<HTMLInputElement>p.target).value
-        //     ),
-        //     // tap((p) => console.log(p)),
-        //     startWith(tipKlaseInput.value) //kad se napravi tok tipoviKlase$ da se izemituje tipKlaseInput.value
-        // );
-        // const tipoviKlase$ = Nadgledanje.nadgledajPromenuCene(tipKlaseInput);
-        // const brojOsobaInput = document.getElementById(
-        //     "brojOsoba"
-        // ) as HTMLInputElement;
-        // const brojOsoba$ = Nadgledanje.nadgledajPromenuCene(
-        //     brojOsobaInput
-        // ).pipe(map((value: string) => +value));
 
-        // let divCenaKarte = liElement.querySelector(".cenaKarte") as HTMLElement;
-        // Nadgledanje.ukombinuj(tipKlaseInput, brojOsobaInput).subscribe((p) => {
-        //     //ceka jedan od ova 2 dogadjaja da se desi i onda se okida
-        //     divCenaKarte.innerHTML = this.izracunajUkupnuCenuLeta(
-        //         p[0],
-        //         +p[1]
-        //     ).toString();
-        // });
-
-        // const dugmeRezervisi: HTMLButtonElement = liElement.querySelector(
-        //     ".dugmeRezervisiJednosmerni"
-        // );
-        // fromEvent(dugmeRezervisi, "click")
-        //     .pipe(
-        //         withLatestFrom(brojOsoba$), //pravi niz, prvi element je event a drugi je ta poslednja emitovana vrednost
-        //         withLatestFrom(tipoviKlase$),
-        //         //tok this.dugmeRezervisi se okida kada kliknemo to dugme i nama kada kliknemo dugme treba broj osoba i tip klase
-        //         // i sa ove dve withLatestFrom ubacujemo zadnje vrednosti od to u ovaj tok
-        //         //dodaje u objekat toka poslednju vrednost koja se emituje iz dogadjaja broj osoba i dog tipoviKlase
-        //         map((p) => ({
-        //             brojOsoba: p[0][1],
-        //             tipKlase: p[1], //da se lakse snadjemo izmapiramo
-        //         }))
-        //     )
-        //     .subscribe((p) => {
-        //         this.azurirajPodatkeOLetu(p.brojOsoba, p.tipKlase);
-        //     });
         const prozorDetaljiJednosmernogLeta = document.getElementById(
             "prozorDetaljiJednosmernogLeta"
         );
@@ -262,24 +183,7 @@ export class JednosmerniLet extends Let {
         </div>
         `;
     }
-    public dodaciToHTML(): string {
-        return `<div class="dodaci">
-         <button type="submit" class="dugmeRezervisiJednosmerni"
-        // data-id="${this.id}"
-        // data-polaziste="${this.polaziste}"
-        // data-odrediste="${this.odrediste}"
-        // data-datum-polaska="${this.datumPolaska}"
-        // data-kapacitet-ekonomske="${this.kapacitetEkonomskeKlase}"
-        // data-kapacitet-premijum-ekonomske="${this.kapacitetPremijumEkonomskeKlase}"
-        // data-kapacitet-biznis="${this.kapacitetBiznisKlase}"
-        // data-kapacitet-prve="${this.kapacitetPrveKlase}"
-        > Rezervisi </button>
-        <button type=submit" class="dugmeDetaljiJednosmernogLeta">Detalji</button>
-        <div class="cenaKarte">
-        0.0
-        <div>
-        </div>`;
-    }
+
     public izracunajUkupnuCenuLeta(
         tipKlaseParam: string,
         brojOsoba: number

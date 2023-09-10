@@ -1,9 +1,7 @@
-import { combineLatest, fromEvent, map, startWith, withLatestFrom } from "rxjs";
+import { fromEvent } from "rxjs";
 import { JednosmerniLet } from "./Jednosmerni let";
 import { Kapaciteti } from "./Kapaciteti";
 import { Let } from "./Let";
-import { Rezervacija } from "./Rezervacija";
-import { tipKlase } from "./TipKlaseEnum";
 
 export class PovratniLet extends Let {
     constructor(
@@ -12,69 +10,6 @@ export class PovratniLet extends Let {
     ) {
         super();
     }
-    // static odgovarajuciPovratniLetovi(
-    //     trazenaRezervacija: Rezervacija,
-    //     listaSvihLetova: JednosmerniLet[]
-    // ): PovratniLet[] {
-    //     const listaOdgovarajucihPovratnihLetova: PovratniLet[] = [];
-    //     listaSvihLetova.forEach((polazak) => {
-    //         listaSvihLetova.forEach((povratak) => {
-    //             if (polazak != povratak) {
-    //             }
-    //             //da ne proveravamo iste letove
-    //             let dovoljnoMesta = false;
-
-    //             switch (trazenaRezervacija.tipKlase) {
-    //                 case tipKlase.EKONOMSKA_KLASA:
-    //                     dovoljnoMesta =
-    //                         trazenaRezervacija.brojOsoba <=
-    //                             polazak.kapacitetEkonomskeKlase &&
-    //                         trazenaRezervacija.brojOsoba <=
-    //                             povratak.kapacitetEkonomskeKlase;
-    //                     break;
-    //                 case tipKlase.BIZNIS_KLASA:
-    //                     dovoljnoMesta =
-    //                         trazenaRezervacija.brojOsoba <=
-    //                             polazak.kapacitetBiznisKlase &&
-    //                         trazenaRezervacija.brojOsoba <=
-    //                             povratak.kapacitetBiznisKlase;
-    //                     break;
-    //                 case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
-    //                     dovoljnoMesta =
-    //                         trazenaRezervacija.brojOsoba <=
-    //                             polazak.kapacitetPremijumEkonomskeKlase &&
-    //                         trazenaRezervacija.brojOsoba <=
-    //                             povratak.kapacitetPremijumEkonomskeKlase;
-    //                     break;
-    //                 case tipKlase.PRVA_KLASA:
-    //                     dovoljnoMesta =
-    //                         trazenaRezervacija.brojOsoba <=
-    //                             polazak.kapacitetPrveKlase &&
-    //                         trazenaRezervacija.brojOsoba <=
-    //                             povratak.kapacitetPrveKlase;
-    //                     break;
-    //             }
-    //             if (
-    //                 trazenaRezervacija.datumPolaska.getDate() ===
-    //                     polazak.datumPolaska.getDate() &&
-    //                 trazenaRezervacija.polaziste === polazak.polaziste &&
-    //                 trazenaRezervacija.odrediste === polazak.odrediste &&
-    //                 trazenaRezervacija.datumPovratka.getDate() ===
-    //                     povratak.datumPolaska.getDate() &&
-    //                 trazenaRezervacija.odrediste === povratak.polaziste && //jer se krece sa kontra strane sad
-    //                 trazenaRezervacija.polaziste === povratak.odrediste &&
-    //                 dovoljnoMesta
-    //             ) {
-    //                 console.log("ispunjava");
-    //                 const noviPovratniLet = new PovratniLet(polazak, povratak);
-    //                 listaOdgovarajucihPovratnihLetova.push(noviPovratniLet);
-    //             } else {
-    //                 console.log("ene ispunjava uslov");
-    //             }
-    //         });
-    //     });
-    //     return listaOdgovarajucihPovratnihLetova;
-    // }
 
     public override draw(parent: HTMLElement): void {
         const liElement = document.createElement("li");
@@ -87,10 +22,13 @@ export class PovratniLet extends Let {
             <br>
             </div>
             <div>
-            ${this.dodaciToHTML()}
+            ${this.dodaciToHTML(
+                "dugmeRezervisiPovratni",
+                "dugmeDetaljiPovratnogLeta"
+            )}
             </div>
         `;
-        // Dodajte li element u listu
+        // dodajem li element u listu elemenata
         parent.appendChild(liElement);
         const tipKlaseInput = document.getElementById(
             "tipKlase"
@@ -108,47 +46,7 @@ export class PovratniLet extends Let {
             liElement,
             dugmeRezervisi
         );
-        // const tipoviKlase$ = fromEvent(tipKlaseInput, "change").pipe(
-        //     map(
-        //         (
-        //             p: InputEvent //p kad stigne je neki event ne znamo koji, specifiiramo odmah blize da je InputEvent
-        //         ) => (<HTMLInputElement>p.target).value
-        //     ),
-        //     // tap((p) => console.log(p)),
-        //     startWith(tipKlaseInput.value) //kad se napravi tok tipoviKlase$ da se izemituje tipKlaseInput.value
-        // );
-        // const brojOsoba$ = fromEvent(brojOsobaInput, "change").pipe(
-        //     map((p: InputEvent) => +(<HTMLInputElement>p.target).value),
-        //     // tap((p) => console.log(p)),
-        //     startWith(+brojOsobaInput.value)
-        // );
-        // let divCenaKarte = liElement.querySelector(".cenaKarte") as HTMLElement;
-        // combineLatest(tipoviKlase$, brojOsoba$).subscribe((p) => {
-        //     //ceka jedan od ova 2 dogadjaja da se desi i onda se okida
-        //     divCenaKarte.innerHTML = this.izracunajUkupnuCenuLeta(
-        //         p[0],
-        //         +p[1]
-        //     ).toString();
-        // });
 
-        // const dugmeRezervisi: HTMLButtonElement = liElement.querySelector(
-        //     ".dugmeRezervisiPovratni"
-        // );
-        // fromEvent(dugmeRezervisi, "click")
-        //     .pipe(
-        //         withLatestFrom(brojOsoba$), //pravi niz, prvi element je event a drugi je ta poslednja emitovana vrednost
-        //         withLatestFrom(tipoviKlase$),
-        //         //tok this.dugmeRezervisi se okida kada kliknemo to dugme i nama kada kliknemo dugme treba broj osoba i tip klase
-        //         // i sa ove dve withLatestFrom ubacujemo zadnje vrednosti od to u ovaj tok
-        //         //dodaje u objekat toka poslednju vrednost koja se emituje iz dogadjaja broj osoba i dog tipoviKlase
-        //         map((p) => ({
-        //             brojOsoba: p[0][1],
-        //             tipKlase: p[1], //da se lakse snadjemo izmapiramo
-        //         }))
-        //     )
-        //     .subscribe((p) => {
-        //         this.azurirajPodatkeOLetu(p.brojOsoba, p.tipKlase);
-        //     });
         const prozorDetaljiPovratnogLeta = document.getElementById(
             "prozorDetaljiPovratnogLeta"
         );
@@ -198,30 +96,7 @@ export class PovratniLet extends Let {
         );
         Let.azurirajLetJson(avionIdPovratak.toString(), kapaciteti);
     }
-    public dodaciToHTML(): string {
-        return `<div class="dodaci">
-         <button type="submit" class="dugmeRezervisiPovratni"
-        // data-id-polazak="${this.polazak.id}"
-        // data-id-povratak="${this.povratak.id}"
-        // data-polaziste="${this.polazak.polaziste}"
-        // data-odrediste="${this.polazak.odrediste}"
-        // data-datum-polaska="${this.polazak.datumPolaska}"
-        // data-datum-povratka="${this.povratak.datumPolaska}"
-        // data-kapacitet-ekonomske-polazak="${this.polazak.kapacitetEkonomskeKlase}"
-        // data-kapacitet-premijum-ekonomske-polazak="${this.polazak.kapacitetPremijumEkonomskeKlase}"
-        // data-kapacitet-biznis-polazak="${this.polazak.kapacitetBiznisKlase}"
-        // data-kapacitet-prve-polazak="${this.polazak.kapacitetPrveKlase}"
-        // data-kapacitet-ekonomske-povratak="${this.povratak.kapacitetEkonomskeKlase}"
-        // data-kapacitet-premijum-ekonomske-povratak="${this.povratak.kapacitetPremijumEkonomskeKlase}"
-        // data-kapacitet-biznis-povratak="${this.povratak.kapacitetBiznisKlase}"
-        // data-kapacitet-prve-povratak="${this.povratak.kapacitetPrveKlase}"
-        > Rezervisi </button>
-        <button type=submit" class="dugmeDetaljiPovratnogLeta">Detalji</button>
-        <div class="cenaKarte">
-        0.0
-        <div>
-        </div>`;
-    }
+
     public izracunajUkupnuCenuLeta(
         tipKlaseParam: string,
         brojOsoba: number

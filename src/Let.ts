@@ -86,7 +86,19 @@ export abstract class Let {
         }
         return kapaciteti;
     }
-    protected abstract dodaciToHTML(): string;
+    protected dodaciToHTML(
+        imeDugmeRezervisi: string,
+        imeDugmeDetalji: string
+    ): string {
+        return `<div class="dodaci">
+             <button type="submit" class=${imeDugmeRezervisi}
+            > Rezervisi </button>
+            <button type=submit" class=${imeDugmeDetalji}>Detalji</button>
+            <div class="cenaKarte">
+            0.0
+            <div>
+            </div>`;
+    }
     protected abstract izracunajUkupnuCenuLeta(
         tipKlaseParam: string,
         brojOsoba: number
