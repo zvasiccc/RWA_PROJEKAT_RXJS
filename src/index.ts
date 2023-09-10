@@ -20,6 +20,8 @@ import { Let } from "./Let";
 import { tipKlase } from "./TipKlaseEnum";
 import { Autocomplete } from "./Autocomplete";
 import { Nadgledanje } from "./Nadgledanje";
+import { NadgledanjeAutocomplete } from "./NadgledanjeAutocomplete";
+import { PribavljanjePodataka } from "./PribavljanjePodataka";
 fromEvent(document, "DOMContentLoaded").subscribe(() => {
     const polazisteInput = document.getElementById(
         "polaziste"
@@ -89,48 +91,47 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
         }&odrediste=${
             rezervacija.odrediste
         }&${trazeniTipKlase}_gte=${rezervacija.brojOsoba.toString()}&_limit=${brojLetovaPoStranici}&_page=${pageIndex}`;
-        return (
-            fromFetch(url)
-                // pravi observable od fetcha, tj pravimo tok na koji mozemo da se pretplatimo
-                .pipe(
-                    //u pipe se ubacuju operatori
-                    concatMap((response) => {
-                        if (response.ok) {
-                            return response.json();
-                        } else {
-                            throw Error("Failed to fetch level");
-                        }
-                        //sa toka responsova se prebacujemo na tok objekta nekih, odnosno ne koristimo vise ceo response
-                        //nego samo nas json iz responsa, tj body responsa
-                    }),
-                    map((data) => <any[]>data), //prvo kazemo da je niz any objekata, nije niz LEt objekata zbog new Date koje koristimo, on dobija string onako
-                    //                    switchMap((data) => from(data)), //from od niza pravi tok elemenata
-                    map(
-                        //sad l predstavlja any trenutno, i sad cemo da napravimo nase Let objekte
-                        (p) =>
-                            p.map(
-                                (l) =>
-                                    new JednosmerniLet(
-                                        l.id,
-                                        l.polaziste,
-                                        l.odrediste,
-                                        new Date(l.datumPolaska),
-                                        l.vremePolaska,
-                                        l.vremeDolaska,
-                                        l.avioKompanija,
-                                        l.cenaKarteEkonomskeKlase,
-                                        l.cenaKartePremijumEkonomskeKlase,
-                                        l.cenaKarteBiznisKlase,
-                                        l.cenaKartePrveKlase,
-                                        l.kapacitetEkonomskeKlase,
-                                        l.kapacitetPremijumEkonomskeKlase,
-                                        l.kapacitetBiznisKlase,
-                                        l.kapacitetPrveKlase
-                                    )
-                            )
-                    )
-                )
-        );
+        return PribavljanjePodataka.odgovarajuciLetovi(url);
+        // fromFetch(url)
+        //     // pravi observable od fetcha, tj pravimo tok na koji mozemo da se pretplatimo
+        //     .pipe(
+        //         //u pipe se ubacuju operatori
+        //         concatMap((response) => {
+        //             if (response.ok) {
+        //                 return response.json();
+        //             } else {
+        //                 throw Error("Failed to fetch level");
+        //             }
+        //             //sa toka responsova se prebacujemo na tok objekta nekih, odnosno ne koristimo vise ceo response
+        //             //nego samo nas json iz responsa, tj body responsa
+        //         }),
+        //         map((data) => <any[]>data), //prvo kazemo da je niz any objekata, nije niz LEt objekata zbog new Date koje koristimo, on dobija string onako
+        //         //                    switchMap((data) => from(data)), //from od niza pravi tok elemenata
+        //         map(
+        //             //sad l predstavlja any trenutno, i sad cemo da napravimo nase Let objekte
+        //             (p) =>
+        //                 p.map(
+        //                     (l) =>
+        //                         new JednosmerniLet(
+        //                             l.id,
+        //                             l.polaziste,
+        //                             l.odrediste,
+        //                             new Date(l.datumPolaska),
+        //                             l.vremePolaska,
+        //                             l.vremeDolaska,
+        //                             l.avioKompanija,
+        //                             l.cenaKarteEkonomskeKlase,
+        //                             l.cenaKartePremijumEkonomskeKlase,
+        //                             l.cenaKarteBiznisKlase,
+        //                             l.cenaKartePrveKlase,
+        //                             l.kapacitetEkonomskeKlase,
+        //                             l.kapacitetPremijumEkonomskeKlase,
+        //                             l.kapacitetBiznisKlase,
+        //                             l.kapacitetPrveKlase
+        //                         )
+        //                 )
+        //         )
+        //     );
     }
     Autocomplete.napraviAutocompletePolja(
         polazisteInput,
