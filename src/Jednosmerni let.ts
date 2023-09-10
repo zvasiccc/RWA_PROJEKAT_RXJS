@@ -154,8 +154,16 @@ export class JednosmerniLet extends Let {
         const brojOsobaInput = document.getElementById(
             "brojOsoba"
         ) as HTMLInputElement;
+        const dugmeRezervisi: HTMLButtonElement = liElement.querySelector(
+            ".dugmeRezervisiJednosmerni"
+        );
 
-        this.rezervisiLet(tipKlaseInput, brojOsobaInput, liElement);
+        this.rezervisiLet(
+            tipKlaseInput,
+            brojOsobaInput,
+            liElement,
+            dugmeRezervisi
+        );
         // const tipoviKlase$ = fromEvent(tipKlaseInput, "change").pipe(
         //     map(
         //         (

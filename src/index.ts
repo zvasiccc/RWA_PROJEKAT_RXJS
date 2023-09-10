@@ -61,7 +61,7 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
         "zameniPolazisteIOdrediste"
     );
     const dugmePretragaLetova = document.getElementById("dugmePretragaLetova");
-
+    //TODO zasto se menja kod povratnih letova kapacitet biznis i premijum ekonomske
     const dugmeUCitajVise = document.getElementById("dugmeUcitajViseLetova");
     let indeksStranice: number = 1;
     const listaLetovaElement = document.getElementById("listaLetova");

@@ -99,48 +99,56 @@ export class PovratniLet extends Let {
         const brojOsobaInput = document.getElementById(
             "brojOsoba"
         ) as HTMLInputElement;
-        const tipoviKlase$ = fromEvent(tipKlaseInput, "change").pipe(
-            map(
-                (
-                    p: InputEvent //p kad stigne je neki event ne znamo koji, specifiiramo odmah blize da je InputEvent
-                ) => (<HTMLInputElement>p.target).value
-            ),
-            // tap((p) => console.log(p)),
-            startWith(tipKlaseInput.value) //kad se napravi tok tipoviKlase$ da se izemituje tipKlaseInput.value
-        );
-        //TODO pozvati funkciju iz Let za racunanje!
-        const brojOsoba$ = fromEvent(brojOsobaInput, "change").pipe(
-            map((p: InputEvent) => +(<HTMLInputElement>p.target).value),
-            // tap((p) => console.log(p)),
-            startWith(+brojOsobaInput.value)
-        );
-        let divCenaKarte = liElement.querySelector(".cenaKarte") as HTMLElement;
-        combineLatest(tipoviKlase$, brojOsoba$).subscribe((p) => {
-            //ceka jedan od ova 2 dogadjaja da se desi i onda se okida
-            divCenaKarte.innerHTML = this.izracunajUkupnuCenuLeta(
-                p[0],
-                +p[1]
-            ).toString();
-        });
-
         const dugmeRezervisi: HTMLButtonElement = liElement.querySelector(
             ".dugmeRezervisiPovratni"
         );
-        fromEvent(dugmeRezervisi, "click")
-            .pipe(
-                withLatestFrom(brojOsoba$), //pravi niz, prvi element je event a drugi je ta poslednja emitovana vrednost
-                withLatestFrom(tipoviKlase$),
-                //tok this.dugmeRezervisi se okida kada kliknemo to dugme i nama kada kliknemo dugme treba broj osoba i tip klase
-                // i sa ove dve withLatestFrom ubacujemo zadnje vrednosti od to u ovaj tok
-                //dodaje u objekat toka poslednju vrednost koja se emituje iz dogadjaja broj osoba i dog tipoviKlase
-                map((p) => ({
-                    brojOsoba: p[0][1],
-                    tipKlase: p[1], //da se lakse snadjemo izmapiramo
-                }))
-            )
-            .subscribe((p) => {
-                this.azurirajPodatkeOLetu(p.brojOsoba, p.tipKlase);
-            });
+        this.rezervisiLet(
+            tipKlaseInput,
+            brojOsobaInput,
+            liElement,
+            dugmeRezervisi
+        );
+        // const tipoviKlase$ = fromEvent(tipKlaseInput, "change").pipe(
+        //     map(
+        //         (
+        //             p: InputEvent //p kad stigne je neki event ne znamo koji, specifiiramo odmah blize da je InputEvent
+        //         ) => (<HTMLInputElement>p.target).value
+        //     ),
+        //     // tap((p) => console.log(p)),
+        //     startWith(tipKlaseInput.value) //kad se napravi tok tipoviKlase$ da se izemituje tipKlaseInput.value
+        // );
+        // const brojOsoba$ = fromEvent(brojOsobaInput, "change").pipe(
+        //     map((p: InputEvent) => +(<HTMLInputElement>p.target).value),
+        //     // tap((p) => console.log(p)),
+        //     startWith(+brojOsobaInput.value)
+        // );
+        // let divCenaKarte = liElement.querySelector(".cenaKarte") as HTMLElement;
+        // combineLatest(tipoviKlase$, brojOsoba$).subscribe((p) => {
+        //     //ceka jedan od ova 2 dogadjaja da se desi i onda se okida
+        //     divCenaKarte.innerHTML = this.izracunajUkupnuCenuLeta(
+        //         p[0],
+        //         +p[1]
+        //     ).toString();
+        // });
+
+        // const dugmeRezervisi: HTMLButtonElement = liElement.querySelector(
+        //     ".dugmeRezervisiPovratni"
+        // );
+        // fromEvent(dugmeRezervisi, "click")
+        //     .pipe(
+        //         withLatestFrom(brojOsoba$), //pravi niz, prvi element je event a drugi je ta poslednja emitovana vrednost
+        //         withLatestFrom(tipoviKlase$),
+        //         //tok this.dugmeRezervisi se okida kada kliknemo to dugme i nama kada kliknemo dugme treba broj osoba i tip klase
+        //         // i sa ove dve withLatestFrom ubacujemo zadnje vrednosti od to u ovaj tok
+        //         //dodaje u objekat toka poslednju vrednost koja se emituje iz dogadjaja broj osoba i dog tipoviKlase
+        //         map((p) => ({
+        //             brojOsoba: p[0][1],
+        //             tipKlase: p[1], //da se lakse snadjemo izmapiramo
+        //         }))
+        //     )
+        //     .subscribe((p) => {
+        //         this.azurirajPodatkeOLetu(p.brojOsoba, p.tipKlase);
+        //     });
         const prozorDetaljiPovratnogLeta = document.getElementById(
             "prozorDetaljiPovratnogLeta"
         );
@@ -178,10 +186,8 @@ export class PovratniLet extends Let {
         Let.azurirajLetJson(avionIdPolazak.toString(), kapaciteti);
         kapaciteti.kapacitetEkonomskeKlase =
             this.povratak.kapacitetEkonomskeKlase;
-
         kapaciteti.kapacitetPremijumEkonomskeKlase =
             this.povratak.kapacitetPremijumEkonomskeKlase;
-
         kapaciteti.kapacitetBiznisKlase = this.povratak.kapacitetBiznisKlase;
         kapaciteti.kapacitetPrveKlase = this.povratak.kapacitetPrveKlase;
 
@@ -228,36 +234,6 @@ export class PovratniLet extends Let {
                 )) *
             0.8
         );
-        // let ukupnaCena: number = 0;
-        // console.log(this);
-        // switch (tipKlaseParam) {
-        //     case tipKlase.EKONOMSKA_KLASA:
-        //         ukupnaCena =
-        //             (brojOsoba * this.polazak.cenaKarteEkonomskeKlase +
-        //                 brojOsoba * this.povratak.cenaKarteEkonomskeKlase) *
-        //             0.9;
-        //         break;
-        //     case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
-        //         ukupnaCena =
-        //             (brojOsoba * this.polazak.cenaKartePremijumEkonomskeKlase +
-        //                 brojOsoba *
-        //                     this.povratak.cenaKartePremijumEkonomskeKlase) *
-        //             0.9;
-        //         break;
-        //     case tipKlase.BIZNIS_KLASA:
-        //         ukupnaCena =
-        //             (brojOsoba * this.polazak.cenaKarteBiznisKlase +
-        //                 brojOsoba * this.povratak.cenaKarteBiznisKlase) *
-        //             0.9;
-        //         break;
-        //     case tipKlase.PRVA_KLASA:
-        //         ukupnaCena =
-        //             (brojOsoba * this.polazak.cenaKartePrveKlase +
-        //                 brojOsoba * this.povratak.cenaKartePrveKlase) *
-        //             0.9;
-        //         break;
-        // }
-        // return ukupnaCena;
     }
     public prikaziDetaljeLeta(prozorDetaljiLeta: HTMLElement) {
         const detaljiBrojPolaznogLeta = document.getElementById(

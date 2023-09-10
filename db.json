@@ -26,10 +26,10 @@
       "cenaKartePremijumEkonomskeKlase": 108,
       "cenaKarteBiznisKlase": 120,
       "cenaKartePrveKlase": 130,
-      "kapacitetEkonomskeKlase": 30,
+      "kapacitetEkonomskeKlase": 29,
       "kapacitetBiznisKlase": 30,
-      "kapacitetPremijumEkonomskeKlase": 27,
-      "kapacitetPrveKlase": 29
+      "kapacitetPremijumEkonomskeKlase": 26,
+      "kapacitetPrveKlase": 28
     },
     {
       "id": 2,
@@ -60,10 +60,10 @@
       "cenaKartePremijumEkonomskeKlase": 58,
       "cenaKarteBiznisKlase": 60,
       "cenaKartePrveKlase": 64,
-      "kapacitetEkonomskeKlase": 30,
+      "kapacitetEkonomskeKlase": 29,
       "kapacitetBiznisKlase": 30,
-      "kapacitetPremijumEkonomskeKlase": 27,
-      "kapacitetPrveKlase": 29
+      "kapacitetPremijumEkonomskeKlase": 26,
+      "kapacitetPrveKlase": 28
     },
     {
       "id": 4,
@@ -80,7 +80,7 @@
       "kapacitetEkonomskeKlase": 47,
       "kapacitetBiznisKlase": 15,
       "kapacitetPremijumEkonomskeKlase": 45,
-      "kapacitetPrveKlase": 56
+      "kapacitetPrveKlase": 50
     }
   ]
 }

@@ -1,4 +1,12 @@
-import { Observable, combineLatest, fromEvent, map, startWith } from "rxjs";
+import {
+    Observable,
+    combineLatest,
+    fromEvent,
+    map,
+    startWith,
+    withLatestFrom,
+} from "rxjs";
+import { Let } from "./Let";
 
 export class Nadgledanje {
     static nadgledajPovratnaKartaCheck(
@@ -41,13 +49,22 @@ export class Nadgledanje {
             startWith(tipKlaseInput.value) //kad se napravi tok tipoviKlase$ da se izemituje tipKlaseInput.value
         );
     }
-    static ukombinuj(
-        tipKlaseInput: HTMLInputElement,
-        brojOsobaInput: HTMLInputElement
+
+    static nadgledajDugmeRezervisi(
+        tipoviKlase$: Observable<string>,
+        brojOsoba$: Observable<number>,
+        dugmeRezervisi: HTMLButtonElement
     ) {
-        return combineLatest(
-            this.nadgledajPromenuCene(tipKlaseInput),
-            this.nadgledajPromenuCene(brojOsobaInput)
+        return fromEvent(dugmeRezervisi, "click").pipe(
+            withLatestFrom(brojOsoba$), //pravi niz, prvi element je event a drugi je ta poslednja emitovana vrednost
+            withLatestFrom(tipoviKlase$),
+            //tok this.dugmeRezervisi se okida kada kliknemo to dugme i nama kada kliknemo dugme treba broj osoba i tip klase
+            // i sa ove dve withLatestFrom ubacujemo zadnje vrednosti od to u ovaj tok
+            //dodaje u objekat toka poslednju vrednost koja se emituje iz dogadjaja broj osoba i dog tipoviKlase
+            map((p) => ({
+                brojOsoba: p[0][1],
+                tipKlase: p[1], //da se lakse snadjemo izmapiramo
+            }))
         );
     }
 }
