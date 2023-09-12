@@ -1,4 +1,4 @@
-import { debounceTime, fromEvent } from "rxjs";
+import { debounceTime, filter, fromEvent, map } from "rxjs";
 import { PribavljanjePodataka } from "./PribavljanjePodataka";
 
 export class NadgledanjeAutocomplete {
@@ -6,24 +6,31 @@ export class NadgledanjeAutocomplete {
         poljeInput: HTMLInputElement,
         listaPredlogaZaPolje: HTMLElement
     ) {
-        fromEvent(listaPredlogaZaPolje, "click").subscribe((event) => {
-            if (event.target instanceof HTMLElement) {
-                // dodajemo click listener na listu predloga
-                const izabraniGrad = event.target.textContent;
+        fromEvent(listaPredlogaZaPolje, "click")
+            .pipe(
+                filter((event: Event) => event.target instanceof HTMLElement),
+                map((event: Event) => (event.target as HTMLElement).textContent)
+            )
+            .subscribe((izabraniGrad: string) => {
                 poljeInput.value = izabraniGrad;
                 listaPredlogaZaPolje.style.display = "none";
-            }
-        });
+            });
     }
     static nadgledajKlikVanListePredloga(
         poljeInput: HTMLInputElement,
         listaPredlogaZaPolje: HTMLElement
     ) {
-        document.addEventListener("click", (e) => {
-            if (e.target !== poljeInput && e.target !== listaPredlogaZaPolje) {
+        fromEvent(document, "click")
+            .pipe(
+                filter(
+                    (e: Event) =>
+                        e.target !== poljeInput &&
+                        e.target !== listaPredlogaZaPolje
+                )
+            )
+            .subscribe(() => {
                 listaPredlogaZaPolje.style.display = "none";
-            }
-        });
+            });
     }
     static nadgledajUnosGrada(
         poljeInput: HTMLInputElement,
@@ -41,7 +48,15 @@ export class NadgledanjeAutocomplete {
                     PribavljanjePodataka.predloziGradova(
                         uneseniTekst,
                         listaPredlogaZaPolje
-                    );
+                    ).subscribe((gradovi) => {
+                        listaPredlogaZaPolje.innerHTML = "";
+                        gradovi.forEach((grad) => {
+                            const listItem = document.createElement("li");
+                            listItem.textContent = grad.name;
+                            listaPredlogaZaPolje.appendChild(listItem);
+                        });
+                        listaPredlogaZaPolje.style.display = "block";
+                    });
                 } catch (err) {
                     console.log(err);
                 }

@@ -1,6 +1,5 @@
 import { JednosmerniLet } from "./Jednosmerni let";
 import { Rezervacija } from "./Rezervacija";
-import { fromFetch } from "rxjs/fetch";
 import {
     switchMap,
     from,
@@ -46,30 +45,28 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
     const datumPovratkaInput = document.getElementById(
         "datumPovratka"
     ) as HTMLInputElement;
-
     const brojOsobaInput = document.getElementById(
         "brojOsoba"
     ) as HTMLInputElement;
     const tipKlaseInput = document.getElementById(
         "tipKlase"
     ) as HTMLInputElement;
-
     const povratnaKartaInput = document.getElementById(
         "povratnaKarta"
     ) as HTMLInputElement;
-
     const dugmeZameniPolazisteIOdrediste = document.getElementById(
         "zameniPolazisteIOdrediste"
     );
     const dugmePretragaLetova = document.getElementById("dugmePretragaLetova");
     //TODO zasto se menja kod povratnih letova kapacitet biznis i premijum ekonomske
     const dugmeUCitajVise = document.getElementById("dugmeUcitajViseLetova");
-    let indeksStranice: number = 1;
     const listaLetovaElement = document.getElementById("listaLetova");
+    let indeksStranice: number = 1;
+
     function pribaviNekeLetove(
         rezervacija: Rezervacija,
-        brojLetovaPoStranici: number,
-        pageIndex: number
+        brojLetovaPoStranici: number = undefined,
+        pageIndex: number = undefined
     ): Observable<JednosmerniLet[]> {
         let trazeniTipKlase = "";
         switch (rezervacija.tipKlase) {
@@ -86,52 +83,15 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
                 trazeniTipKlase = "kapacitetPrveKlase";
                 break;
         }
-        const url = `http://localhost:3000/sviLetovi?polaziste=${
+        let url = `http://localhost:3000/sviLetovi?polaziste=${
             rezervacija.polaziste
         }&odrediste=${
             rezervacija.odrediste
-        }&${trazeniTipKlase}_gte=${rezervacija.brojOsoba.toString()}&_limit=${brojLetovaPoStranici}&_page=${pageIndex}`;
+        }&${trazeniTipKlase}_gte=${rezervacija.brojOsoba.toString()}`;
+
+        if (brojLetovaPoStranici !== undefined && pageIndex !== undefined)
+            url += `&_limit=${brojLetovaPoStranici}&_page=${pageIndex}`;
         return PribavljanjePodataka.odgovarajuciLetovi(url);
-        // fromFetch(url)
-        //     // pravi observable od fetcha, tj pravimo tok na koji mozemo da se pretplatimo
-        //     .pipe(
-        //         //u pipe se ubacuju operatori
-        //         concatMap((response) => {
-        //             if (response.ok) {
-        //                 return response.json();
-        //             } else {
-        //                 throw Error("Failed to fetch level");
-        //             }
-        //             //sa toka responsova se prebacujemo na tok objekta nekih, odnosno ne koristimo vise ceo response
-        //             //nego samo nas json iz responsa, tj body responsa
-        //         }),
-        //         map((data) => <any[]>data), //prvo kazemo da je niz any objekata, nije niz LEt objekata zbog new Date koje koristimo, on dobija string onako
-        //         //                    switchMap((data) => from(data)), //from od niza pravi tok elemenata
-        //         map(
-        //             //sad l predstavlja any trenutno, i sad cemo da napravimo nase Let objekte
-        //             (p) =>
-        //                 p.map(
-        //                     (l) =>
-        //                         new JednosmerniLet(
-        //                             l.id,
-        //                             l.polaziste,
-        //                             l.odrediste,
-        //                             new Date(l.datumPolaska),
-        //                             l.vremePolaska,
-        //                             l.vremeDolaska,
-        //                             l.avioKompanija,
-        //                             l.cenaKarteEkonomskeKlase,
-        //                             l.cenaKartePremijumEkonomskeKlase,
-        //                             l.cenaKarteBiznisKlase,
-        //                             l.cenaKartePrveKlase,
-        //                             l.kapacitetEkonomskeKlase,
-        //                             l.kapacitetPremijumEkonomskeKlase,
-        //                             l.kapacitetBiznisKlase,
-        //                             l.kapacitetPrveKlase
-        //                         )
-        //                 )
-        //         )
-        //     );
     }
     Autocomplete.napraviAutocompletePolja(
         polazisteInput,
@@ -189,7 +149,6 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
         //nekad kad se sledeci put klikne
         //switch map ako krene jedan a naidje drugi, on prekdia prvi i nastavlja drugi
         //exhaust map ako je prvi u toku, drugi iskulira samo
-
         share()
     );
     odlazniLetoviFetch$.subscribe((p) => p); //ne emituje bez ovoga
@@ -208,7 +167,7 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
                     povratnaKartaInput.checked
                 )
         ),
-        concatMap((rez) => pribaviNekeLetove(rez, 1, indeksStranice)),
+        concatMap((rez) => pribaviNekeLetove(rez)),
         //da je obican map dobili bi observable od observable od jednosmerni let a sad je samo obresvale od jednosmerni
         //pretragaRequest$ je emitovalo klikovi misa, mi smo to izmapirali na rezervaciju, znaci svaki put kad se klikne pretraaga se pravi nova rezervacija
         // a sa concat map se od toka rezervacija prebcujemo na tok  nizom jednosmernih letova

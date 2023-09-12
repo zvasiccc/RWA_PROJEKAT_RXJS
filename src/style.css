@@ -5,18 +5,18 @@ body {
 .header {
     background-color: red;
 }
+
 .container {
     background-color: #3737c6;
     display: flex;
     flex-wrap: wrap;
-
     justify-content: space-between;
 }
 .form-row {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between; /* Rasporedi elemente ravnomerno */
-    margin: 100px;
+    justify-content: space-around; /* Rasporedi elemente ravnomerno */
+    margin: 200px;
 }
 .form-group {
     flex: 1;
@@ -25,6 +25,9 @@ body {
 button {
     align-self: flex-end; /* Postavi dugme na desni kraj */
     margin-top: 10px; /* Dodaj razmak iznad dugmeta */
+}
+ul#listaLetova {
+    width: 100%;
 }
 .let-jednosmerni {
     display: flex;
@@ -40,6 +43,7 @@ button {
 /* Stilovi za naslove atributa unutar <li> stavke */
 .let-jednosmerni > strong {
     font-weight: bold; /* Podešavanje debljine fonta za naslove atributa */
+    width: 100%;
 }
 .let-jednosmerni > span {
     margin-left: 5px;
@@ -48,6 +52,10 @@ button {
 }
 li.let-povratni {
     display: flex;
+}
+li.let-jednosmerni {
+    display: flex;
+    margin-right: 30px;
 }
 .let-povratni {
     border: 5px solid black;
@@ -103,4 +111,16 @@ li.let-povratni {
 
 .suggestions li:hover {
     background-color: #c5c1c1;
+}
+div.cenaKarte {
+    font-size: large;
+    font-weight: bold;
+}
+.dodaci {
+    margin-left: 10%;
+}
+button#dugmeUcitajViseLetova {
+    font-size: large;
+    border-radius: 10px;
+    margin-right: 50%;
 }

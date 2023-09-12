@@ -17,7 +17,6 @@ export class Autocomplete {
             poljeInput,
             listaPredlogaZaPolje
         );
-
         NadgledanjeAutocomplete.nadgledajKlikVanListePredloga(
             poljeInput,
             listaPredlogaZaPolje

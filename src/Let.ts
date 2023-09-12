@@ -2,11 +2,14 @@ import { combineLatest, fromEvent, map, switchMap, withLatestFrom } from "rxjs";
 import { fromFetch } from "rxjs/fetch";
 import { Kapaciteti } from "./Kapaciteti";
 import { tipKlase } from "./TipKlaseEnum";
-import { JednosmerniLet } from "./Jednosmerni let";
 import { Nadgledanje } from "./Nadgledanje";
 
 export abstract class Let {
     public abstract draw(parent: HTMLElement): void;
+    protected abstract izracunajUkupnuCenuLeta(
+        tipKlaseParam: string,
+        brojOsoba: number
+    ): number;
 
     public static prikaziLetove(listaLetova: Let[]): void {
         const listaLetovaElement = document.getElementById("listaLetova");
@@ -50,6 +53,10 @@ export abstract class Let {
                 .subscribe(
                     (response) => {
                         if (response.ok) {
+                            alert(
+                                "azuriraj let json " +
+                                    kapaciteti.kapacitetBiznisKlase
+                            );
                             console.log("uspesno azurirano");
                         } else {
                             throw new Error("Neuspješno ažuriranje kapaciteta");
@@ -84,6 +91,7 @@ export abstract class Let {
             default:
                 break;
         }
+        alert("izracunaj nove kapacitete" + kapaciteti.kapacitetBiznisKlase);
         return kapaciteti;
     }
     protected dodaciToHTML(
@@ -99,10 +107,7 @@ export abstract class Let {
             <div>
             </div>`;
     }
-    protected abstract izracunajUkupnuCenuLeta(
-        tipKlaseParam: string,
-        brojOsoba: number
-    ): number;
+
     public prikaziProzor(prozorDetaljiLeta: HTMLElement) {
         if (prozorDetaljiLeta) {
             prozorDetaljiLeta.classList.add("prikazi");
@@ -133,10 +138,8 @@ export abstract class Let {
 
         combineLatest(tipoviKlase$, brojOsoba$).subscribe((p) => {
             //ceka jedan od ova 2 dogadjaja da se desi i onda se okida
-            divCenaKarte.innerHTML = this.izracunajUkupnuCenuLeta(
-                p[0],
-                +p[1]
-            ).toString();
+            divCenaKarte.innerHTML =
+                this.izracunajUkupnuCenuLeta(p[0], +p[1]).toString() + " €";
         });
         Nadgledanje.nadgledajDugmeRezervisi(
             tipoviKlase$,

@@ -117,13 +117,32 @@ export class PovratniLet extends Let {
         const detaljiDatumPolaska = document.getElementById(
             "detaljiDatumPolaskaPovratnogLeta"
         );
+        const vremePolaskaOdlaznogLeta = document.getElementById(
+            "detaljiVremePolaskaOdlaznogPovratnogLeta"
+        );
+        const vremeDolaskaOdlaznogLeta = document.getElementById(
+            "detaljiVremeDolaskaOdlaznogPovratnogLeta"
+        );
+        const vremePolaskaDolaznogLeta = document.getElementById(
+            "detaljiVremePolaskaDolaznogPovratnogLeta"
+        );
+        const vremeDolaskaDolaznogLeta = document.getElementById(
+            "detaljiVremeDolaskaDolaznogPovratnogLeta"
+        );
         const detaljiDatumPovratka = document.getElementById(
             "detaljiDatumPovratkaPovratnogLeta"
         );
         detaljiBrojPolaznogLeta.textContent = this.polazak.id.toString();
-        detaljiDatumPolaska.textContent = this.polazak.datumPolaska.toString();
-        detaljiDatumPovratka.textContent =
-            this.povratak.datumPolaska.toString();
+        detaljiDatumPolaska.textContent = this.polazak.datumPolaska
+            .toLocaleDateString()
+            .toString();
+        detaljiDatumPovratka.textContent = this.povratak.datumPolaska
+            .toLocaleDateString()
+            .toString();
+        vremePolaskaOdlaznogLeta.textContent = this.polazak.vremePolaska;
+        vremeDolaskaOdlaznogLeta.textContent = this.polazak.vremeDolaska;
+        vremePolaskaDolaznogLeta.textContent = this.polazak.vremePolaska;
+        vremeDolaskaDolaznogLeta.textContent = this.polazak.vremeDolaska;
         //TODO pozovi 2 fje za 2 povratna leta, ovde se ne crta
         this.prikaziProzor(prozorDetaljiLeta);
     }

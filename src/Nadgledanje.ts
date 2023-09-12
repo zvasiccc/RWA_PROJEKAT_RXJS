@@ -1,26 +1,40 @@
 import {
     Observable,
-    debounceTime,
+    filter,
     fromEvent,
     map,
     startWith,
     withLatestFrom,
 } from "rxjs";
-import { PribavljanjePodataka } from "./PribavljanjePodataka";
 
 export class Nadgledanje {
     static nadgledajPovratnaKartaCheck(
         povratnaKartaInput: HTMLInputElement,
         datumPovratkaInput: HTMLInputElement
     ) {
-        fromEvent(povratnaKartaInput, "change").subscribe((event) => {
-            if (povratnaKartaInput.checked) {
-                datumPovratkaInput.disabled = false;
-            } else {
-                datumPovratkaInput.disabled = true;
-                datumPovratkaInput.value = "";
-            }
-        });
+        // fromEvent(povratnaKartaInput, "change").subscribe((event) => {
+        //     if (povratnaKartaInput.checked) {
+        //         datumPovratkaInput.disabled = false;
+        //     } else {
+        //         datumPovratkaInput.disabled = true;
+        //         datumPovratkaInput.value = "";
+        //     }
+        // });
+        fromEvent(povratnaKartaInput, "change")
+            .pipe(
+                filter(
+                    (event: Event) => (event.target as HTMLInputElement).checked
+                )
+            )
+            .subscribe(
+                () => {
+                    datumPovratkaInput.disabled = false; //kad je cekirano
+                },
+                () => {
+                    datumPovratkaInput.disabled = true; //kad nije cekirano
+                    datumPovratkaInput.value = "";
+                }
+            );
     }
     static nadgledajdugmeZameniPolazisteIOdrediste(
         dugmeZameniPolazisteIOdrediste: HTMLElement,
@@ -30,6 +44,7 @@ export class Nadgledanje {
         {
             fromEvent(dugmeZameniPolazisteIOdrediste, "click").subscribe(
                 (event) => {
+                    event.preventDefault(); //bez ovoga se opet ucita stranica
                     const trenutnoPolaziste = polazisteInput.value;
                     const trenutnoOdrediste = odredisteInput.value;
                     polazisteInput.value = trenutnoOdrediste;

@@ -110,7 +110,6 @@ export class JednosmerniLet extends Let {
                 "dugmeDetaljiJednosmernogLeta"
             );
         parent.appendChild(liElement);
-
         const tipKlaseInput = document.getElementById(
             "tipKlase"
         ) as HTMLInputElement;
@@ -148,7 +147,6 @@ export class JednosmerniLet extends Let {
 
     public azurirajPodatkeOLetu(brojOsoba: number, tipKlase: string) {
         const avionId = this.id;
-        alert("id aviona je " + avionId);
         let kapaciteti = new Kapaciteti();
         kapaciteti.kapacitetEkonomskeKlase = this.kapacitetEkonomskeKlase;
         kapaciteti.kapacitetPremijumEkonomskeKlase =
@@ -161,6 +159,7 @@ export class JednosmerniLet extends Let {
             tipKlase,
             kapaciteti
         );
+        alert("azuriraj podatke o letu" + kapaciteti.kapacitetBiznisKlase);
         Let.azurirajLetJson(avionId.toString(), kapaciteti);
     }
 
@@ -169,11 +168,8 @@ export class JednosmerniLet extends Let {
         <div class="let-jednosmerni">
         <strong>Polazište:</strong> <span> ${this.polaziste} </span><br>
         <strong>Odredište:</strong> <span> ${this.odrediste} </span><br>
-        <strong>Datum polaska:</strong> <span> ${
-            this.datumPolaska
-            // ? l.datumPolaska.toLocaleDateString()
-            // : " N/A"
-        } </span><br>
+        <strong>Vreme polaska:</strong> <span> ${this.vremePolaska} </span><br>
+        <strong>Vreme dolaska:</strong> <span> ${this.vremeDolaska} </span><br>
         <strong>Kapacitet:</strong> <span> ${
             this.kapacitetEkonomskeKlase +
             this.kapacitetPremijumEkonomskeKlase +
@@ -211,9 +207,19 @@ export class JednosmerniLet extends Let {
         const detaljiDatumPolaska = document.getElementById(
             "detaljiDatumPolaskaJednosmernogLeta"
         );
+        const detaljiVremePolaska = document.getElementById(
+            "detaljiVremePolaskaJednosmernogLeta"
+        );
+        const detaljiVremeDolaska = document.getElementById(
+            "detaljiVremeDolaskaJednosmernogLeta"
+        );
         detaljiBrojLeta.textContent = this.id.toString();
-        detaljiDatumPolaska.textContent = this.datumPolaska.toString();
+        detaljiDatumPolaska.textContent = this.datumPolaska
+            .toLocaleDateString()
+            .toString();
         this.prikaziProzor(prozorDetaljiLeta);
+        detaljiVremePolaska.textContent = this.vremePolaska;
+        detaljiVremeDolaska.textContent = this.vremeDolaska;
     }
     public prikaziProzor(prozorDetaljiLeta: HTMLElement) {
         return super.prikaziProzor(prozorDetaljiLeta);
