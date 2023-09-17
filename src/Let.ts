@@ -1,19 +1,77 @@
-import { combineLatest, map, switchMap } from "rxjs";
+import { combineLatest, fromEvent, map, switchMap } from "rxjs";
 import { fromFetch } from "rxjs/fetch";
 import { Kapaciteti } from "./Kapaciteti";
 import { nadgledajDugmeRezervisi, nadgledajPromenuCene } from "./Nadgledanje";
 import { tipKlase } from "./TipKlaseEnum";
 
 export abstract class Let {
-    public abstract draw(parent: HTMLElement): void;
-    protected abstract izracunajUkupnuCenuLeta(
+    public draw(parent: HTMLElement) {
+        const liElement = document.createElement("li");
+        this.getHTML(liElement);
+        liElement.innerHTML += `
+            <div>
+                ${this.dodaciToHTML()}
+            </div>
+        `;
+        parent.appendChild(liElement);
+        const tipKlaseInput = document.getElementById(
+            "tipKlase"
+        ) as HTMLInputElement;
+
+        const brojOsobaInput = document.getElementById(
+            "brojOsoba"
+        ) as HTMLInputElement;
+        const dugmeRezervisi: HTMLButtonElement =
+            liElement.querySelector(".dugme-rezervisi");
+        const prozorDetaljiJednosmernogLeta = document.getElementById(
+            "prozorDetaljiJednosmernogLeta"
+        );
+        const dugmeDetaljiLeta: HTMLButtonElement =
+            liElement.querySelector(".dugme-detalji");
+        const dugmeZatvoriProzor = document.getElementById(
+            "dugmeZatvoriProzorJednosmernogLeta"
+        );
+        this.rezervisanje(
+            tipKlaseInput,
+            brojOsobaInput,
+            liElement,
+            dugmeRezervisi
+        );
+
+        fromEvent(dugmeDetaljiLeta, "click").subscribe(() => {
+            this.prikaziDetaljeLeta(prozorDetaljiJednosmernogLeta);
+        });
+
+        fromEvent(dugmeZatvoriProzor, "click").subscribe(() => {
+            this.zatvoriProzor(prozorDetaljiJednosmernogLeta);
+        });
+    }
+
+    private dodaciToHTML(): string {
+        return `<div class="dodaci">
+             <button type="submit" class="dugme-rezervisi"
+            > Rezervisi </button>
+            <button type=submit" class="dugme-detalji">Detalji</button>
+            <div class="cenaKarte">
+            0.0
+            <div>
+            </div>`;
+    }
+
+    protected abstract getHTML(liElement: HTMLElement): void;
+
+    public abstract izracunajUkupnuCenuLeta(
         tipKlaseParam: string,
         brojOsoba: number
     ): number;
-    public abstract azurirajPodatkeOLetu(
+
+    protected abstract prikaziDetaljeLeta(prozorDetaljiLeta: HTMLElement): void;
+
+    protected abstract azurirajPodatkeOLetu(
         brojOsoba: number,
         tipKlase: string
     ): void;
+
     public static prikaziLetove(listaLetova: Let[]): void {
         const listaLetovaElement = document.getElementById("listaLetova");
         listaLetovaElement.innerHTML = "";
@@ -92,19 +150,7 @@ export abstract class Let {
         }
         return kapaciteti;
     }
-    protected dodaciToHTML(
-        imeDugmeRezervisi: string,
-        imeDugmeDetalji: string
-    ): string {
-        return `<div class="dodaci">
-             <button type="submit" class=${imeDugmeRezervisi}
-            > Rezervisi </button>
-            <button type=submit" class=${imeDugmeDetalji}>Detalji</button>
-            <div class="cenaKarte">
-            0.0
-            <div>
-            </div>`;
-    }
+
     public rezervisanje(
         tipKlaseInput: HTMLInputElement,
         brojOsobaInput: HTMLInputElement,
@@ -131,12 +177,13 @@ export abstract class Let {
         });
     }
 
-    public prikaziProzor(prozorDetaljiLeta: HTMLElement) {
+    protected prikaziProzor(prozorDetaljiLeta: HTMLElement) {
         if (prozorDetaljiLeta) {
             prozorDetaljiLeta.classList.add("prikazi");
         }
     }
-    public zatvoriProzor(prozorDetaljiLeta: HTMLElement) {
+
+    protected zatvoriProzor(prozorDetaljiLeta: HTMLElement) {
         if (prozorDetaljiLeta) {
             prozorDetaljiLeta.classList.remove("prikazi");
         }

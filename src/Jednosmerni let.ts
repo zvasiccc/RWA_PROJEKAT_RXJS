@@ -1,4 +1,3 @@
-import { fromEvent } from "rxjs";
 import { Kapaciteti } from "./Kapaciteti";
 import { Let } from "./Let";
 import { tipKlase } from "./TipKlaseEnum";
@@ -98,52 +97,58 @@ export class JednosmerniLet extends Let {
         this._kapacitetPrveKlase = value;
     }
 
-    public override draw(parent: HTMLElement): void {
-        const liElement = document.createElement("li");
+    protected override getHTML(liElement: HTMLElement): void {
         liElement.classList.add("let-jednosmerni");
-        liElement.innerHTML =
-            this.jednosmerniLetToHTML() +
-            this.dodaciToHTML(
-                "dugmeRezervisiJednosmerni",
-                "dugmeDetaljiJednosmernogLeta"
-            );
-        parent.appendChild(liElement);
-        const tipKlaseInput = document.getElementById(
-            "tipKlase"
-        ) as HTMLInputElement;
-
-        const brojOsobaInput = document.getElementById(
-            "brojOsoba"
-        ) as HTMLInputElement;
-        const dugmeRezervisi: HTMLButtonElement = liElement.querySelector(
-            ".dugmeRezervisiJednosmerni"
-        );
-        const prozorDetaljiJednosmernogLeta = document.getElementById(
-            "prozorDetaljiJednosmernogLeta"
-        );
-        const dugmeDetaljiLeta: HTMLButtonElement = liElement.querySelector(
-            ".dugmeDetaljiJednosmernogLeta"
-        );
-        const dugmeZatvoriProzor = document.getElementById(
-            "dugmeZatvoriProzorJednosmernogLeta"
-        );
-        this.rezervisanje(
-            tipKlaseInput,
-            brojOsobaInput,
-            liElement,
-            dugmeRezervisi
-        );
-
-        fromEvent(dugmeDetaljiLeta, "click").subscribe(() => {
-            this.prikaziDetaljeLeta(prozorDetaljiJednosmernogLeta);
-        });
-
-        fromEvent(dugmeZatvoriProzor, "click").subscribe(() => {
-            this.zatvoriProzor(prozorDetaljiJednosmernogLeta);
-        });
+        liElement.innerHTML = this.jednosmerniLetToHTML();
     }
 
-    public azurirajPodatkeOLetu(brojOsoba: number, tipKlase: string) {
+    public override izracunajUkupnuCenuLeta(
+        tipKlaseParam: string,
+        brojOsoba: number
+    ): number {
+        let ukupnaCena: number = 0;
+        console.log(this);
+        switch (tipKlaseParam) {
+            case tipKlase.EKONOMSKA_KLASA:
+                ukupnaCena = brojOsoba * this.cenaKarteEkonomskeKlase;
+                break;
+            case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
+                ukupnaCena = brojOsoba * this.cenaKartePremijumEkonomskeKlase;
+                break;
+            case tipKlase.BIZNIS_KLASA:
+                ukupnaCena = brojOsoba * this.cenaKarteBiznisKlase;
+                break;
+            case tipKlase.PRVA_KLASA:
+                ukupnaCena = brojOsoba * this.cenaKartePrveKlase;
+                break;
+        }
+        return ukupnaCena;
+    }
+
+    protected override prikaziDetaljeLeta(prozorDetaljiLeta: HTMLElement) {
+        const detaljiBrojLeta = document.getElementById("detaljiBrojLeta");
+        const detaljiDatumPolaska = document.getElementById(
+            "detaljiDatumPolaskaJednosmernogLeta"
+        );
+        const detaljiVremePolaska = document.getElementById(
+            "detaljiVremePolaskaJednosmernogLeta"
+        );
+        const detaljiVremeDolaska = document.getElementById(
+            "detaljiVremeDolaskaJednosmernogLeta"
+        );
+        detaljiBrojLeta.textContent = this.id.toString();
+        detaljiDatumPolaska.textContent = this.datumPolaska
+            .toLocaleDateString()
+            .toString();
+        this.prikaziProzor(prozorDetaljiLeta);
+        detaljiVremePolaska.textContent = this.vremePolaska;
+        detaljiVremeDolaska.textContent = this.vremeDolaska;
+    }
+
+    protected override azurirajPodatkeOLetu(
+        brojOsoba: number,
+        tipKlase: string
+    ) {
         const avionId = this.id;
         let kapaciteti = new Kapaciteti();
         kapaciteti.kapacitetEkonomskeKlase = this.kapacitetEkonomskeKlase;
@@ -174,53 +179,5 @@ export class JednosmerniLet extends Let {
         } </span>
         </div>
         `;
-    }
-
-    public izracunajUkupnuCenuLeta(
-        tipKlaseParam: string,
-        brojOsoba: number
-    ): number {
-        let ukupnaCena: number = 0;
-        console.log(this);
-        switch (tipKlaseParam) {
-            case tipKlase.EKONOMSKA_KLASA:
-                ukupnaCena = brojOsoba * this.cenaKarteEkonomskeKlase;
-                break;
-            case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
-                ukupnaCena = brojOsoba * this.cenaKartePremijumEkonomskeKlase;
-                break;
-            case tipKlase.BIZNIS_KLASA:
-                ukupnaCena = brojOsoba * this.cenaKarteBiznisKlase;
-                break;
-            case tipKlase.PRVA_KLASA:
-                ukupnaCena = brojOsoba * this.cenaKartePrveKlase;
-                break;
-        }
-        return ukupnaCena;
-    }
-    public prikaziDetaljeLeta(prozorDetaljiLeta: HTMLElement) {
-        const detaljiBrojLeta = document.getElementById("detaljiBrojLeta");
-        const detaljiDatumPolaska = document.getElementById(
-            "detaljiDatumPolaskaJednosmernogLeta"
-        );
-        const detaljiVremePolaska = document.getElementById(
-            "detaljiVremePolaskaJednosmernogLeta"
-        );
-        const detaljiVremeDolaska = document.getElementById(
-            "detaljiVremeDolaskaJednosmernogLeta"
-        );
-        detaljiBrojLeta.textContent = this.id.toString();
-        detaljiDatumPolaska.textContent = this.datumPolaska
-            .toLocaleDateString()
-            .toString();
-        this.prikaziProzor(prozorDetaljiLeta);
-        detaljiVremePolaska.textContent = this.vremePolaska;
-        detaljiVremeDolaska.textContent = this.vremeDolaska;
-    }
-    public prikaziProzor(prozorDetaljiLeta: HTMLElement) {
-        return super.prikaziProzor(prozorDetaljiLeta);
-    }
-    public zatvoriProzor(prozorDetaljiLeta: HTMLElement): void {
-        return super.zatvoriProzor(prozorDetaljiLeta);
     }
 }
