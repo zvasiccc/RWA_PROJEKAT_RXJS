@@ -1,8 +1,8 @@
-import { combineLatest, fromEvent, map, switchMap, withLatestFrom } from "rxjs";
+import { combineLatest, map, switchMap } from "rxjs";
 import { fromFetch } from "rxjs/fetch";
 import { Kapaciteti } from "./Kapaciteti";
+import { nadgledajDugmeRezervisi, nadgledajPromenuCene } from "./Nadgledanje";
 import { tipKlase } from "./TipKlaseEnum";
-import { Nadgledanje } from "./Nadgledanje";
 
 export abstract class Let {
     public abstract draw(parent: HTMLElement): void;
@@ -56,10 +56,6 @@ export abstract class Let {
                 .subscribe(
                     (response) => {
                         if (response.ok) {
-                            alert(
-                                "azuriraj let json " +
-                                    kapaciteti.kapacitetBiznisKlase
-                            );
                             console.log("uspesno azurirano");
                         } else {
                             throw new Error("Neuspješno ažuriranje kapaciteta");
@@ -94,7 +90,6 @@ export abstract class Let {
             default:
                 break;
         }
-        alert("izracunaj nove kapacitete" + kapaciteti.kapacitetBiznisKlase);
         return kapaciteti;
     }
     protected dodaciToHTML(
@@ -116,17 +111,18 @@ export abstract class Let {
         liElement: HTMLLIElement,
         dugmeRezervisi: HTMLButtonElement
     ) {
-        const tipoviKlase$ = Nadgledanje.nadgledajPromenuCene(tipKlaseInput);
-        const brojOsoba$ = Nadgledanje.nadgledajPromenuCene(
-            brojOsobaInput
-        ).pipe(map((value: string) => +value));
+        const tipoviKlase$ = nadgledajPromenuCene(tipKlaseInput);
+        const brojOsoba$ = nadgledajPromenuCene(brojOsobaInput).pipe(
+            map((value: string) => +value)
+        );
         let divCenaKarte = liElement.querySelector(".cenaKarte") as HTMLElement;
         combineLatest(tipoviKlase$, brojOsoba$).subscribe((p) => {
-            //ceka jedan od ova 2 dogadjaja da se desi i onda se okida
+            //kad se jedan promeni odmah se okida i koristi staru vrednost drugog, zip npr ceka oba da se promene
+            //a merge bi pomesalo i ne bi mogli da kopristimo p[0]i p[1]
             divCenaKarte.innerHTML =
                 this.izracunajUkupnuCenuLeta(p[0], +p[1]).toString() + " €";
         });
-        Nadgledanje.nadgledajDugmeRezervisi(
+        nadgledajDugmeRezervisi(
             tipoviKlase$,
             brojOsoba$,
             dugmeRezervisi

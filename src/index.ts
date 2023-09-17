@@ -1,26 +1,27 @@
-import { JednosmerniLet } from "./Jednosmerni let";
+import {
+    concatMap,
+    filter,
+    from,
+    fromEvent,
+    map,
+    merge,
+    share,
+    switchMap,
+    tap,
+    withLatestFrom,
+    zip,
+} from "rxjs";
+import { napraviAutocompletePolja } from "./Autocomplete";
+import { PovratniLet } from "./Povratni let";
+
 import { Rezervacija } from "./Rezervacija";
 import {
-    switchMap,
-    from,
-    map,
-    tap,
-    fromEvent,
-    filter,
-    merge,
-    concatMap,
-    Observable,
-    zip,
-    share,
-    withLatestFrom,
-} from "rxjs";
-import { PovratniLet } from "./Povratni let";
+    subToPovratnaKartaCheck,
+    subToZamenaPolazisteIOdrediste,
+} from "./Nadgledanje";
 import { Let } from "./Let";
-import { tipKlase } from "./TipKlaseEnum";
-import { Autocomplete } from "./Autocomplete";
-import { Nadgledanje } from "./Nadgledanje";
-import { NadgledanjeAutocomplete } from "./NadgledanjeAutocomplete";
-import { PribavljanjePodataka } from "./PribavljanjePodataka";
+import { pribaviNekeLetove } from "./PribavljanjePodataka";
+//TODO da nisu sve static nego moze export function
 fromEvent(document, "DOMContentLoaded").subscribe(() => {
     const polazisteInput = document.getElementById(
         "polaziste"
@@ -63,19 +64,10 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
     const listaLetovaElement = document.getElementById("listaLetova");
     let indeksStranice: number = 1;
 
-    Autocomplete.napraviAutocompletePolja(
-        polazisteInput,
-        predloziListaPolaziste
-    );
-    Autocomplete.napraviAutocompletePolja(
-        odredisteInput,
-        predloziListaOdrediste
-    );
-    Nadgledanje.nadgledajPovratnaKartaCheck(
-        povratnaKartaInput,
-        datumPovratkaInput
-    );
-    Nadgledanje.nadgledajdugmeZameniPolazisteIOdrediste(
+    napraviAutocompletePolja(polazisteInput, predloziListaPolaziste);
+    napraviAutocompletePolja(odredisteInput, predloziListaOdrediste);
+    subToPovratnaKartaCheck(povratnaKartaInput, datumPovratkaInput);
+    subToZamenaPolazisteIOdrediste(
         dugmeZameniPolazisteIOdrediste,
         polazisteInput,
         odredisteInput
@@ -89,10 +81,9 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
             dugmeUCitajVise.removeAttribute("hidden");
             listaLetovaElement.innerHTML = "";
         }),
-        share() //ako se vise puta pretplatyim na tok, bez share bi emitovao vise puta, i onda jedan subscribe bi reagovao vise puta
-        //na dogadjaj na koji je vec reagovao, ovako sa share reaguje samo jednom, posto se vise puta subsribeujemo na pretragaRequest
+        share() //ako se vise puta pretplatyim na tok, bez share bi emitovao vise puta odnosno emitovao bi se jednom za svaki subscribe,
+        //znaci ako imam 3 subscribea jedan klik bi se emitovao 3 puta, a ovako se emituje jednom a mi imamo 3 subsicribea na jedan event
     );
-
     const ucitajJosRequest$ = fromEvent(dugmeUCitajVise, "click").pipe(
         tap(() => indeksStranice++),
         share()
@@ -113,14 +104,8 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
                     povratnaKartaInput.checked
                 )
         ),
-        concatMap((rez) =>
-            PribavljanjePodataka.pribaviNekeLetove(rez, 1, indeksStranice)
-        ),
-        //merge map kako koji tok dodje on ih mesa
-        //concat map saceka da se zavrsi prvi tok i onda krece sa drugim tokom, znaci ovde ceka da se svi letovi izemituju pa onda krece na sledeci tok
-        //nekad kad se sledeci put klikne
-        //switch map ako krene jedan a naidje drugi, on prekdia prvi i nastavlja drugi
-        //exhaust map ako je prvi u toku, drugi iskulira samo
+        concatMap((rez) => pribaviNekeLetove(rez, 1, indeksStranice)),
+        //TODO da nije hardkodirano da se ucitava samo po 1 let nego npr po 3
         share()
     );
     odlazniLetoviFetch$.subscribe((p) => p); //ne emituje bez ovoga
@@ -139,7 +124,7 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
                     povratnaKartaInput.checked
                 )
         ),
-        concatMap((rez) => PribavljanjePodataka.pribaviNekeLetove(rez)),
+        concatMap((rez) => pribaviNekeLetove(rez)),
         //da je obican map dobili bi observable od observable od jednosmerni let a sad je samo obresvale od jednosmerni
         //pretragaRequest$ je emitovalo klikovi misa, mi smo to izmapirali na rezervaciju, znaci svaki put kad se klikne pretraaga se pravi nova rezervacija
         // a sa concat map se od toka rezervacija prebcujemo na tok  nizom jednosmernih letova
@@ -149,9 +134,9 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
     );
     dolazniLetoviFetch$.subscribe((p) => p);
 
-    const jednosmerniLet$ = pretragaRequest$.pipe(
+    const jednosmerniLet$ = odlazniLetoviFetch$.pipe(
         filter(() => !povratnaKartaInput.checked),
-        switchMap(() => odlazniLetoviFetch$), //odlazniLetoviFetch je vec mergovano izmedju pretragaRequest i ucitaj jos Request, i prebacimo se na taj tok
+        //odlazniLetoviFetch je vec mergovano izmedju pretragaRequest i ucitaj jos Request, i prebacimo se na taj tok
         map((p) => <Let[]>p) //zbog polimorfizma da bude tipa Let da bi mogli da ga ukombinujemo sa povratnim letom
     );
 

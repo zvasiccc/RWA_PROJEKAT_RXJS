@@ -1,9 +1,7 @@
-import { combineLatest, fromEvent, map, startWith, withLatestFrom } from "rxjs";
+import { fromEvent } from "rxjs";
 import { Kapaciteti } from "./Kapaciteti";
 import { Let } from "./Let";
-import { Rezervacija } from "./Rezervacija";
 import { tipKlase } from "./TipKlaseEnum";
-import { Nadgledanje } from "./Nadgledanje";
 
 export class JednosmerniLet extends Let {
     constructor(
