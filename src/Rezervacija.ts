@@ -35,29 +35,4 @@ export class Rezervacija {
     public get povratnaKarta(): boolean {
         return this._povratnaKarta;
     }
-    // polaziste: string {
-    //     return this.polaziste;
-    // }
-
-    // odrediste: string {
-    //     return this.odrediste;
-    // }
-
-    // getDatumPolaska(): Date {
-    //     return this.datumPolaska;
-    // }
-
-    // getDatumPovratka(): Date {
-    //     return this.datumPovratka;
-    // }
-
-    // brojOsoba: number {
-    //     return this.brojOsoba;
-    // }
-    // tipKlase: string {
-    //     return this.tipKlase;
-    // }
-    // getPovratnaKarta(): boolean {
-    //     return this.povratnaKarta;
-    // }
 }

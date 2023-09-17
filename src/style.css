@@ -52,20 +52,40 @@ ul#listaLetova {
 }
 li.let-povratni {
     display: flex;
+    flex-direction: row;
+    justify-content: center;
+    list-style-type: none; /* Ukloni tačke ili brojeve ispred stavki */
+    margin-bottom: 20px; /* Dodaj razmak između stavki */
+    padding: 10px; /* Dodaj unutarnji prostor oko svake stavke */
+    background-color: purple; /* Boja pozadine stavki */
+    border: 1px solid #ccc; /* Dodaj ivicu oko svake stavke */
+    border-radius: 5px; /* Zaobljeni rubovi */
 }
-li.let-jednosmerni {
-    display: flex;
-    margin-right: 30px;
+
+/* Stilovi za naslove atributa unutar <li> stavke za povratni let */
+li.let-povratni > strong {
+    font-weight: bold; /* Podešavanje debljine fonta za naslove atributa */
+    width: 100%;
 }
-.let-povratni {
-    border: 5px solid black;
-    background-color: aqua;
-}
-.let-povratni > span {
+
+/* Stilovi za ikonu za povratni let */
+li.let-povratni > span {
     margin-left: 5px;
     margin-right: 20px;
-    background-color: red;
+    background-color: #1b6da8;
 }
+
+/* Stilovi za cijenu povratnog leta */
+li.let-povratni > div.cenaKarte {
+    font-size: large;
+    font-weight: bold;
+}
+
+/* Stilovi za dodatke povratnog leta */
+li.let-povratni > div.dodaci {
+    margin-left: 10%;
+}
+
 #prozorDetaljiJednosmernogLeta,
 #prozorDetaljiPovratnogLeta {
     display: none;

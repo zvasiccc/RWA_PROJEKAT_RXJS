@@ -120,26 +120,26 @@ export class JednosmerniLet extends Let {
         const dugmeRezervisi: HTMLButtonElement = liElement.querySelector(
             ".dugmeRezervisiJednosmerni"
         );
-
-        this.rezervisiLet(
-            tipKlaseInput,
-            brojOsobaInput,
-            liElement,
-            dugmeRezervisi
-        );
-
         const prozorDetaljiJednosmernogLeta = document.getElementById(
             "prozorDetaljiJednosmernogLeta"
         );
         const dugmeDetaljiLeta: HTMLButtonElement = liElement.querySelector(
             ".dugmeDetaljiJednosmernogLeta"
         );
-        fromEvent(dugmeDetaljiLeta, "click").subscribe(() => {
-            this.prikaziDetaljeLeta(prozorDetaljiJednosmernogLeta);
-        });
         const dugmeZatvoriProzor = document.getElementById(
             "dugmeZatvoriProzorJednosmernogLeta"
         );
+        this.rezervisanje(
+            tipKlaseInput,
+            brojOsobaInput,
+            liElement,
+            dugmeRezervisi
+        );
+
+        fromEvent(dugmeDetaljiLeta, "click").subscribe(() => {
+            this.prikaziDetaljeLeta(prozorDetaljiJednosmernogLeta);
+        });
+
         fromEvent(dugmeZatvoriProzor, "click").subscribe(() => {
             this.zatvoriProzor(prozorDetaljiJednosmernogLeta);
         });
@@ -153,13 +153,11 @@ export class JednosmerniLet extends Let {
             this.kapacitetPremijumEkonomskeKlase;
         kapaciteti.kapacitetBiznisKlase = this.kapacitetBiznisKlase;
         kapaciteti.kapacitetPrveKlase = this.kapacitetPrveKlase;
-
         kapaciteti = Let.izracunajNoveKapaciteteLeta(
             brojOsoba,
             tipKlase,
             kapaciteti
         );
-        alert("azuriraj podatke o letu" + kapaciteti.kapacitetBiznisKlase);
         Let.azurirajLetJson(avionId.toString(), kapaciteti);
     }
 

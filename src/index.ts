@@ -63,36 +63,6 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
     const listaLetovaElement = document.getElementById("listaLetova");
     let indeksStranice: number = 1;
 
-    function pribaviNekeLetove(
-        rezervacija: Rezervacija,
-        brojLetovaPoStranici: number = undefined,
-        pageIndex: number = undefined
-    ): Observable<JednosmerniLet[]> {
-        let trazeniTipKlase = "";
-        switch (rezervacija.tipKlase) {
-            case tipKlase.EKONOMSKA_KLASA:
-                trazeniTipKlase = "kapacitetEkonomskeKlase";
-                break;
-            case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
-                trazeniTipKlase = "kapacitetPremijumEkonomskeKlase";
-                break;
-            case tipKlase.BIZNIS_KLASA:
-                trazeniTipKlase = "kapacitetBiznisKlase";
-                break;
-            case tipKlase.PRVA_KLASA:
-                trazeniTipKlase = "kapacitetPrveKlase";
-                break;
-        }
-        let url = `http://localhost:3000/sviLetovi?polaziste=${
-            rezervacija.polaziste
-        }&odrediste=${
-            rezervacija.odrediste
-        }&${trazeniTipKlase}_gte=${rezervacija.brojOsoba.toString()}`;
-
-        if (brojLetovaPoStranici !== undefined && pageIndex !== undefined)
-            url += `&_limit=${brojLetovaPoStranici}&_page=${pageIndex}`;
-        return PribavljanjePodataka.odgovarajuciLetovi(url);
-    }
     Autocomplete.napraviAutocompletePolja(
         polazisteInput,
         predloziListaPolaziste
@@ -143,7 +113,9 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
                     povratnaKartaInput.checked
                 )
         ),
-        concatMap((rez) => pribaviNekeLetove(rez, 1, indeksStranice)),
+        concatMap((rez) =>
+            PribavljanjePodataka.pribaviNekeLetove(rez, 1, indeksStranice)
+        ),
         //merge map kako koji tok dodje on ih mesa
         //concat map saceka da se zavrsi prvi tok i onda krece sa drugim tokom, znaci ovde ceka da se svi letovi izemituju pa onda krece na sledeci tok
         //nekad kad se sledeci put klikne
@@ -153,7 +125,7 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
     );
     odlazniLetoviFetch$.subscribe((p) => p); //ne emituje bez ovoga
     const dolazniLetoviFetch$ = pretragaRequest$.pipe(
-        //zato sto za dolazne letove nemamo stranicenje, nego sve pribavljamo odmah kada se klikne pretraga
+        //zato sto za dolazne letove nemamo ucitaj vise, nego sve pribavljamo odmah kada se klikne pretraga
         filter(() => povratnaKartaInput.checked), //odnosno ovde emituje svaki dogadjaj samo ako je cekirano, ako nije dolazniLetoviFetch$ tok ne emituje nista
         map(
             () =>
@@ -167,7 +139,7 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
                     povratnaKartaInput.checked
                 )
         ),
-        concatMap((rez) => pribaviNekeLetove(rez)),
+        concatMap((rez) => PribavljanjePodataka.pribaviNekeLetove(rez)),
         //da je obican map dobili bi observable od observable od jednosmerni let a sad je samo obresvale od jednosmerni
         //pretragaRequest$ je emitovalo klikovi misa, mi smo to izmapirali na rezervaciju, znaci svaki put kad se klikne pretraaga se pravi nova rezervacija
         // a sa concat map se od toka rezervacija prebcujemo na tok  nizom jednosmernih letova
@@ -175,7 +147,6 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
         //i onda se posle negde  subscribujemo na taj tok
         share()
     );
-
     dolazniLetoviFetch$.subscribe((p) => p);
 
     const jednosmerniLet$ = pretragaRequest$.pipe(

@@ -10,7 +10,10 @@ export abstract class Let {
         tipKlaseParam: string,
         brojOsoba: number
     ): number;
-
+    public abstract azurirajPodatkeOLetu(
+        brojOsoba: number,
+        tipKlase: string
+    ): void;
     public static prikaziLetove(listaLetova: Let[]): void {
         const listaLetovaElement = document.getElementById("listaLetova");
         listaLetovaElement.innerHTML = "";
@@ -107,35 +110,17 @@ export abstract class Let {
             <div>
             </div>`;
     }
-
-    public prikaziProzor(prozorDetaljiLeta: HTMLElement) {
-        if (prozorDetaljiLeta) {
-            prozorDetaljiLeta.classList.add("prikazi");
-        }
-    }
-    public zatvoriProzor(prozorDetaljiLeta: HTMLElement) {
-        if (prozorDetaljiLeta) {
-            prozorDetaljiLeta.classList.remove("prikazi");
-        }
-    }
-    public abstract azurirajPodatkeOLetu(
-        brojOsoba: number,
-        tipKlase: string
-    ): void;
-    public rezervisiLet(
+    public rezervisanje(
         tipKlaseInput: HTMLInputElement,
         brojOsobaInput: HTMLInputElement,
         liElement: HTMLLIElement,
         dugmeRezervisi: HTMLButtonElement
     ) {
         const tipoviKlase$ = Nadgledanje.nadgledajPromenuCene(tipKlaseInput);
-
         const brojOsoba$ = Nadgledanje.nadgledajPromenuCene(
             brojOsobaInput
         ).pipe(map((value: string) => +value));
-
         let divCenaKarte = liElement.querySelector(".cenaKarte") as HTMLElement;
-
         combineLatest(tipoviKlase$, brojOsoba$).subscribe((p) => {
             //ceka jedan od ova 2 dogadjaja da se desi i onda se okida
             divCenaKarte.innerHTML =
@@ -148,5 +133,16 @@ export abstract class Let {
         ).subscribe((p) => {
             this.azurirajPodatkeOLetu(p.brojOsoba, p.tipKlase);
         });
+    }
+
+    public prikaziProzor(prozorDetaljiLeta: HTMLElement) {
+        if (prozorDetaljiLeta) {
+            prozorDetaljiLeta.classList.add("prikazi");
+        }
+    }
+    public zatvoriProzor(prozorDetaljiLeta: HTMLElement) {
+        if (prozorDetaljiLeta) {
+            prozorDetaljiLeta.classList.remove("prikazi");
+        }
     }
 }

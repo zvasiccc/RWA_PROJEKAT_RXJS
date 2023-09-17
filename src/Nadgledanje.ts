@@ -1,5 +1,6 @@
 import {
     Observable,
+    distinctUntilChanged,
     filter,
     fromEvent,
     map,
@@ -12,29 +13,21 @@ export class Nadgledanje {
         povratnaKartaInput: HTMLInputElement,
         datumPovratkaInput: HTMLInputElement
     ) {
-        // fromEvent(povratnaKartaInput, "change").subscribe((event) => {
-        //     if (povratnaKartaInput.checked) {
-        //         datumPovratkaInput.disabled = false;
-        //     } else {
-        //         datumPovratkaInput.disabled = true;
-        //         datumPovratkaInput.value = "";
-        //     }
-        // });
         fromEvent(povratnaKartaInput, "change")
             .pipe(
-                filter(
+                map(
                     (event: Event) => (event.target as HTMLInputElement).checked
-                )
+                ),
+                distinctUntilChanged() // ovaj operator osigurava da se akcije izvrsavaju samo kada se stvarno promeni stanje cekiranja
             )
-            .subscribe(
-                () => {
-                    datumPovratkaInput.disabled = false; //kad je cekirano
-                },
-                () => {
-                    datumPovratkaInput.disabled = true; //kad nije cekirano
+            .subscribe((isChecked: boolean) => {
+                if (isChecked) {
+                    datumPovratkaInput.disabled = false;
+                } else {
+                    datumPovratkaInput.disabled = true;
                     datumPovratkaInput.value = "";
                 }
-            );
+            });
     }
     static nadgledajdugmeZameniPolazisteIOdrediste(
         dugmeZameniPolazisteIOdrediste: HTMLElement,
@@ -53,15 +46,14 @@ export class Nadgledanje {
             );
         }
     }
-    static nadgledajPromenuCene(tipKlaseInput: HTMLInputElement) {
-        return fromEvent(tipKlaseInput, "change").pipe(
+    static nadgledajPromenuCene(inputPolje: HTMLInputElement) {
+        return fromEvent(inputPolje, "change").pipe(
             map(
                 (
-                    p: InputEvent //p kad stigne je neki event ne znamo koji, specifiiramo odmah blize da je InputEvent
+                    p: InputEvent //emituje se ceo input event a nama treba samo vrednost iz input polja
                 ) => (<HTMLInputElement>p.target).value
             ),
-            // tap((p) => console.log(p)),
-            startWith(tipKlaseInput.value) //kad se napravi tok tipoviKlase$ da se izemituje tipKlaseInput.value
+            startWith(inputPolje.value) //bez ovoga se nista ne prikazuje dok se ne opali prvi change
         );
     }
 

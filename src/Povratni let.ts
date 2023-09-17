@@ -33,14 +33,13 @@ export class PovratniLet extends Let {
         const tipKlaseInput = document.getElementById(
             "tipKlase"
         ) as HTMLInputElement;
-
         const brojOsobaInput = document.getElementById(
             "brojOsoba"
         ) as HTMLInputElement;
         const dugmeRezervisi: HTMLButtonElement = liElement.querySelector(
             ".dugmeRezervisiPovratni"
         );
-        this.rezervisiLet(
+        this.rezervisanje(
             tipKlaseInput,
             brojOsobaInput,
             liElement,

@@ -1,6 +1,8 @@
-import { concatMap, map } from "rxjs";
+import { Observable, concatMap, map } from "rxjs";
 import { fromFetch } from "rxjs/fetch";
 import { JednosmerniLet } from "./Jednosmerni let";
+import { Rezervacija } from "./Rezervacija";
+import { tipKlase } from "./TipKlaseEnum";
 
 export class PribavljanjePodataka {
     // static async predloziGradova(
@@ -31,10 +33,7 @@ export class PribavljanjePodataka {
     //         throw new Error("failed to fetch");
     //     }
     // }
-    static predloziGradova(
-        uneseniTekst: String,
-        listaPredlogaZaPolje: HTMLElement
-    ) {
+    static predloziGradova(uneseniTekst: String) {
         return fromFetch(
             `http://localhost:3000/gradovi?name_like=${uneseniTekst}`
         ).pipe(
@@ -47,15 +46,6 @@ export class PribavljanjePodataka {
             }),
             map((data) => <{ name: string }[]>data)
         );
-        // .subscribe((gradovi) => {
-        //     listaPredlogaZaPolje.innerHTML = "";
-        //     gradovi.forEach((grad) => {
-        //         const listItem = document.createElement("li");
-        //         listItem.textContent = grad.name;
-        //         listaPredlogaZaPolje.appendChild(listItem);
-        //     });
-        //     listaPredlogaZaPolje.style.display = "block";
-        // });
     }
     static odgovarajuciLetovi(url: string) {
         return (
@@ -99,5 +89,36 @@ export class PribavljanjePodataka {
                     )
                 )
         );
+    }
+    static pribaviNekeLetove(
+        rezervacija: Rezervacija,
+        brojLetovaPoStranici: number = undefined,
+        pageIndex: number = undefined
+    ): Observable<JednosmerniLet[]> {
+        let trazeniTipKlase = "";
+        switch (rezervacija.tipKlase) {
+            case tipKlase.EKONOMSKA_KLASA:
+                trazeniTipKlase = "kapacitetEkonomskeKlase";
+                break;
+            case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
+                trazeniTipKlase = "kapacitetPremijumEkonomskeKlase";
+                break;
+            case tipKlase.BIZNIS_KLASA:
+                trazeniTipKlase = "kapacitetBiznisKlase";
+                break;
+            case tipKlase.PRVA_KLASA:
+                trazeniTipKlase = "kapacitetPrveKlase";
+                break;
+        }
+        let url = `http://localhost:3000/sviLetovi?polaziste=${
+            rezervacija.polaziste
+        }&odrediste=${
+            rezervacija.odrediste
+        }&${trazeniTipKlase}_gte=${rezervacija.brojOsoba.toString()}`;
+
+        if (brojLetovaPoStranici !== undefined && pageIndex !== undefined)
+            //ako je jednosmerni onda +ovo
+            url += `&_limit=${brojLetovaPoStranici}&_page=${pageIndex}`;
+        return PribavljanjePodataka.odgovarajuciLetovi(url);
     }
 }

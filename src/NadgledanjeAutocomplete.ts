@@ -46,8 +46,7 @@ export class NadgledanjeAutocomplete {
                         return;
                     }
                     PribavljanjePodataka.predloziGradova(
-                        uneseniTekst,
-                        listaPredlogaZaPolje
+                        uneseniTekst
                     ).subscribe((gradovi) => {
                         listaPredlogaZaPolje.innerHTML = "";
                         gradovi.forEach((grad) => {
