@@ -21,6 +21,7 @@ import {
 } from "./Nadgledanje";
 import { Let } from "./Let";
 import { pribaviNekeLetove } from "./PribavljanjePodataka";
+import { formatStringUDate } from "./FormatiranjeDatuma";
 //TODO da nisu sve static nego moze export function
 fromEvent(document, "DOMContentLoaded").subscribe(() => {
     const polazisteInput = document.getElementById(
@@ -97,17 +98,17 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
                 new Rezervacija(
                     polazisteInput.value,
                     odredisteInput.value,
-                    new Date(formatDate(datumPolaskaInput.value)),
-                    new Date(formatDate(datumPovratkaInput.value)),
+                    new Date(formatStringUDate(datumPolaskaInput.value)),
+                    new Date(formatStringUDate(datumPovratkaInput.value)),
                     +brojOsobaInput.value,
                     tipKlaseInput.value,
                     povratnaKartaInput.checked
                 )
         ),
-        concatMap((rez) => pribaviNekeLetove(rez, 1, indeksStranice)),
-        //TODO da nije hardkodirano da se ucitava samo po 1 let nego npr po 3
+        concatMap((rez) => pribaviNekeLetove(rez, 3, indeksStranice)),
+        tap((p) => console.log(p)),
         share()
-    );
+    ); //mozda se lose poziva draw, to smo menjali ovo nismo dirali
     odlazniLetoviFetch$.subscribe((p) => p); //ne emituje bez ovoga
     const dolazniLetoviFetch$ = pretragaRequest$.pipe(
         //zato sto za dolazne letove nemamo ucitaj vise, nego sve pribavljamo odmah kada se klikne pretraga
@@ -117,8 +118,8 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
                 new Rezervacija(
                     odredisteInput.value,
                     polazisteInput.value,
-                    new Date(formatDate(datumPovratkaInput.value)),
-                    new Date(formatDate(datumPolaskaInput.value)),
+                    new Date(formatStringUDate(datumPovratkaInput.value)),
+                    new Date(formatStringUDate(datumPolaskaInput.value)),
                     +brojOsobaInput.value,
                     tipKlaseInput.value,
                     povratnaKartaInput.checked
@@ -179,9 +180,4 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
         //from od niza pravi tok vrednosti, znaci emituje prvi element pa drugi, pa treci...
         .subscribe((p) => p.draw(listaLetovaElement));
     //na svaki let pojedinacno reagujemo iscrtavanjem
-
-    function formatDate(dateString: string) {
-        const [year, month, day] = dateString.split("-");
-        return new Date(Number(year), Number(month) - 1, Number(day)); // Meseci u JavaScriptu krecu od 0 (januar = 0, februar = 1, ...), pa se oduzima 1.
-    }
 });

@@ -8,6 +8,8 @@ export abstract class Let {
     public draw(parent: HTMLElement) {
         const liElement = document.createElement("li");
         this.getHTML(liElement);
+        const prozorDetaljiLeta = this.getProzorDetaljiLeta();
+        const dugmeZatvoriProzor = this.getProzorDetaljiLeta();
         liElement.innerHTML += `
             <div>
                 ${this.dodaciToHTML()}
@@ -23,14 +25,14 @@ export abstract class Let {
         ) as HTMLInputElement;
         const dugmeRezervisi: HTMLButtonElement =
             liElement.querySelector(".dugme-rezervisi");
-        const prozorDetaljiJednosmernogLeta = document.getElementById(
-            "prozorDetaljiJednosmernogLeta"
-        );
         const dugmeDetaljiLeta: HTMLButtonElement =
             liElement.querySelector(".dugme-detalji");
-        const dugmeZatvoriProzor = document.getElementById(
-            "dugmeZatvoriProzorJednosmernogLeta"
-        );
+        // const prozorDetaljiJednosmernogLeta = document.getElementById(
+        //     "prozorDetaljiJednosmernogLeta"
+        // );
+        // const dugmeZatvoriProzor = document.getElementById(
+        //     "dugmeZatvoriProzorJednosmernogLeta"
+        // );
         this.rezervisanje(
             tipKlaseInput,
             brojOsobaInput,
@@ -39,11 +41,11 @@ export abstract class Let {
         );
 
         fromEvent(dugmeDetaljiLeta, "click").subscribe(() => {
-            this.prikaziDetaljeLeta(prozorDetaljiJednosmernogLeta);
+            this.prikaziDetaljeLeta(prozorDetaljiLeta);
         });
 
         fromEvent(dugmeZatvoriProzor, "click").subscribe(() => {
-            this.zatvoriProzor(prozorDetaljiJednosmernogLeta);
+            this.zatvoriProzor(prozorDetaljiLeta);
         });
     }
 
@@ -59,7 +61,8 @@ export abstract class Let {
     }
 
     protected abstract getHTML(liElement: HTMLElement): void;
-
+    protected abstract getProzorDetaljiLeta(): HTMLElement;
+    protected abstract getDugmeZatvoriProzor(): HTMLElement;
     public abstract izracunajUkupnuCenuLeta(
         tipKlaseParam: string,
         brojOsoba: number

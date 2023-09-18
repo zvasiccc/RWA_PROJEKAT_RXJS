@@ -20,6 +20,13 @@ export class PovratniLet extends Let {
                 <br>
             </div>
         `;
+        //return document.getElementById("prozorDetaljiPovratnogLeta");
+    }
+    protected override getProzorDetaljiLeta(): HTMLElement {
+        return document.getElementById("prozorDetaljiPovratnogLeta");
+    }
+    protected override getDugmeZatvoriProzor(): HTMLElement {
+        return document.getElementById("prozorDetaljiPovratnogLeta");
     }
 
     public override izracunajUkupnuCenuLeta(
@@ -49,6 +56,9 @@ export class PovratniLet extends Let {
         const vremeDolaskaOdlaznogLeta = document.getElementById(
             "detaljiVremeDolaskaOdlaznogPovratnogLeta"
         );
+        const detaljiBrojDolaznogLeta = document.getElementById(
+            "detaljiBrojDolaznogLeta"
+        );
         const vremePolaskaDolaznogLeta = document.getElementById(
             "detaljiVremePolaskaDolaznogPovratnogLeta"
         );
@@ -67,6 +77,7 @@ export class PovratniLet extends Let {
             .toString();
         vremePolaskaOdlaznogLeta.textContent = this.polazak.vremePolaska;
         vremeDolaskaOdlaznogLeta.textContent = this.polazak.vremeDolaska;
+        detaljiBrojDolaznogLeta.textContent = this.povratak.id.toString();
         vremePolaskaDolaznogLeta.textContent = this.polazak.vremePolaska;
         vremeDolaskaDolaznogLeta.textContent = this.polazak.vremeDolaska;
         //TODO pozovi 2 fje za 2 povratna leta, ovde se ne crta
