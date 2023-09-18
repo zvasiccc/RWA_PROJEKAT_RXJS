@@ -61,12 +61,12 @@ export abstract class Let {
 
     protected abstract prikaziDetaljeLeta(prozorDetaljiLeta: HTMLElement): void;
 
-    protected abstract azurirajPodatkeOLetu(
+    public abstract azurirajPodatkeOLetu(
         brojOsoba: number,
         tipKlase: string
     ): void;
 
-    public static azurirajLetJson(avionId: string, kapaciteti: Kapaciteti) {
+    public azurirajLetJson(avionId: string, kapaciteti: Kapaciteti) {
         try {
             fromFetch(`http://localhost:3000/sviLetovi/${avionId}`)
                 .pipe(
@@ -113,7 +113,7 @@ export abstract class Let {
             console.log(er);
         }
     }
-    public static izracunajNoveKapaciteteLeta(
+    public izracunajNoveKapaciteteLeta(
         brojOsoba: number,
         tipKlaseParam: string,
         kapaciteti: Kapaciteti

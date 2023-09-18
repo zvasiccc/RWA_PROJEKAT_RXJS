@@ -82,39 +82,8 @@ export class PovratniLet extends Let {
         this.prikaziProzor(prozorDetaljiLeta);
     }
 
-    protected override azurirajPodatkeOLetu(
-        brojOsoba: number,
-        tipKlase: string
-    ) {
-        const avionIdPolazak = this.polazak.id;
-        const avionIdPovratak = this.povratak.id;
-        let kapaciteti = new Kapaciteti();
-        kapaciteti.kapacitetEkonomskeKlase =
-            this.polazak.kapacitetEkonomskeKlase;
-
-        kapaciteti.kapacitetPremijumEkonomskeKlase =
-            this.polazak.kapacitetPremijumEkonomskeKlase;
-        kapaciteti.kapacitetBiznisKlase = this.polazak.kapacitetBiznisKlase;
-        kapaciteti.kapacitetPrveKlase = this.polazak.kapacitetPrveKlase;
-
-        kapaciteti = Let.izracunajNoveKapaciteteLeta(
-            brojOsoba,
-            tipKlase,
-            kapaciteti
-        );
-        Let.azurirajLetJson(avionIdPolazak.toString(), kapaciteti);
-        kapaciteti.kapacitetEkonomskeKlase =
-            this.povratak.kapacitetEkonomskeKlase;
-        kapaciteti.kapacitetPremijumEkonomskeKlase =
-            this.povratak.kapacitetPremijumEkonomskeKlase;
-        kapaciteti.kapacitetBiznisKlase = this.povratak.kapacitetBiznisKlase;
-        kapaciteti.kapacitetPrveKlase = this.povratak.kapacitetPrveKlase;
-
-        kapaciteti = Let.izracunajNoveKapaciteteLeta(
-            brojOsoba,
-            tipKlase,
-            kapaciteti
-        );
-        Let.azurirajLetJson(avionIdPovratak.toString(), kapaciteti);
+    public override azurirajPodatkeOLetu(brojOsoba: number, tipKlase: string) {
+        this.polazak.azurirajPodatkeOLetu(brojOsoba, tipKlase);
+        this.povratak.azurirajPodatkeOLetu(brojOsoba, tipKlase);
     }
 }

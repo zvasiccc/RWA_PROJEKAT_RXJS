@@ -145,10 +145,7 @@ export class JednosmerniLet extends Let {
         detaljiVremeDolaska.textContent = this.vremeDolaska;
     }
 
-    protected override azurirajPodatkeOLetu(
-        brojOsoba: number,
-        tipKlase: string
-    ) {
+    public override azurirajPodatkeOLetu(brojOsoba: number, tipKlase: string) {
         const avionId = this.id;
         let kapaciteti = new Kapaciteti();
         kapaciteti.kapacitetEkonomskeKlase = this.kapacitetEkonomskeKlase;
@@ -156,12 +153,12 @@ export class JednosmerniLet extends Let {
             this.kapacitetPremijumEkonomskeKlase;
         kapaciteti.kapacitetBiznisKlase = this.kapacitetBiznisKlase;
         kapaciteti.kapacitetPrveKlase = this.kapacitetPrveKlase;
-        kapaciteti = Let.izracunajNoveKapaciteteLeta(
+        kapaciteti = this.izracunajNoveKapaciteteLeta(
             brojOsoba,
             tipKlase,
             kapaciteti
         );
-        Let.azurirajLetJson(avionId.toString(), kapaciteti);
+        this.azurirajLetJson(avionId.toString(), kapaciteti);
     }
 
     public jednosmerniLetToHTML(): string {
