@@ -11,7 +11,7 @@ export class PovratniLet extends Let {
     }
 
     protected override getHTML(liElement: HTMLElement): void {
-        liElement.classList.add("let-jednosmerni");
+        liElement.classList.add("let-povratni");
         liElement.innerHTML = `
             <div class="let-povratni">
                 ${this.polazak.jednosmerniLetToHTML()}
@@ -20,7 +20,6 @@ export class PovratniLet extends Let {
                 <br>
             </div>
         `;
-        //return document.getElementById("prozorDetaljiPovratnogLeta");
     }
     protected override getProzorDetaljiLeta(): HTMLElement {
         return document.getElementById("prozorDetaljiPovratnogLeta");
@@ -33,14 +32,14 @@ export class PovratniLet extends Let {
         tipKlaseParam: string,
         brojOsoba: number
     ): number {
-        return (
+        const ukupnaCena =
             (this.polazak.izracunajUkupnuCenuLeta(tipKlaseParam, brojOsoba) +
                 this.povratak.izracunajUkupnuCenuLeta(
                     tipKlaseParam,
                     brojOsoba
                 )) *
-            0.8
-        );
+            0.8;
+        return parseFloat(ukupnaCena.toFixed(2));
     }
 
     protected override prikaziDetaljeLeta(prozorDetaljiLeta: HTMLElement) {
@@ -80,7 +79,6 @@ export class PovratniLet extends Let {
         detaljiBrojDolaznogLeta.textContent = this.povratak.id.toString();
         vremePolaskaDolaznogLeta.textContent = this.polazak.vremePolaska;
         vremeDolaskaDolaznogLeta.textContent = this.polazak.vremeDolaska;
-        //TODO pozovi 2 fje za 2 povratna leta, ovde se ne crta
         this.prikaziProzor(prozorDetaljiLeta);
     }
 
@@ -90,7 +88,6 @@ export class PovratniLet extends Let {
     ) {
         const avionIdPolazak = this.polazak.id;
         const avionIdPovratak = this.povratak.id;
-        //const avionIdPovratak = dugme.getAttribute("data-id-povratak");
         let kapaciteti = new Kapaciteti();
         kapaciteti.kapacitetEkonomskeKlase =
             this.polazak.kapacitetEkonomskeKlase;

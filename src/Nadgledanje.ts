@@ -53,10 +53,10 @@ export function nadgledajDugmeRezervisi(
     dugmeRezervisi: HTMLButtonElement
 ) {
     return fromEvent(dugmeRezervisi, "click").pipe(
-        withLatestFrom(brojOsoba$, tipoviKlase$), //uzima zadnju vrednost iz toka, atok se menja tamo kad je napravljen tj na promenu broja u input
+        withLatestFrom(brojOsoba$, tipoviKlase$),
         map((p) => ({
             brojOsoba: p[1],
-            tipKlase: p[2], //da se lakse snadjemo izmapiramo
+            tipKlase: p[2],
         }))
     );
 }

@@ -49,8 +49,7 @@ export function odgovarajuciLetovi(url: string) {
                         l.kapacitetPrveKlase
                     )
             )
-        ),
-        tap((p) => console.log(p))
+        )
     );
 }
 export function pribaviNekeLetove(
@@ -58,32 +57,31 @@ export function pribaviNekeLetove(
     brojLetovaPoStranici: number = undefined,
     pageIndex: number = undefined
 ): Observable<JednosmerniLet[]> {
-    let trazeniTipKlase = "";
+    let kapacitetTrazeneKlase = "";
     switch (rezervacija.tipKlase) {
         case tipKlase.EKONOMSKA_KLASA:
-            trazeniTipKlase = "kapacitetEkonomskeKlase";
+            kapacitetTrazeneKlase = "kapacitetEkonomskeKlase";
             break;
         case tipKlase.PREMIJUM_EKONOMSKA_KLASA:
-            trazeniTipKlase = "kapacitetPremijumEkonomskeKlase";
+            kapacitetTrazeneKlase = "kapacitetPremijumEkonomskeKlase";
             break;
         case tipKlase.BIZNIS_KLASA:
-            trazeniTipKlase = "kapacitetBiznisKlase";
+            kapacitetTrazeneKlase = "kapacitetBiznisKlase";
             break;
         case tipKlase.PRVA_KLASA:
-            trazeniTipKlase = "kapacitetPrveKlase";
+            kapacitetTrazeneKlase = "kapacitetPrveKlase";
             break;
     }
     let url = `http://localhost:3000/sviLetovi?polaziste=${
         rezervacija.polaziste
     }&odrediste=${
         rezervacija.odrediste
-    }&${trazeniTipKlase}_gte=${rezervacija.brojOsoba.toString()}&datumPolaska=${formatDateUString(
+    }&${kapacitetTrazeneKlase}_gte=${rezervacija.brojOsoba.toString()}&datumPolaska=${formatDateUString(
         rezervacija.datumPolaska
     )}`;
     //TODO ubaciti proveru za datum,
     //TODO i za datum povratka da ne moze da izabere manji od datum odlaska
     if (brojLetovaPoStranici !== undefined && pageIndex !== undefined)
-        //ako je jednosmerni onda +ovo
         url += `&_limit=${brojLetovaPoStranici}&_page=${pageIndex}`;
     return odgovarajuciLetovi(url);
 }

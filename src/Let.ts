@@ -8,18 +8,17 @@ export abstract class Let {
     public draw(parent: HTMLElement) {
         const liElement = document.createElement("li");
         this.getHTML(liElement);
-        const prozorDetaljiLeta = this.getProzorDetaljiLeta();
-        const dugmeZatvoriProzor = this.getProzorDetaljiLeta();
         liElement.innerHTML += `
-            <div>
-                ${this.dodaciToHTML()}
-            </div>
+        <div>
+        ${this.dodaciToHTML()}
+        </div>
         `;
         parent.appendChild(liElement);
+        const prozorDetaljiLeta = this.getProzorDetaljiLeta();
+        const dugmeZatvoriProzor = this.getDugmeZatvoriProzor();
         const tipKlaseInput = document.getElementById(
             "tipKlase"
         ) as HTMLInputElement;
-
         const brojOsobaInput = document.getElementById(
             "brojOsoba"
         ) as HTMLInputElement;
@@ -27,19 +26,12 @@ export abstract class Let {
             liElement.querySelector(".dugme-rezervisi");
         const dugmeDetaljiLeta: HTMLButtonElement =
             liElement.querySelector(".dugme-detalji");
-        // const prozorDetaljiJednosmernogLeta = document.getElementById(
-        //     "prozorDetaljiJednosmernogLeta"
-        // );
-        // const dugmeZatvoriProzor = document.getElementById(
-        //     "dugmeZatvoriProzorJednosmernogLeta"
-        // );
         this.rezervisanje(
             tipKlaseInput,
             brojOsobaInput,
             liElement,
             dugmeRezervisi
         );
-
         fromEvent(dugmeDetaljiLeta, "click").subscribe(() => {
             this.prikaziDetaljeLeta(prozorDetaljiLeta);
         });
@@ -59,7 +51,6 @@ export abstract class Let {
             <div>
             </div>`;
     }
-
     protected abstract getHTML(liElement: HTMLElement): void;
     protected abstract getProzorDetaljiLeta(): HTMLElement;
     protected abstract getDugmeZatvoriProzor(): HTMLElement;
@@ -75,14 +66,6 @@ export abstract class Let {
         tipKlase: string
     ): void;
 
-    public static prikaziLetove(listaLetova: Let[]): void {
-        const listaLetovaElement = document.getElementById("listaLetova");
-        listaLetovaElement.innerHTML = "";
-        listaLetova.forEach((l) => {
-            l.draw(listaLetovaElement);
-        });
-        //! da svaki let psotane tok i da se na svaki let reaguje iscrtavanjem
-    }
     public static azurirajLetJson(avionId: string, kapaciteti: Kapaciteti) {
         try {
             fromFetch(`http://localhost:3000/sviLetovi/${avionId}`)
@@ -166,8 +149,6 @@ export abstract class Let {
         );
         let divCenaKarte = liElement.querySelector(".cenaKarte") as HTMLElement;
         combineLatest(tipoviKlase$, brojOsoba$).subscribe((p) => {
-            //kad se jedan promeni odmah se okida i koristi staru vrednost drugog, zip npr ceka oba da se promene
-            //a merge bi pomesalo i ne bi mogli da kopristimo p[0]i p[1]
             divCenaKarte.innerHTML =
                 this.izracunajUkupnuCenuLeta(p[0], +p[1]).toString() + " €";
         });

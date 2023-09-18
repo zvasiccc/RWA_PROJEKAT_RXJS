@@ -10,7 +10,6 @@ export class JednosmerniLet extends Let {
         private _datumPolaska: Date,
         private _vremePolaska: string,
         private _vremeDolaska: string,
-
         private _cenaKarteEkonomskeKlase: number,
         private _cenaKartePremijumEkonomskeKlase: number,
         private _cenaKarteBiznisKlase: number,
@@ -96,7 +95,6 @@ export class JednosmerniLet extends Let {
     protected override getHTML(liElement: HTMLElement): void {
         liElement.classList.add("let-jednosmerni");
         liElement.innerHTML = this.jednosmerniLetToHTML();
-        //return document.getElementById("prozorDetaljiJednosmernogLeta");
     }
     protected override getProzorDetaljiLeta(): HTMLElement {
         return document.getElementById("prozorDetaljiJednosmernogLeta");
@@ -124,7 +122,7 @@ export class JednosmerniLet extends Let {
                 ukupnaCena = brojOsoba * this.cenaKartePrveKlase;
                 break;
         }
-        return ukupnaCena;
+        return parseFloat(ukupnaCena.toFixed(2));
     }
 
     protected override prikaziDetaljeLeta(prozorDetaljiLeta: HTMLElement) {
