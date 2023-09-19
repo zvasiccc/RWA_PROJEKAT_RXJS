@@ -1,7 +1,5 @@
 import {
     Observable,
-    distinctUntilChanged,
-    filter,
     fromEvent,
     map,
     startWith,
@@ -17,7 +15,7 @@ export function subToPovratnaKartaCheck(
         .pipe(
             map((event: Event) => (event.target as HTMLInputElement).checked),
             tap(() => (datumPovratkaInput.value = "")),
-            map((checked) => !checked) //kad je checked true mi vratimo false a kad je false mi vratimo true
+            map((checked) => !checked)
         )
         .subscribe((isDisabled) => (datumPovratkaInput.disabled = isDisabled));
 }
@@ -28,7 +26,7 @@ export function subToZamenaPolazisteIOdrediste(
     odredisteInput: HTMLInputElement
 ) {
     fromEvent(dugmeZameniPolazisteIOdrediste, "click").subscribe((event) => {
-        event.preventDefault(); //bez ovoga se opet ucita stranica
+        event.preventDefault();
         const trenutnoPolaziste = polazisteInput.value;
         const trenutnoOdrediste = odredisteInput.value;
         polazisteInput.value = trenutnoOdrediste;
@@ -37,13 +35,8 @@ export function subToZamenaPolazisteIOdrediste(
 }
 export function nadgledajPromenuCene(inputPolje: HTMLInputElement) {
     return fromEvent(inputPolje, "change").pipe(
-        map(
-            (
-                event: Event //emituje se ceo input event a nama treba samo vrednost iz input polja
-            ) => (event.target as HTMLInputElement).value
-        ),
-        startWith(inputPolje.value) //bez ovoga se nista ne prikazuje ako korisnik nista ne unese, ovako kazemo startuj
-        //sa onim sto je treuntno tu
+        map((event: Event) => (event.target as HTMLInputElement).value),
+        startWith(inputPolje.value)
     );
 }
 

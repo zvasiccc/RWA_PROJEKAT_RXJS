@@ -21,7 +21,6 @@ import {
 } from "./Nadgledanje";
 import { pribaviNekeLetove } from "./PribavljanjePodataka";
 import { Rezervacija } from "./Rezervacija";
-//TODO da nisu sve static nego moze export function
 fromEvent(document, "DOMContentLoaded").subscribe(() => {
     const polazisteInput = document.getElementById(
         "polaziste"
@@ -59,7 +58,6 @@ fromEvent(document, "DOMContentLoaded").subscribe(() => {
         "zameniPolazisteIOdrediste"
     );
     const dugmePretragaLetova = document.getElementById("dugmePretragaLetova");
-    //TODO zasto se menja kod povratnih letova kapacitet biznis i premijum ekonomske
     const dugmeUcitajVise = document.getElementById("dugmeUcitajViseLetova");
     const listaLetovaElement = document.getElementById("listaLetova");
     let indeksStranice: number = 1;

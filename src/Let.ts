@@ -54,17 +54,41 @@ export abstract class Let {
     protected abstract getHTML(liElement: HTMLElement): void;
     protected abstract getProzorDetaljiLeta(): HTMLElement;
     protected abstract getDugmeZatvoriProzor(): HTMLElement;
+    public rezervisanje(
+        tipKlaseInput: HTMLInputElement,
+        brojOsobaInput: HTMLInputElement,
+        liElement: HTMLLIElement,
+        dugmeRezervisi: HTMLButtonElement
+    ) {
+        const tipoviKlase$ = nadgledajPromenuCene(tipKlaseInput);
+        const brojOsoba$ = nadgledajPromenuCene(brojOsobaInput).pipe(
+            map((value: string) => +value)
+        );
+        let divCenaKarte = liElement.querySelector(".cenaKarte") as HTMLElement;
+        combineLatest(tipoviKlase$, brojOsoba$).subscribe((p) => {
+            divCenaKarte.innerHTML =
+                this.izracunajUkupnuCenuLeta(p[0], +p[1]).toString() + " €";
+        });
+        nadgledajDugmeRezervisi(
+            tipoviKlase$,
+            brojOsoba$,
+            dugmeRezervisi
+        ).subscribe((p) => {
+            this.azurirajPodatkeOLetu(p.brojOsoba, p.tipKlase);
+        });
+    }
+
     public abstract izracunajUkupnuCenuLeta(
         tipKlaseParam: string,
         brojOsoba: number
     ): number;
 
-    protected abstract prikaziDetaljeLeta(prozorDetaljiLeta: HTMLElement): void;
-
     public abstract azurirajPodatkeOLetu(
         brojOsoba: number,
         tipKlase: string
     ): void;
+
+    protected abstract prikaziDetaljeLeta(prozorDetaljiLeta: HTMLElement): void;
 
     public azurirajLetJson(avionId: string, kapaciteti: Kapaciteti) {
         try {
@@ -135,30 +159,6 @@ export abstract class Let {
                 break;
         }
         return kapaciteti;
-    }
-
-    public rezervisanje(
-        tipKlaseInput: HTMLInputElement,
-        brojOsobaInput: HTMLInputElement,
-        liElement: HTMLLIElement,
-        dugmeRezervisi: HTMLButtonElement
-    ) {
-        const tipoviKlase$ = nadgledajPromenuCene(tipKlaseInput);
-        const brojOsoba$ = nadgledajPromenuCene(brojOsobaInput).pipe(
-            map((value: string) => +value)
-        );
-        let divCenaKarte = liElement.querySelector(".cenaKarte") as HTMLElement;
-        combineLatest(tipoviKlase$, brojOsoba$).subscribe((p) => {
-            divCenaKarte.innerHTML =
-                this.izracunajUkupnuCenuLeta(p[0], +p[1]).toString() + " €";
-        });
-        nadgledajDugmeRezervisi(
-            tipoviKlase$,
-            brojOsoba$,
-            dugmeRezervisi
-        ).subscribe((p) => {
-            this.azurirajPodatkeOLetu(p.brojOsoba, p.tipKlase);
-        });
     }
 
     protected prikaziProzor(prozorDetaljiLeta: HTMLElement) {

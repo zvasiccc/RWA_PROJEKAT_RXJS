@@ -15,16 +15,16 @@ body {
 .form-row {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around; /* Rasporedi elemente ravnomerno */
+    justify-content: space-around;
     margin: 200px;
 }
 .form-group {
     flex: 1;
-    margin: 100px; /* Dodaj razmak između elemenata */
+    margin: 100px;
 }
 button {
-    align-self: flex-end; /* Postavi dugme na desni kraj */
-    margin-top: 10px; /* Dodaj razmak iznad dugmeta */
+    align-self: flex-end;
+    margin-top: 10px;
 }
 ul#listaLetova {
     width: 100%;
@@ -33,16 +33,16 @@ ul#listaLetova {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    list-style-type: none; /* Ukloni tačke ili brojeve ispred stavki */
-    margin-bottom: 20px; /* Dodaj razmak između stavki */
-    padding: 10px; /* Dodaj unutarnji prostor oko svake stavke */
-    background-color: purple; /* Boja pozadine stavki */
-    border: 1px solid #ccc; /* Dodaj ivicu oko svake stavke */
-    border-radius: 5px; /* Zaobljeni rubovi */
+    list-style-type: none;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: purple;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
-/* Stilovi za naslove atributa unutar <li> stavke */
+
 .let-jednosmerni > strong {
-    font-weight: bold; /* Podešavanje debljine fonta za naslove atributa */
+    font-weight: bold;
     width: 100%;
 }
 .let-jednosmerni > span {
@@ -54,34 +54,30 @@ li.let-povratni {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    list-style-type: none; /* Ukloni tačke ili brojeve ispred stavki */
-    margin-bottom: 20px; /* Dodaj razmak između stavki */
-    padding: 10px; /* Dodaj unutarnji prostor oko svake stavke */
-    background-color: purple; /* Boja pozadine stavki */
-    border: 1px solid #ccc; /* Dodaj ivicu oko svake stavke */
-    border-radius: 5px; /* Zaobljeni rubovi */
+    list-style-type: none;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: purple;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
-/* Stilovi za naslove atributa unutar <li> stavke za povratni let */
 li.let-povratni > strong {
-    font-weight: bold; /* Podešavanje debljine fonta za naslove atributa */
+    font-weight: bold;
     width: 100%;
 }
 
-/* Stilovi za ikonu za povratni let */
 li.let-povratni > span {
     margin-left: 5px;
     margin-right: 20px;
     background-color: #1b6da8;
 }
 
-/* Stilovi za cijenu povratnog leta */
 li.let-povratni > div.cenaKarte {
     font-size: large;
     font-weight: bold;
 }
 
-/* Stilovi za dodatke povratnog leta */
 li.let-povratni > div.dodaci {
     margin-left: 10%;
 }

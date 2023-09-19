@@ -11,27 +11,21 @@ export class Rezervacija {
     public get polaziste(): string {
         return this._polaziste;
     }
-
     public get odrediste(): string {
         return this._odrediste;
     }
-
     public get datumPolaska(): Date {
         return this._datumPolaska;
     }
-
     public get datumPovratka(): Date {
         return this._datumPovratka;
     }
-
     public get brojOsoba(): number {
         return this._brojOsoba;
     }
-
     public get tipKlase(): string {
         return this._tipKlase;
     }
-
     public get povratnaKarta(): boolean {
         return this._povratnaKarta;
     }

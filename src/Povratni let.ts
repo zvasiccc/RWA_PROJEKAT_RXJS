@@ -42,6 +42,11 @@ export class PovratniLet extends Let {
         return parseFloat(ukupnaCena.toFixed(2));
     }
 
+    public override azurirajPodatkeOLetu(brojOsoba: number, tipKlase: string) {
+        this.polazak.azurirajPodatkeOLetu(brojOsoba, tipKlase);
+        this.povratak.azurirajPodatkeOLetu(brojOsoba, tipKlase);
+    }
+
     protected override prikaziDetaljeLeta(prozorDetaljiLeta: HTMLElement) {
         const detaljiBrojPolaznogLeta = document.getElementById(
             "detaljiBrojPolaznogLeta"
@@ -80,10 +85,5 @@ export class PovratniLet extends Let {
         vremePolaskaDolaznogLeta.textContent = this.polazak.vremePolaska;
         vremeDolaskaDolaznogLeta.textContent = this.polazak.vremeDolaska;
         this.prikaziProzor(prozorDetaljiLeta);
-    }
-
-    public override azurirajPodatkeOLetu(brojOsoba: number, tipKlase: string) {
-        this.polazak.azurirajPodatkeOLetu(brojOsoba, tipKlase);
-        this.povratak.azurirajPodatkeOLetu(brojOsoba, tipKlase);
     }
 }

@@ -79,8 +79,7 @@ export function pribaviNekeLetove(
     }&${kapacitetTrazeneKlase}_gte=${rezervacija.brojOsoba.toString()}&datumPolaska=${formatDateUString(
         rezervacija.datumPolaska
     )}`;
-    //TODO ubaciti proveru za datum,
-    //TODO i za datum povratka da ne moze da izabere manji od datum odlaska
+
     if (brojLetovaPoStranici !== undefined && pageIndex !== undefined)
         url += `&_limit=${brojLetovaPoStranici}&_page=${pageIndex}`;
     return odgovarajuciLetovi(url);

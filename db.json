@@ -43,7 +43,7 @@
       "cenaKartePrveKlase": 64,
       "kapacitetEkonomskeKlase": 41,
       "kapacitetPremijumEkonomskeKlase": 45,
-      "kapacitetBiznisKlase": 15,
+      "kapacitetBiznisKlase": 14,
       "kapacitetPrveKlase": 50
     },
     {
@@ -425,7 +425,7 @@
       "cenaKartePremijumEkonomskeKlase": 48,
       "cenaKarteBiznisKlase": 65,
       "cenaKartePrveKlase": 80,
-      "kapacitetEkonomskeKlase": 70,
+      "kapacitetEkonomskeKlase": 69,
       "kapacitetPremijumEkonomskeKlase": 25,
       "kapacitetBiznisKlase": 35,
       "kapacitetPrveKlase": 10

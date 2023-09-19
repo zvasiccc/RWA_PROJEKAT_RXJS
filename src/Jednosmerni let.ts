@@ -24,70 +24,54 @@ export class JednosmerniLet extends Let {
     public get id(): number {
         return this._id;
     }
-
     public get polaziste(): string {
         return this._polaziste;
     }
-
     public get odrediste(): string {
         return this._odrediste;
     }
-
     public get datumPolaska(): Date {
         return this._datumPolaska;
     }
-
     public get vremePolaska(): string {
         return this._vremePolaska;
     }
-
     public get vremeDolaska(): string {
         return this._vremeDolaska;
     }
-
     public get cenaKarteEkonomskeKlase(): number {
         return this._cenaKarteEkonomskeKlase;
     }
-
     public get cenaKartePremijumEkonomskeKlase(): number {
         return this._cenaKartePremijumEkonomskeKlase;
     }
-
     public get cenaKarteBiznisKlase(): number {
         return this._cenaKarteBiznisKlase;
     }
-
     public get cenaKartePrveKlase(): number {
         return this._cenaKartePrveKlase;
     }
     public get kapacitetEkonomskeKlase(): number {
         return this._kapacitetEkonomskeKlase;
     }
-
     public set kapacitetEkonomskeKlase(value: number) {
         this._kapacitetEkonomskeKlase = value;
     }
-
     public get kapacitetPremijumEkonomskeKlase(): number {
         return this._kapacitetPremijumEkonomskeKlase;
     }
-
     public set kapacitetPremijumEkonomskeKlase(value: number) {
         this._kapacitetPremijumEkonomskeKlase = value;
     }
-
     public get kapacitetBiznisKlase(): number {
         return this._kapacitetBiznisKlase;
     }
-
     public set kapacitetBiznisKlase(value: number) {
         this._kapacitetBiznisKlase = value;
     }
-
     public get kapacitetPrveKlase(): number {
         return this._kapacitetPrveKlase;
     }
-
     public set kapacitetPrveKlase(value: number) {
         this._kapacitetPrveKlase = value;
     }
@@ -96,11 +80,47 @@ export class JednosmerniLet extends Let {
         liElement.classList.add("let-jednosmerni");
         liElement.innerHTML = this.jednosmerniLetToHTML();
     }
+    public jednosmerniLetToHTML(): string {
+        return `
+        <div class="let-jednosmerni">
+        <strong>Polazište:</strong> <span> ${this.polaziste} </span><br>
+        <strong>Odredište:</strong> <span> ${this.odrediste} </span><br>
+        <strong>Vreme polaska:</strong> <span> ${this.vremePolaska} </span><br>
+        <strong>Vreme dolaska:</strong> <span> ${this.vremeDolaska} </span><br>
+        <strong>Kapacitet:</strong> <span> ${
+            this.kapacitetEkonomskeKlase +
+            this.kapacitetPremijumEkonomskeKlase +
+            this.kapacitetBiznisKlase +
+            this.kapacitetPrveKlase
+        } </span>
+        </div>
+        `;
+    }
     protected override getProzorDetaljiLeta(): HTMLElement {
         return document.getElementById("prozorDetaljiJednosmernogLeta");
     }
     protected override getDugmeZatvoriProzor(): HTMLElement {
         return document.getElementById("prozorDetaljiJednosmernogLeta");
+    }
+
+    protected override prikaziDetaljeLeta(prozorDetaljiLeta: HTMLElement) {
+        const detaljiBrojLeta = document.getElementById("detaljiBrojLeta");
+        const detaljiDatumPolaska = document.getElementById(
+            "detaljiDatumPolaskaJednosmernogLeta"
+        );
+        const detaljiVremePolaska = document.getElementById(
+            "detaljiVremePolaskaJednosmernogLeta"
+        );
+        const detaljiVremeDolaska = document.getElementById(
+            "detaljiVremeDolaskaJednosmernogLeta"
+        );
+        detaljiBrojLeta.textContent = this.id.toString();
+        detaljiDatumPolaska.textContent = this.datumPolaska
+            .toLocaleDateString()
+            .toString();
+        this.prikaziProzor(prozorDetaljiLeta);
+        detaljiVremePolaska.textContent = this.vremePolaska;
+        detaljiVremeDolaska.textContent = this.vremeDolaska;
     }
     public override izracunajUkupnuCenuLeta(
         tipKlaseParam: string,
@@ -124,27 +144,6 @@ export class JednosmerniLet extends Let {
         }
         return parseFloat(ukupnaCena.toFixed(2));
     }
-
-    protected override prikaziDetaljeLeta(prozorDetaljiLeta: HTMLElement) {
-        const detaljiBrojLeta = document.getElementById("detaljiBrojLeta");
-        const detaljiDatumPolaska = document.getElementById(
-            "detaljiDatumPolaskaJednosmernogLeta"
-        );
-        const detaljiVremePolaska = document.getElementById(
-            "detaljiVremePolaskaJednosmernogLeta"
-        );
-        const detaljiVremeDolaska = document.getElementById(
-            "detaljiVremeDolaskaJednosmernogLeta"
-        );
-        detaljiBrojLeta.textContent = this.id.toString();
-        detaljiDatumPolaska.textContent = this.datumPolaska
-            .toLocaleDateString()
-            .toString();
-        this.prikaziProzor(prozorDetaljiLeta);
-        detaljiVremePolaska.textContent = this.vremePolaska;
-        detaljiVremeDolaska.textContent = this.vremeDolaska;
-    }
-
     public override azurirajPodatkeOLetu(brojOsoba: number, tipKlase: string) {
         const avionId = this.id;
         let kapaciteti = new Kapaciteti();
@@ -159,22 +158,5 @@ export class JednosmerniLet extends Let {
             kapaciteti
         );
         this.azurirajLetJson(avionId.toString(), kapaciteti);
-    }
-
-    public jednosmerniLetToHTML(): string {
-        return `
-        <div class="let-jednosmerni">
-        <strong>Polazište:</strong> <span> ${this.polaziste} </span><br>
-        <strong>Odredište:</strong> <span> ${this.odrediste} </span><br>
-        <strong>Vreme polaska:</strong> <span> ${this.vremePolaska} </span><br>
-        <strong>Vreme dolaska:</strong> <span> ${this.vremeDolaska} </span><br>
-        <strong>Kapacitet:</strong> <span> ${
-            this.kapacitetEkonomskeKlase +
-            this.kapacitetPremijumEkonomskeKlase +
-            this.kapacitetBiznisKlase +
-            this.kapacitetPrveKlase
-        } </span>
-        </div>
-        `;
     }
 }
